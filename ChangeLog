@@ -1,0 +1,52 @@
+TODO
+* update msvscpp files
+* library: add support to set the master key directly
+
+Crypto support:
+* add support for benbi
+* add support for ESSIV
+* add support for lmk
+* add support for AES-XTS
+* add support for serpent
+* add support for twofish
+* add support for cast5
+* add support for cast6
+* add support for RIPEMD160
+
+20141001
+* removed README.macosx
+
+20140801
+* bug fix in Python-bindings
+
+20140531
+* updated dependencies
+
+20140330
+* worked on Python bindings
+
+20140112
+* 2014 update
+* updated dependencies
+
+20131205
+* updated dependencies
+
+20130909
+* updated dependencies
+* worked on libcthreads build support
+
+20130716
+* updated dependencies
+
+20130714
+* worked on SHA512 support
+
+20130704
+* worked on initial version
+* renamed libluksve to libluksde
+* removed unused local libraries
+
+20130703
+* initial version based on libbde
+

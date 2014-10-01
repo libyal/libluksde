@@ -1,0 +1,36 @@
+Source: libluksde
+Section: unknown
+Priority: extra
+Maintainer: Joachim Metz <joachim.metz@gmail.com>
+Build-Depends: debhelper (>= 7), autotools-dev, libssl-dev, libfuse-dev, python-dev
+Standards-Version: 3.8.3
+Homepage: http://code.google.com/p/libluksde/
+
+Package: libluksde
+Section: libs
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: Library to access the Linux Unified Key Setup (LUKS) Disk Encryption format
+ libluksde is a library to access the Linux Unified Key Setup (LUKS) Disk Encryption format.
+
+Package: libluksde-dev
+Section: libdevel
+Architecture: any
+Depends: libluksde (= ${Source-Version})
+Description: Header files and libraries for developing applications for libluksde
+ Header files and libraries for developing applications for libluksde.
+
+Package: libluksde-tools
+Section: utils
+Architecture: any
+Depends: libluksde (= ${Source-Version}), ${shlibs:Depends}
+Description: Several tools for reading Linux Unified Key Setup (LUKS) Disk Encryption volumes
+ Several tools for reading Linux Unified Key Setup (LUKS) Disk Encryption volumes.
+
+Package: libluksde-python
+Section: python
+Architecture: any
+Depends: libluksde (= ${Source-Version}), ${shlibs:Depends}, ${python:Depends}
+Description: Python bindings for libluksde
+ Python bindings for libluksde.
+

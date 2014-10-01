@@ -1,0 +1,68 @@
+.Dd January 12, 2014
+.Dt luksdeinfo
+.Os libluksde
+.Sh NAME
+.Nm luksdeinfo
+.Nd determines information about a Linux Unified Key Setup (LUKS) Disk Encryption volume
+.Sh SYNOPSIS
+.Nm luksdeinfo
+.Op Fl k Ar keys
+.Op Fl o Ar offset
+.Op Fl p Ar password
+.Op Fl hvV
+.Va Ar source
+.Sh DESCRIPTION
+.Nm luksdeinfo
+is a utility to determine information about a Linux Unified Key Setup (LUKS) Disk Encryption volume
+.Pp
+.Nm luksdeinfo
+is part of the
+.Nm libluksde
+package.
+.Nm libluksde
+is a library to access the Linux Unified Key Setup (LUKS) Disk Encryption format
+.Pp
+.Ar source
+is the source file.
+.Pp
+The options are as follows:
+.Bl -tag -width Ds
+.It Fl h
+shows this help
+.It Fl k Ar keys
+the master key, formatted in base16
+.It Fl o Ar offset
+specify the volume offset
+.It fl p Ar password
+specify the password
+.It Fl v
+verbose output to stderr
+.It Fl V
+print version
+.El
+.Sh ENVIRONMENT
+None
+.Sh FILES
+None
+.Sh EXAMPLES
+.Bd -literal
+# luksdeinfo -p Password /dev/sda1
+luksdeinfo 20130704
+
+Linux Unified Key Setup Disk Encryption information:
+	Encryption method:		AES 128-bit
+
+.Ed
+.Sh DIAGNOSTICS
+Errors, verbose and debug output are printed to stderr when verbose output \-v is enabled.
+Verbose and debug output are only printed when enabled at compilation.
+.Sh BUGS
+Please report bugs of any kind to <joachim.metz@gmail.com> or on the project website:
+http://code.google.com/p/libluksde/
+.Sh AUTHOR
+These man pages were written by Joachim Metz.
+.Sh COPYRIGHT
+Copyright 2013-2014, Joachim Metz <joachim.metz@gmail.com>.
+This is free software; see the source for copying conditions. There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+.Sh SEE ALSO
+.Xr luksdemount 1

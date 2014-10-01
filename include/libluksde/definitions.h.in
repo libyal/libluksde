@@ -1,0 +1,102 @@
+/*
+ * Definitions for libluksde
+ *
+ * Copyright (C) 2013-2014, Joachim Metz <joachim.metz@gmail.com>
+ *
+ * Refer to AUTHORS for acknowledgements.
+ *
+ * This software is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this software.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+#if !defined( _LIBLUKSDE_DEFINITIONS_H )
+#define _LIBLUKSDE_DEFINITIONS_H
+
+#include <libluksde/types.h>
+
+#define LIBLUKSDE_VERSION				@VERSION@
+
+/* The version string
+ */
+#define LIBLUKSDE_VERSION_STRING			"@VERSION@"
+
+/* The file access
+ * bit 1        set to 1 for read access
+ * bit 2        set to 1 for write access
+ * bit 3-8      not used
+ */
+enum LIBLUKSDE_ACCESS_FLAGS
+{
+	LIBLUKSDE_ACCESS_FLAG_READ			= 0x01,
+/* Reserved: not supported yet */
+	LIBLUKSDE_ACCESS_FLAG_WRITE			= 0x02
+};
+
+/* The file access macros
+ */
+#define LIBLUKSDE_OPEN_READ				( LIBLUKSDE_ACCESS_FLAG_READ )
+/* Reserved: not supported yet */
+#define LIBLUKSDE_OPEN_WRITE				( LIBLUKSDE_ACCESS_FLAG_WRITE )
+/* Reserved: not supported yet */
+#define LIBLUKSDE_OPEN_READ_WRITE			( LIBLUKSDE_ACCESS_FLAG_READ | LIBLUKSDE_ACCESS_FLAG_WRITE )
+
+/* The encryption methods
+ */
+enum LIBLUKSDE_ENCRYPTION_METHODS
+{
+	LIBLUKSDE_ENCRYPTION_METHOD_UNKNOWN,
+	LIBLUKSDE_ENCRYPTION_METHOD_AES,
+	LIBLUKSDE_ENCRYPTION_METHOD_ANUBIS,
+	LIBLUKSDE_ENCRYPTION_METHOD_BLOWFISH,
+	LIBLUKSDE_ENCRYPTION_METHOD_CAST5,
+	LIBLUKSDE_ENCRYPTION_METHOD_CAST6,
+	LIBLUKSDE_ENCRYPTION_METHOD_SERPENT,
+	LIBLUKSDE_ENCRYPTION_METHOD_TWOFISH
+};
+
+/* The encryption chaining modes
+ */
+enum LIBLUKSDE_ENCRYPTION_CHAINING_MODES
+{
+	LIBLUKSDE_ENCRYPTION_CHAINING_MODE_UNKNOWN,
+	LIBLUKSDE_ENCRYPTION_CHAINING_MODE_CBC,
+	LIBLUKSDE_ENCRYPTION_CHAINING_MODE_ECB,
+	LIBLUKSDE_ENCRYPTION_CHAINING_MODE_XTS
+};
+
+/* The intialization vector (calculation) modes
+ */
+enum LIBLUKSDE_INITIALIZATION_VECTOR_MODES
+{
+	LIBLUKSDE_INITIALIZATION_VECTOR_MODE_UNKNOWN,
+	LIBLUKSDE_INITIALIZATION_VECTOR_MODE_BENBI,
+	LIBLUKSDE_INITIALIZATION_VECTOR_MODE_ESSIV,
+	LIBLUKSDE_INITIALIZATION_VECTOR_MODE_LMK,
+	LIBLUKSDE_INITIALIZATION_VECTOR_MODE_NULL,
+	LIBLUKSDE_INITIALIZATION_VECTOR_MODE_PLAIN32,
+	LIBLUKSDE_INITIALIZATION_VECTOR_MODE_PLAIN64
+};
+
+/* The hashing methods
+ */
+enum LIBLUKSDE_HASHING_METHODS
+{
+	LIBLUKSDE_HASHING_METHOD_UNKNOWN,
+	LIBLUKSDE_HASHING_METHOD_RIPEMD160,
+	LIBLUKSDE_HASHING_METHOD_SHA1,
+	LIBLUKSDE_HASHING_METHOD_SHA256,
+	LIBLUKSDE_HASHING_METHOD_SHA512
+};
+
+#endif
+
