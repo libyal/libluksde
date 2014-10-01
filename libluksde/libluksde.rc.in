@@ -28,7 +28,7 @@ BEGIN
       VALUE "OriginalFilename",		"libluksde.dll\0"
       VALUE "ProductName",		"libluksde\0"
       VALUE "ProductVersion",		"@VERSION@" "\0"
-      VALUE "Comments",			"For more information visit http://code.google.com/p/libluksde\0"
+      VALUE "Comments",			"For more information visit https://github.com/libyal/libluksde/\0"
     END
   END
   BLOCK "VarFileInfo"

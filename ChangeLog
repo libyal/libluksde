@@ -4,7 +4,6 @@ TODO
 
 Crypto support:
 * add support for benbi
-* add support for ESSIV
 * add support for lmk
 * add support for AES-XTS
 * add support for serpent
@@ -15,6 +14,7 @@ Crypto support:
 
 20141001
 * removed README.macosx
+* changes for project site move
 
 20140801
 * bug fix in Python-bindings

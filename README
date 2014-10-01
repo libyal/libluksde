@@ -1,4 +1,25 @@
-See:
-* http://code.google.com/p/libluksde/wiki/Building
-* README.macosx
+libluksde is a library to access LUKS Disk Encryption encrypted volumes.
+
+Supported encryption/hashing methods:
+* AES (AES-CBC)
+* ESSIV (SHA1)
+* SHA (SHA256, SHA512)
+
+Unsupported encryption/hashing methods:
+* AES (AES-XTS)
+* benbi
+* lmk
+* serpent
+* twofish
+* cast5
+* cast6
+* RIPEMD160
+
+Planned:
+* Multi-threading support
+* Python 3 support
+
+For more information see:
+* Project documentation: https://github.com/libyal/libluksde/wiki/Home
+* How to build from source: https://github.com/libyal/libluksde/wiki/Building
 

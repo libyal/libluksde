@@ -239,6 +239,7 @@ AC_CONFIG_FILES([common/types.h])
 AC_CONFIG_FILES([dpkg/changelog])
 AC_CONFIG_FILES([dpkg/copyright])
 AC_CONFIG_FILES([libluksde/libluksde.rc])
+AC_CONFIG_FILES([pyluksde/setup.py])
 AC_CONFIG_FILES([libluksde.pc])
 AC_CONFIG_FILES([libluksde.spec])
 dnl Have configure write its configuration
