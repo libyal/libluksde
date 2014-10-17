@@ -12,6 +12,9 @@ Crypto support:
 * add support for cast6
 * add support for RIPEMD160
 
+20141017
+* changes for deployment
+
 20141001
 * removed README.macosx
 * changes for project site move
