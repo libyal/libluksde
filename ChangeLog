@@ -1,5 +1,4 @@
 TODO
-* update msvscpp files
 * library: add support to set the master key directly
 
 Crypto support:
@@ -11,6 +10,10 @@ Crypto support:
 * add support for cast5
 * add support for cast6
 * add support for RIPEMD160
+
+20141023
+* changes for deployment
+* updated msvscpp files
 
 20141017
 * changes for deployment
