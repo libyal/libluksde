@@ -1,5 +1,9 @@
 libluksde is a library to access LUKS Disk Encryption encrypted volumes.
 
+Project information:
+* Status: experimental
+* Licence: LGPLv3+
+
 Supported encryption/hashing methods:
 * AES (AES-CBC)
 * ESSIV (SHA1)

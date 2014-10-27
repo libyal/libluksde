@@ -33,6 +33,7 @@
 #include <stdlib.h>
 #endif
 
+#include "info_handle.h"
 #include "luksdeoutput.h"
 #include "luksdetools_libluksde.h"
 #include "luksdetools_libcerror.h"
@@ -40,7 +41,6 @@
 #include "luksdetools_libcnotify.h"
 #include "luksdetools_libcstring.h"
 #include "luksdetools_libcsystem.h"
-#include "info_handle.h"
 
 info_handle_t *luksdeinfo_info_handle = NULL;
 int luksdeinfo_abort                  = 0;

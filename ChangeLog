@@ -11,6 +11,9 @@ Crypto support:
 * add support for cast6
 * add support for RIPEMD160
 
+20141027
+* changes for deployment
+
 20141023
 * changes for deployment
 * updated msvscpp files
