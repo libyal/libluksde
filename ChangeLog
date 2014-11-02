@@ -11,6 +11,9 @@ Crypto support:
 * add support for cast6
 * add support for RIPEMD160
 
+Tests:
+* add tests for Python-bindings
+
 20141028
 * bug fix in Python-bindings
 
