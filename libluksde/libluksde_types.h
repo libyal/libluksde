@@ -33,9 +33,15 @@
 
 /* The following type definitions hide internal data structures
  */
+#if defined( HAVE_DEBUG_OUTPUT ) && !defined( WINAPI )
+typedef struct libluksde_volume {}	libluksde_volume_t;
+
+#else
 typedef intptr_t libluksde_volume_t;
 
 #endif
+
+#endif /* defined( HAVE_LOCAL_LIBLUKSDE ) */
 
 #endif
 

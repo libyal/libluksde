@@ -19,8 +19,11 @@ Unsupported encryption/hashing methods:
 * cast6
 * RIPEMD160
 
+Work in progress:
+* Thread-safety in volume API functions
+
 Planned:
-* Multi-threading support
+* Dokan library support
 * Python 3 support
 
 For more information see:

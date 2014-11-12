@@ -29,6 +29,7 @@
 #include "libluksde_io_handle.h"
 #include "libluksde_libbfio.h"
 #include "libluksde_libcerror.h"
+#include "libluksde_libcthreads.h"
 #include "libluksde_libfcache.h"
 #include "libluksde_libfdata.h"
 #include "libluksde_types.h"
@@ -68,6 +69,12 @@ struct libluksde_internal_volume
 	/* Value to indicate if the file IO handle was opened inside the library
 	 */
 	uint8_t file_io_handle_opened_in_library;
+
+#if defined( HAVE_MULTI_THREAD_SUPPORT )
+	/* The read/write lock
+	 */
+	libcthreads_read_write_lock_t *read_write_lock;
+#endif
 };
 
 LIBLUKSDE_EXTERN \
@@ -93,13 +100,15 @@ int libluksde_volume_open(
      libcerror_error_t **error );
 
 #if defined( HAVE_WIDE_CHARACTER_TYPE )
+
 LIBLUKSDE_EXTERN \
 int libluksde_volume_open_wide(
      libluksde_volume_t *volume,
      const wchar_t *filename,
      int access_flags,
      libcerror_error_t **error );
-#endif
+
+#endif /* defined( HAVE_WIDE_CHARACTER_TYPE ) */
 
 LIBLUKSDE_EXTERN \
 int libluksde_volume_open_file_io_handle(
@@ -118,6 +127,13 @@ int libluksde_volume_open_read(
      libbfio_handle_t *file_io_handle,
      libcerror_error_t **error );
 
+ssize_t libluksde_internal_volume_read_buffer_from_file_io_handle(
+         libluksde_internal_volume_t *internal_volume,
+         libbfio_handle_t *file_io_handle,
+         void *buffer,
+         size_t buffer_size,
+         libcerror_error_t **error );
+
 LIBLUKSDE_EXTERN \
 ssize_t libluksde_volume_read_buffer(
          libluksde_volume_t *volume,
@@ -133,7 +149,8 @@ ssize_t libluksde_volume_read_buffer_at_offset(
          off64_t offset,
          libcerror_error_t **error );
 
-#ifdef TODO
+#ifdef TODO_WRITE_SUPPORT
+
 LIBLUKSDE_EXTERN \
 ssize_t libluksde_volume_write_buffer(
          libluksde_volume_t *volume,
@@ -148,7 +165,14 @@ ssize_t libluksde_volume_write_buffer_at_offset(
          size_t buffer_size,
          off64_t offset,
          libcerror_error_t **error );
-#endif
+
+#endif /* TODO_WRITE_SUPPORT */
+
+off64_t libluksde_internal_volume_seek_offset(
+         libluksde_internal_volume_t *internal_volume,
+         off64_t offset,
+         int whence,
+         libcerror_error_t **error );
 
 LIBLUKSDE_EXTERN \
 off64_t libluksde_volume_seek_offset(

@@ -29,7 +29,7 @@
 
 /* Define HAVE_LOCAL_LIBLUKSDE for local use of libluksde
  */
-#if !defined( HAVE_LOCAL_LIBLUKSDE )
+#if !defined( HAVE_LOCAL_LIBLUKSDE ) && defined( HAVE_DLLMAIN )
 
 #if defined( WINAPI )
 
@@ -74,6 +74,6 @@ int libluksde_is_dll(
 	return( 1 );
 }
 
-#endif /* defined( WINAPI ) */
+#endif /* defined( WINAPI ) && defined( HAVE_DLLMAIN ) */
 
 #endif /* !defined( HAVE_LOCAL_LIBLUKSDE ) */

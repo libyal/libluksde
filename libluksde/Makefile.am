@@ -3,6 +3,7 @@ AM_CPPFLAGS = \
 	-I$(top_srcdir)/common \
 	@LIBCSTRING_CPPFLAGS@ \
 	@LIBCERROR_CPPFLAGS@ \
+	@LIBCTHREADS_CPPFLAGS@ \
 	@LIBCDATA_CPPFLAGS@ \
 	@LIBCLOCALE_CPPFLAGS@ \
 	@LIBCNOTIFY_CPPFLAGS@ \
@@ -15,7 +16,8 @@ AM_CPPFLAGS = \
 	@LIBFDATA_CPPFLAGS@ \
 	@LIBFGUID_CPPFLAGS@ \
 	@LIBHMAC_CPPFLAGS@ \
-	@LIBCAES_CPPFLAGS@
+	@LIBCAES_CPPFLAGS@ \
+	@PTHREAD_CPPFLAGS@
 
 lib_LTLIBRARIES = libluksde.la
 
@@ -37,6 +39,7 @@ libluksde_la_SOURCES = \
 	libluksde_libclocale.h \
 	libluksde_libcnotify.h \
 	libluksde_libcstring.h \
+	libluksde_libcthreads.h \
 	libluksde_libfcache.h \
 	libluksde_libfdata.h \
 	libluksde_libfguid.h \
@@ -54,6 +57,7 @@ libluksde_la_SOURCES = \
 libluksde_la_LIBADD = \
 	@LIBCSTRING_LIBADD@ \
 	@LIBCERROR_LIBADD@ \
+	@LIBCTHREADS_LIBADD@ \
 	@LIBCDATA_LIBADD@ \
 	@LIBCLOCALE_LIBADD@ \
 	@LIBCNOTIFY_LIBADD@ \
@@ -68,7 +72,8 @@ libluksde_la_LIBADD = \
 	@LIBHMAC_LIBADD@ \
 	@LIBCAES_LIBADD@ \
 	@LIBCRYPTO_LIBADD@ \
-	@LIBDL_LIBADD@
+	@LIBDL_LIBADD@ \
+	@PTHREAD_LIBADD@
 
 libluksde_la_LDFLAGS = -no-undefined -version-info 1:0:0
 

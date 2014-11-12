@@ -20,14 +20,9 @@
  */
 
 #include <common.h>
+#include <file_stream.h>
 #include <memory.h>
 #include <types.h>
-
-#if defined( HAVE_LOCAL_LIBUNA )
-#include <libuna_definitions.h>
-#elif defined( HAVE_LIBUNA_H )
-#include <libuna.h>
-#endif
 
 #include "luksdeoutput.h"
 #include "luksdetools_libluksde.h"
@@ -37,6 +32,7 @@
 #include "luksdetools_libclocale.h"
 #include "luksdetools_libcstring.h"
 #include "luksdetools_libcsystem.h"
+#include "luksdetools_libuna.h"
 
 /* Prints the copyright information
  */

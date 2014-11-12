@@ -73,7 +73,7 @@ int libluksde_set_codepage(
      int codepage,
      libluksde_error_t **error );
 
-/* Determines if a volume is a VSS volume (check for the VSS identifier)
+/* Determines if a volume is a Linux Unified Key Setup (LUKS) Disk Encrypted volume (check for the LUKS signature)
  * Returns 1 if true, 0 if not or -1 on error
  */
 LIBLUKSDE_EXTERN \
@@ -81,7 +81,7 @@ int libluksde_check_volume_signature(
      const char *filename,
      libluksde_error_t **error );
 
-/* Determines if a volume is a VSS volume (check for the VSS identifier)
+/* Determines if a volume is a Linux Unified Key Setup (LUKS) Disk Encrypted volume (check for the LUKS signature)
  * Returns 1 if true, 0 if not or -1 on error
  */
 LIBLUKSDE_EXTERN \
@@ -90,14 +90,16 @@ int libluksde_check_volume_signature_wide(
      libluksde_error_t **error );
 
 #if defined( LIBLUKSDE_HAVE_BFIO )
-/* Determines if a volume is a VSS volume (check for the VSS identifier) using a Basic File IO (bfio) handle
+
+/* Determines if a volume is a Linux Unified Key Setup (LUKS) Disk Encrypted volume (check for the LUKS signature)
  * Returns 1 if true, 0 if not or -1 on error
  */
 LIBLUKSDE_EXTERN \
 int libluksde_check_volume_signature_file_io_handle(
      libbfio_handle_t *file_io_handle,
      libluksde_error_t **error );
-#endif
+
+#endif /* defined( LIBLUKSDE_HAVE_BFIO ) */
 
 /* -------------------------------------------------------------------------
  * Notify functions
@@ -219,6 +221,7 @@ int libluksde_volume_open(
      libluksde_error_t **error );
 
 #if defined( LIBLUKSDE_HAVE_WIDE_CHARACTER_TYPE )
+
 /* Opens a volume
  * Returns 1 if successful, 0 if the keys could not be read or -1 on error
  */
@@ -228,9 +231,11 @@ int libluksde_volume_open_wide(
      const wchar_t *filename,
      int access_flags,
      libluksde_error_t **error );
-#endif
+
+#endif /* defined( LIBLUKSDE_HAVE_WIDE_CHARACTER_TYPE ) */
 
 #if defined( LIBLUKSDE_HAVE_BFIO )
+
 /* Opens a volume using a Basic File IO (bfio) handle
  * Returns 1 if successful, 0 if the keys could not be read or -1 on error
  */
@@ -240,7 +245,8 @@ int libluksde_volume_open_file_io_handle(
      libbfio_handle_t *file_io_handle,
      int access_flags,
      libluksde_error_t **error );
-#endif
+
+#endif /* defined( LIBLUKSDE_HAVE_BFIO ) */
 
 /* Closes a volume
  * Returns 0 if successful or -1 on error
@@ -271,7 +277,7 @@ ssize_t libluksde_volume_read_buffer_at_offset(
          off64_t offset,
          libluksde_error_t **error );
 
-#ifdef TODO
+#ifdef TODO_WRITE_SUPPORT
 
 /* Writes (media) data at the current offset
  * Returns the number of input bytes written, 0 when no longer bytes can be written or -1 on error
@@ -294,7 +300,7 @@ ssize_t libluksde_volume_write_buffer_at_offset(
          off64_t offset,
          libluksde_error_t **error );
 
-#endif
+#endif /* TODO_WRITE_SUPPORT */
 
 /* Seeks a certain offset of the data
  * Returns the offset if seek is successful or -1 on error

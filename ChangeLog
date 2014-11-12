@@ -1,4 +1,9 @@
 TODO
+* fix broken tests
+* add thread-safety in volume
+  - open functions
+  - add tests
+
 * library: add support to set the master key directly
 
 Crypto support:
@@ -13,6 +18,11 @@ Crypto support:
 
 Tests:
 * add tests for Python-bindings
+
+20141112
+* code clean up
+* worked on multi-threading support
+* updated msvscpp files
 
 20141028
 * bug fix in Python-bindings

@@ -100,7 +100,7 @@ int libluksde_set_codepage(
 
 #endif /* !defined( HAVE_LOCAL_LIBLUKSDE ) */
 
-/* Determines if a volume is a VSS volume (check for the VSS identifier)
+/* Determines if a volume is a Linux Unified Key Setup (LUKS) Disk Encrypted volume (check for the LUKS signature)
  * Returns 1 if true, 0 if not or -1 on error
  */
 int libluksde_check_volume_signature(
@@ -135,7 +135,7 @@ int libluksde_check_volume_signature(
 		 "%s: invalid filename.",
 		 function );
 
-		return( -1 );
+		goto on_error;
 	}
 	if( libbfio_file_initialize(
 	     &file_io_handle,
@@ -148,7 +148,7 @@ int libluksde_check_volume_signature(
 		 "%s: unable to create file IO handle.",
 		 function );
 
-		return( -1 );
+		goto on_error;
 	}
 	if( libbfio_file_set_name(
 	     file_io_handle,
@@ -163,11 +163,7 @@ int libluksde_check_volume_signature(
 		 "%s: unable to set filename in file IO handle.",
 		 function );
 
-		libbfio_handle_free(
-		 &file_io_handle,
-		 NULL );
-
-		return( -1 );
+		goto on_error;
 	}
 	result = libluksde_check_volume_signature_file_io_handle(
 	          file_io_handle,
@@ -182,11 +178,7 @@ int libluksde_check_volume_signature(
 		 "%s: unable to check volume signature using a file handle.",
 		 function );
 
-		libbfio_handle_free(
-		 &file_io_handle,
-		 NULL );
-
-		return( -1 );
+		goto on_error;
 	}
 	if( libbfio_handle_free(
 	     &file_io_handle,
@@ -199,14 +191,23 @@ int libluksde_check_volume_signature(
 		 "%s: unable to free file IO handle.",
 		 function );
 
-		return( -1 );
+		goto on_error;
 	}
 	return( result );
+
+on_error:
+	if( file_io_handle != NULL )
+	{
+		libbfio_handle_free(
+		 &file_io_handle,
+		 NULL );
+	}
+	return( -1 );
 }
 
 #if defined( HAVE_WIDE_CHARACTER_TYPE )
 
-/* Determines if a volume is a VSS volume (check for the VSS identifier)
+/* Determines if a volume is a Linux Unified Key Setup (LUKS) Disk Encrypted volume (check for the LUKS signature)
  * Returns 1 if true, 0 if not or -1 on error
  */
 int libluksde_check_volume_signature_wide(
@@ -241,7 +242,7 @@ int libluksde_check_volume_signature_wide(
 		 "%s: invalid filename.",
 		 function );
 
-		return( -1 );
+		goto on_error;
 	}
 	if( libbfio_file_initialize(
 	     &file_io_handle,
@@ -254,7 +255,7 @@ int libluksde_check_volume_signature_wide(
 		 "%s: unable to create file IO handle.",
 		 function );
 
-		return( -1 );
+		goto on_error;
 	}
 	if( libbfio_file_set_name_wide(
 	     file_io_handle,
@@ -269,11 +270,7 @@ int libluksde_check_volume_signature_wide(
 		 "%s: unable to set filename in file IO handle.",
 		 function );
 
-		libbfio_handle_free(
-		 &file_io_handle,
-		 NULL );
-
-		return( -1 );
+		goto on_error;
 	}
 	result = libluksde_check_volume_signature_file_io_handle(
 	          file_io_handle,
@@ -288,11 +285,7 @@ int libluksde_check_volume_signature_wide(
 		 "%s: unable to check volume signature using a file handle.",
 		 function );
 
-		libbfio_handle_free(
-		 &file_io_handle,
-		 NULL );
-
-		return( -1 );
+		goto on_error;
 	}
 	if( libbfio_handle_free(
 	     &file_io_handle,
@@ -305,14 +298,23 @@ int libluksde_check_volume_signature_wide(
 		 "%s: unable to free file IO handle.",
 		 function );
 
-		return( -1 );
+		goto on_error;
 	}
 	return( result );
+
+on_error:
+	if( file_io_handle != NULL )
+	{
+		libbfio_handle_free(
+		 &file_io_handle,
+		 NULL );
+	}
+	return( -1 );
 }
 
-#endif
+#endif /* defined( HAVE_WIDE_CHARACTER_TYPE ) */
 
-/* Determines if a volume is a VSS volume (check for the VSS identifier) using a Basic File IO (bfio) handle
+/* Determines if a volume is a Linux Unified Key Setup (LUKS) Disk Encrypted volume (check for the LUKS signature)
  * Returns 1 if true, 0 if not or -1 on error
  */
 int libluksde_check_volume_signature_file_io_handle(
