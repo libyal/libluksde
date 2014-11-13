@@ -1,7 +1,7 @@
 TODO
 * fix broken tests
+  - add sha224 password hashing support
 * add thread-safety in volume
-  - open functions
   - add tests
 
 * library: add support to set the master key directly
@@ -18,6 +18,11 @@ Crypto support:
 
 Tests:
 * add tests for Python-bindings
+
+20141113
+* worked on multi-threading support
+* worked on ESSIV SHA256 support
+* worked on SHA256 password hash support
 
 20141112
 * code clean up

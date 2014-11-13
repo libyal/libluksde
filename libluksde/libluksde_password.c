@@ -86,6 +86,10 @@ int libluksde_password_pbkdf2(
 			hash_size = LIBHMAC_SHA1_HASH_SIZE;
 			break;
 
+		case LIBLUKSDE_HASHING_METHOD_SHA256:
+			hash_size = LIBHMAC_SHA256_HASH_SIZE;
+			break;
+
 		default:
 			libcerror_error_set(
 			 error,
@@ -259,6 +263,17 @@ int libluksde_password_pbkdf2(
 				          error );
 				break;
 
+			case LIBLUKSDE_HASHING_METHOD_SHA256:
+	                	result = libhmac_sha256_calculate_hmac(
+				          password,
+				          password_size,
+				          data_buffer,
+				          data_buffer_size,
+				          hash_buffer,
+				          hash_size,
+				          error );
+				break;
+
 			default:
 				result = 0;
 				break;
@@ -297,6 +312,17 @@ int libluksde_password_pbkdf2(
 			{
 				case LIBLUKSDE_HASHING_METHOD_SHA1:
 					result = libhmac_sha1_calculate_hmac(
+					          password,
+					          password_size,
+					          hash_buffer,
+					          hash_size,
+					          hash_buffer,
+					          hash_size,
+					          error );
+					break;
+
+				case LIBLUKSDE_HASHING_METHOD_SHA256:
+					result = libhmac_sha256_calculate_hmac(
 					          password,
 					          password_size,
 					          hash_buffer,
@@ -351,6 +377,17 @@ int libluksde_password_pbkdf2(
 				          error );
 				break;
 
+			case LIBLUKSDE_HASHING_METHOD_SHA256:
+				result = libhmac_sha256_calculate_hmac(
+				          password,
+				          password_size,
+				          data_buffer,
+				          data_buffer_size,
+				          hash_buffer,
+				          hash_size,
+				          error );
+				break;
+
 			default:
 				result = 0;
 				break;
@@ -389,6 +426,17 @@ int libluksde_password_pbkdf2(
 			{
 				case LIBLUKSDE_HASHING_METHOD_SHA1:
 					result = libhmac_sha1_calculate_hmac(
+					          password,
+					          password_size,
+					          hash_buffer,
+					          hash_size,
+					          hash_buffer,
+					          hash_size,
+					          error );
+					break;
+
+				case LIBLUKSDE_HASHING_METHOD_SHA256:
+					result = libhmac_sha256_calculate_hmac(
 					          password,
 					          password_size,
 					          hash_buffer,

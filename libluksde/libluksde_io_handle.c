@@ -168,6 +168,28 @@ int libluksde_io_handle_free(
 
 			result = -1;
 		}
+		if( ( *io_handle )->user_password != NULL )
+		{
+			if( memory_set(
+			     ( *io_handle )->user_password,
+			     0,
+			     ( *io_handle )->user_password_size ) == NULL )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_MEMORY,
+				 LIBCERROR_MEMORY_ERROR_SET_FAILED,
+				 "%s: unable to clear user password.",
+				 function );
+
+				result = -1;
+			}
+			memory_free(
+			 ( *io_handle )->user_password );
+
+			( *io_handle )->user_password      = NULL;
+			( *io_handle )->user_password_size = 0;
+		}
 		if( libcdata_array_free(
 		     &( ( *io_handle )->key_slots_array ),
 		     (int(*)(intptr_t **, libcerror_error_t **)) &libluksde_key_slot_free,
@@ -226,28 +248,6 @@ int libluksde_io_handle_clear(
 
 			result = -1;
 		}
-	}
-	if( io_handle->user_password != NULL )
-	{
-		if( memory_set(
-		     io_handle->user_password,
-		     0,
-		     io_handle->user_password_size ) == NULL )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_MEMORY,
-			 LIBCERROR_MEMORY_ERROR_SET_FAILED,
-			 "%s: unable to clear user password.",
-			 function );
-
-			result = -1;
-		}
-		memory_free(
-		 io_handle->user_password );
-
-		io_handle->user_password      = NULL;
-		io_handle->user_password_size = 0;
 	}
 	if( memory_set(
 	     io_handle->master_key,
@@ -925,6 +925,14 @@ int libluksde_io_handle_read_volume_header(
 					{
 						io_handle->initialization_vector_mode = LIBLUKSDE_INITIALIZATION_VECTOR_MODE_ESSIV;
 						io_handle->essiv_hashing_method       = LIBLUKSDE_HASHING_METHOD_SHA1;
+					}
+					if( ( ( (luksde_volume_header_t *) volume_header_data )->encryption_mode[ separator_index + 10 ] == '2' )
+					 && ( ( (luksde_volume_header_t *) volume_header_data )->encryption_mode[ separator_index + 11 ] == '5' )
+					 && ( ( (luksde_volume_header_t *) volume_header_data )->encryption_mode[ separator_index + 12 ] == '6' )
+					 && ( ( (luksde_volume_header_t *) volume_header_data )->encryption_mode[ separator_index + 13 ] == 0 ) )
+					{
+						io_handle->initialization_vector_mode = LIBLUKSDE_INITIALIZATION_VECTOR_MODE_ESSIV;
+						io_handle->essiv_hashing_method       = LIBLUKSDE_HASHING_METHOD_SHA256;
 					}
 				}
 /* TODO IV options */

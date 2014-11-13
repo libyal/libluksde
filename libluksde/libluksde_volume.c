@@ -407,11 +407,7 @@ int libluksde_volume_open(
 
 		goto on_error;
 	}
-	else if( result != 0 )
-	{
-		internal_volume->file_io_handle_created_in_library = 1;
-	}
-	else
+	else if( result == 0 )
 	{
 		if( libbfio_handle_free(
 		     &file_io_handle,
@@ -426,6 +422,41 @@ int libluksde_volume_open(
 
 			goto on_error;
 		}
+	}
+	else
+	{
+#if defined( HAVE_MULTI_THREAD_SUPPORT )
+		if( libcthreads_read_write_lock_grab_for_write(
+		     internal_volume->read_write_lock,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+			 "%s: unable to grab read/write lock for writing.",
+			 function );
+
+			return( -1 );
+		}
+#endif
+		internal_volume->file_io_handle_created_in_library = 1;
+
+#if defined( HAVE_MULTI_THREAD_SUPPORT )
+		if( libcthreads_read_write_lock_release_for_write(
+		     internal_volume->read_write_lock,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+			 "%s: unable to release read/write lock for writing.",
+			 function );
+
+			return( -1 );
+		}
+#endif
 	}
 	return( result );
 
@@ -579,11 +610,7 @@ int libluksde_volume_open_wide(
 
 		goto on_error;
 	}
-	else if( result != 0 )
-	{
-		internal_volume->file_io_handle_created_in_library = 1;
-	}
-	else
+	else if( result == 0 )
 	{
 		if( libbfio_handle_free(
 		     &file_io_handle,
@@ -598,6 +625,41 @@ int libluksde_volume_open_wide(
 
 			goto on_error;
 		}
+	}
+	else
+	{
+#if defined( HAVE_MULTI_THREAD_SUPPORT )
+		if( libcthreads_read_write_lock_grab_for_write(
+		     internal_volume->read_write_lock,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+			 "%s: unable to grab read/write lock for writing.",
+			 function );
+
+			return( -1 );
+		}
+#endif
+		internal_volume->file_io_handle_created_in_library = 1;
+
+#if defined( HAVE_MULTI_THREAD_SUPPORT )
+		if( libcthreads_read_write_lock_release_for_write(
+		     internal_volume->read_write_lock,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+			 "%s: unable to release read/write lock for writing.",
+			 function );
+
+			return( -1 );
+		}
+#endif
 	}
 	return( result );
 
@@ -740,43 +802,72 @@ int libluksde_volume_open_file_io_handle(
 
 		goto on_error;
 	}
-	else if( result != 0 )
+	else if( result == 0 )
 	{
-		internal_volume->file_io_handle                   = file_io_handle;
-		internal_volume->file_io_handle_opened_in_library = file_io_handle_opened_in_library;
-	}
-	else if( file_io_handle_opened_in_library != 0 )
-	{
-		file_io_handle_opened_in_library = 0;
+		if( file_io_handle_opened_in_library != 0 )
+		{
+			file_io_handle_opened_in_library = 0;
 
-		if( libbfio_handle_close(
-		     file_io_handle,
-		     error ) != 0 )
+			if( libbfio_handle_close(
+			     file_io_handle,
+			     error ) != 0 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_IO,
+				 LIBCERROR_IO_ERROR_CLOSE_FAILED,
+				 "%s: unable to close file IO handle.",
+				 function );
+
+				goto on_error;
+			}
+		}
+	}
+	else
+	{
+#if defined( HAVE_MULTI_THREAD_SUPPORT )
+		if( libcthreads_read_write_lock_grab_for_write(
+		     internal_volume->read_write_lock,
+		     error ) != 1 )
 		{
 			libcerror_error_set(
 			 error,
-			 LIBCERROR_ERROR_DOMAIN_IO,
-			 LIBCERROR_IO_ERROR_CLOSE_FAILED,
-			 "%s: unable to close file IO handle.",
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+			 "%s: unable to grab read/write lock for writing.",
 			 function );
 
-			goto on_error;
+			return( -1 );
 		}
+#endif
+		internal_volume->file_io_handle                   = file_io_handle;
+		internal_volume->file_io_handle_opened_in_library = file_io_handle_opened_in_library;
+
+#if defined( HAVE_MULTI_THREAD_SUPPORT )
+		if( libcthreads_read_write_lock_release_for_write(
+		     internal_volume->read_write_lock,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+			 "%s: unable to release read/write lock for writing.",
+			 function );
+
+			return( -1 );
+		}
+#endif
 	}
 	return( result );
 
 on_error:
-	if( ( file_io_handle_is_open == 0 )
-	 && ( internal_volume->file_io_handle_opened_in_library != 0 ) )
+	if( file_io_handle_opened_in_library == 0 )
 	{
 		libbfio_handle_close(
 		 file_io_handle,
 		 error );
-
-		internal_volume->file_io_handle_opened_in_library = 0;
 	}
-	internal_volume->file_io_handle = NULL;
-
 	return( -1 );
 }
 
@@ -815,6 +906,21 @@ int libluksde_volume_close(
 
 		return( -1 );
 	}
+#if defined( HAVE_MULTI_THREAD_SUPPORT )
+	if( libcthreads_read_write_lock_grab_for_write(
+	     internal_volume->read_write_lock,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to grab read/write lock for writing.",
+		 function );
+
+		return( -1 );
+	}
+#endif
 #if defined( HAVE_DEBUG_OUTPUT )
 	if( libcnotify_verbose != 0 )
 	{
@@ -923,6 +1029,21 @@ int libluksde_volume_close(
 
 		result = -1;
 	}
+#if defined( HAVE_MULTI_THREAD_SUPPORT )
+	if( libcthreads_read_write_lock_release_for_write(
+	     internal_volume->read_write_lock,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to release read/write lock for writing.",
+		 function );
+
+		return( -1 );
+	}
+#endif
 	return( result );
 }
 
@@ -1004,6 +1125,21 @@ int libluksde_volume_open_read(
 
 		return( -1 );
 	}
+#if defined( HAVE_MULTI_THREAD_SUPPORT )
+	if( libcthreads_read_write_lock_grab_for_write(
+	     internal_volume->read_write_lock,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to grab read/write lock for writing.",
+		 function );
+
+		return( -1 );
+	}
+#endif
 	if( libbfio_handle_get_size(
 	     file_io_handle,
 	     &( internal_volume->io_handle->volume_size ),
@@ -1016,7 +1152,7 @@ int libluksde_volume_open_read(
 		 "%s: unable to determine volume size.",
 		 function );
 
-		return( -1 );
+		goto on_error;
 	}
 #if defined( HAVE_DEBUG_OUTPUT )
 	if( libcnotify_verbose != 0 )
@@ -1491,6 +1627,21 @@ int libluksde_volume_open_read(
 			goto on_error;
 		}
 	}
+#if defined( HAVE_MULTI_THREAD_SUPPORT )
+	if( libcthreads_read_write_lock_release_for_write(
+	     internal_volume->read_write_lock,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to release read/write lock for writing.",
+		 function );
+
+		return( -1 );
+	}
+#endif
 	return( result );
 
 on_error:
@@ -1526,6 +1677,11 @@ on_error:
 	 0,
 	 32 );
 
+#if defined( HAVE_MULTI_THREAD_SUPPORT )
+	libcthreads_read_write_lock_release_for_write(
+	 internal_volume->read_write_lock,
+	 NULL );
+#endif
 	return( -1 );
 }
 

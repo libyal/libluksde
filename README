@@ -6,8 +6,12 @@ Project information:
 
 Supported encryption/hashing methods:
 * AES (AES-CBC)
-* ESSIV (SHA1)
+* ESSIV (SHA1, SAH256)
 * SHA (SHA256, SHA512)
+
+Supported password hashing methods:
+* SHA1
+* SHA256
 
 Unsupported encryption/hashing methods:
 * AES (AES-XTS)

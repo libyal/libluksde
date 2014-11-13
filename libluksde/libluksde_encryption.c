@@ -430,6 +430,15 @@ int libluksde_encryption_set_keys(
 				          error );
 				break;
 
+			case LIBLUKSDE_HASHING_METHOD_SHA256:
+	                	result = libhmac_sha256_calculate(
+				          key,
+				          key_size,
+				          essiv_key,
+				          32,
+				          error );
+				break;
+
 			default:
 				break;
 		}
