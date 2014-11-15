@@ -4,23 +4,34 @@ Project information:
 * Status: experimental
 * Licence: LGPLv3+
 
-Supported encryption/hashing methods:
+Supported encryption methods:
 * AES (AES-CBC)
-* ESSIV (SHA1, SAH256)
-* SHA (SHA256, SHA512)
 
-Supported password hashing methods:
-* SHA1
-* SHA256
-
-Unsupported encryption/hashing methods:
+Unsupported encryption methods:
+* AES (AES-ECB)
 * AES (AES-XTS)
-* benbi
-* lmk
-* serpent
-* twofish
+* anubis
 * cast5
 * cast6
+* serpent
+* twofish
+
+Supported initialization vector modes:
+* ESSIV (SHA1, SHA256)
+* null
+* plain, plain64
+
+Unsupported initialization vector modes:
+* benbi
+* lmk
+* plumb
+
+Supported hashing methods:
+* SHA1
+* SHA224
+* SHA256
+
+Unsupported hashing methods:
 * RIPEMD160
 
 Work in progress:

@@ -1016,11 +1016,27 @@ int libluksde_io_handle_read_volume_header(
 		if( ( ( ( (luksde_volume_header_t *) volume_header_data )->hashing_method[ 1 ] == 'h' )
 		  ||  ( ( (luksde_volume_header_t *) volume_header_data )->hashing_method[ 1 ] == 'H' ) )
 		 && ( ( ( (luksde_volume_header_t *) volume_header_data )->hashing_method[ 2 ] == 'a' )
-		  ||  ( ( (luksde_volume_header_t *) volume_header_data )->hashing_method[ 2 ] == 'A' ) )
-		 &&   ( ( (luksde_volume_header_t *) volume_header_data )->hashing_method[ 3 ] == '1' )
-		 &&   ( ( (luksde_volume_header_t *) volume_header_data )->hashing_method[ 4 ] == 0 ) )
+		  ||  ( ( (luksde_volume_header_t *) volume_header_data )->hashing_method[ 2 ] == 'A' ) ) )
 		{
-			io_handle->hashing_method = LIBLUKSDE_HASHING_METHOD_SHA1;
+			if( ( ( (luksde_volume_header_t *) volume_header_data )->hashing_method[ 3 ] == '1' )
+			 && ( ( (luksde_volume_header_t *) volume_header_data )->hashing_method[ 4 ] == 0 ) )
+			{
+				io_handle->hashing_method = LIBLUKSDE_HASHING_METHOD_SHA1;
+			}
+			else if( ( ( (luksde_volume_header_t *) volume_header_data )->hashing_method[ 3 ] == '2' )
+			      && ( ( (luksde_volume_header_t *) volume_header_data )->hashing_method[ 4 ] == '2' )
+			      && ( ( (luksde_volume_header_t *) volume_header_data )->hashing_method[ 5 ] == '4' )
+			      && ( ( (luksde_volume_header_t *) volume_header_data )->hashing_method[ 6 ] == 0 ) )
+			{
+				io_handle->hashing_method = LIBLUKSDE_HASHING_METHOD_SHA224;
+			}
+			else if( ( ( (luksde_volume_header_t *) volume_header_data )->hashing_method[ 3 ] == '2' )
+			      && ( ( (luksde_volume_header_t *) volume_header_data )->hashing_method[ 4 ] == '5' )
+			      && ( ( (luksde_volume_header_t *) volume_header_data )->hashing_method[ 5 ] == '6' )
+			      && ( ( (luksde_volume_header_t *) volume_header_data )->hashing_method[ 6 ] == 0 ) )
+			{
+				io_handle->hashing_method = LIBLUKSDE_HASHING_METHOD_SHA256;
+			}
 		}
 	}
 	volume_key_slot_data = volume_header_data + sizeof( luksde_volume_header_t );

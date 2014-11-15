@@ -1,6 +1,9 @@
 TODO
+* documentation
+  - move to asciidoc
+  - add SHA224 hashing method
 * fix broken tests
-  - add sha224 password hashing support
+  - add more password hashing support
 * add thread-safety in volume
   - add tests
 
@@ -14,6 +17,9 @@ Crypto support:
 * add support for twofish
 * add support for cast5
 * add support for cast6
+
+Hashing support:
+* add support for SHA224
 * add support for RIPEMD160
 
 Tests:
