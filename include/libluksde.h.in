@@ -73,7 +73,7 @@ int libluksde_set_codepage(
      int codepage,
      libluksde_error_t **error );
 
-/* Determines if a volume is a Linux Unified Key Setup (LUKS) Disk Encrypted volume (check for the LUKS signature)
+/* Determines if a file contains a LUKS volume signature
  * Returns 1 if true, 0 if not or -1 on error
  */
 LIBLUKSDE_EXTERN \
@@ -81,7 +81,7 @@ int libluksde_check_volume_signature(
      const char *filename,
      libluksde_error_t **error );
 
-/* Determines if a volume is a Linux Unified Key Setup (LUKS) Disk Encrypted volume (check for the LUKS signature)
+/* Determines if a file contains a LUKS volume signature
  * Returns 1 if true, 0 if not or -1 on error
  */
 LIBLUKSDE_EXTERN \
@@ -91,7 +91,7 @@ int libluksde_check_volume_signature_wide(
 
 #if defined( LIBLUKSDE_HAVE_BFIO )
 
-/* Determines if a volume is a Linux Unified Key Setup (LUKS) Disk Encrypted volume (check for the LUKS signature)
+/* Determines if a file contains a LUKS volume signature using a Basic File IO (bfio) handle
  * Returns 1 if true, 0 if not or -1 on error
  */
 LIBLUKSDE_EXTERN \

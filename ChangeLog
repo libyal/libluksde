@@ -6,6 +6,8 @@ TODO
   - add more password hashing support
 * add thread-safety in volume
   - add tests
+* check XTS support (tweak key?)
+* detect encryption types (notify as unsupported)
 
 * library: add support to set the master key directly
 
@@ -24,6 +26,9 @@ Hashing support:
 
 Tests:
 * add tests for Python-bindings
+
+20141129
+* code clean up
 
 20141113
 * worked on multi-threading support
