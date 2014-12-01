@@ -118,7 +118,7 @@ int libluksde_volume_initialize(
 
 		goto on_error;
 	}
-#if defined( HAVE_MULTI_THREAD_SUPPORT )
+#if defined( HAVE_LIBLUKSDE_MULTI_THREAD_SUPPORT )
 	if( libcthreads_read_write_lock_initialize(
 	     &( internal_volume->read_write_lock ),
 	     error ) != 1 )
@@ -196,7 +196,7 @@ int libluksde_volume_free(
 		}
 		*volume = NULL;
 
-#if defined( HAVE_MULTI_THREAD_SUPPORT )
+#if defined( HAVE_LIBLUKSDE_MULTI_THREAD_SUPPORT )
 		if( libcthreads_read_write_lock_free(
 		     &( internal_volume->read_write_lock ),
 		     error ) != 1 )
@@ -425,7 +425,7 @@ int libluksde_volume_open(
 	}
 	else
 	{
-#if defined( HAVE_MULTI_THREAD_SUPPORT )
+#if defined( HAVE_LIBLUKSDE_MULTI_THREAD_SUPPORT )
 		if( libcthreads_read_write_lock_grab_for_write(
 		     internal_volume->read_write_lock,
 		     error ) != 1 )
@@ -442,7 +442,7 @@ int libluksde_volume_open(
 #endif
 		internal_volume->file_io_handle_created_in_library = 1;
 
-#if defined( HAVE_MULTI_THREAD_SUPPORT )
+#if defined( HAVE_LIBLUKSDE_MULTI_THREAD_SUPPORT )
 		if( libcthreads_read_write_lock_release_for_write(
 		     internal_volume->read_write_lock,
 		     error ) != 1 )
@@ -628,7 +628,7 @@ int libluksde_volume_open_wide(
 	}
 	else
 	{
-#if defined( HAVE_MULTI_THREAD_SUPPORT )
+#if defined( HAVE_LIBLUKSDE_MULTI_THREAD_SUPPORT )
 		if( libcthreads_read_write_lock_grab_for_write(
 		     internal_volume->read_write_lock,
 		     error ) != 1 )
@@ -645,7 +645,7 @@ int libluksde_volume_open_wide(
 #endif
 		internal_volume->file_io_handle_created_in_library = 1;
 
-#if defined( HAVE_MULTI_THREAD_SUPPORT )
+#if defined( HAVE_LIBLUKSDE_MULTI_THREAD_SUPPORT )
 		if( libcthreads_read_write_lock_release_for_write(
 		     internal_volume->read_write_lock,
 		     error ) != 1 )
@@ -825,7 +825,7 @@ int libluksde_volume_open_file_io_handle(
 	}
 	else
 	{
-#if defined( HAVE_MULTI_THREAD_SUPPORT )
+#if defined( HAVE_LIBLUKSDE_MULTI_THREAD_SUPPORT )
 		if( libcthreads_read_write_lock_grab_for_write(
 		     internal_volume->read_write_lock,
 		     error ) != 1 )
@@ -843,7 +843,7 @@ int libluksde_volume_open_file_io_handle(
 		internal_volume->file_io_handle                   = file_io_handle;
 		internal_volume->file_io_handle_opened_in_library = file_io_handle_opened_in_library;
 
-#if defined( HAVE_MULTI_THREAD_SUPPORT )
+#if defined( HAVE_LIBLUKSDE_MULTI_THREAD_SUPPORT )
 		if( libcthreads_read_write_lock_release_for_write(
 		     internal_volume->read_write_lock,
 		     error ) != 1 )
@@ -906,7 +906,7 @@ int libluksde_volume_close(
 
 		return( -1 );
 	}
-#if defined( HAVE_MULTI_THREAD_SUPPORT )
+#if defined( HAVE_LIBLUKSDE_MULTI_THREAD_SUPPORT )
 	if( libcthreads_read_write_lock_grab_for_write(
 	     internal_volume->read_write_lock,
 	     error ) != 1 )
@@ -1029,7 +1029,7 @@ int libluksde_volume_close(
 
 		result = -1;
 	}
-#if defined( HAVE_MULTI_THREAD_SUPPORT )
+#if defined( HAVE_LIBLUKSDE_MULTI_THREAD_SUPPORT )
 	if( libcthreads_read_write_lock_release_for_write(
 	     internal_volume->read_write_lock,
 	     error ) != 1 )
@@ -1125,7 +1125,7 @@ int libluksde_volume_open_read(
 
 		return( -1 );
 	}
-#if defined( HAVE_MULTI_THREAD_SUPPORT )
+#if defined( HAVE_LIBLUKSDE_MULTI_THREAD_SUPPORT )
 	if( libcthreads_read_write_lock_grab_for_write(
 	     internal_volume->read_write_lock,
 	     error ) != 1 )
@@ -1627,7 +1627,7 @@ int libluksde_volume_open_read(
 			goto on_error;
 		}
 	}
-#if defined( HAVE_MULTI_THREAD_SUPPORT )
+#if defined( HAVE_LIBLUKSDE_MULTI_THREAD_SUPPORT )
 	if( libcthreads_read_write_lock_release_for_write(
 	     internal_volume->read_write_lock,
 	     error ) != 1 )
@@ -1677,7 +1677,7 @@ on_error:
 	 0,
 	 32 );
 
-#if defined( HAVE_MULTI_THREAD_SUPPORT )
+#if defined( HAVE_LIBLUKSDE_MULTI_THREAD_SUPPORT )
 	libcthreads_read_write_lock_release_for_write(
 	 internal_volume->read_write_lock,
 	 NULL );
@@ -1894,7 +1894,7 @@ ssize_t libluksde_volume_read_buffer(
 	}
 	internal_volume = (libluksde_internal_volume_t *) volume;
 
-#if defined( HAVE_MULTI_THREAD_SUPPORT )
+#if defined( HAVE_LIBLUKSDE_MULTI_THREAD_SUPPORT )
 	if( libcthreads_read_write_lock_grab_for_write(
 	     internal_volume->read_write_lock,
 	     error ) != 1 )
@@ -1927,7 +1927,7 @@ ssize_t libluksde_volume_read_buffer(
 
 		read_count = -1;
 	}
-#if defined( HAVE_MULTI_THREAD_SUPPORT )
+#if defined( HAVE_LIBLUKSDE_MULTI_THREAD_SUPPORT )
 	if( libcthreads_read_write_lock_release_for_write(
 	     internal_volume->read_write_lock,
 	     error ) != 1 )
@@ -1972,7 +1972,7 @@ ssize_t libluksde_volume_read_buffer_at_offset(
 	}
 	internal_volume = (libluksde_internal_volume_t *) volume;
 
-#if defined( HAVE_MULTI_THREAD_SUPPORT )
+#if defined( HAVE_LIBLUKSDE_MULTI_THREAD_SUPPORT )
 	if( libcthreads_read_write_lock_grab_for_write(
 	     internal_volume->read_write_lock,
 	     error ) != 1 )
@@ -2020,7 +2020,7 @@ ssize_t libluksde_volume_read_buffer_at_offset(
 
 		goto on_error;
 	}
-#if defined( HAVE_MULTI_THREAD_SUPPORT )
+#if defined( HAVE_LIBLUKSDE_MULTI_THREAD_SUPPORT )
 	if( libcthreads_read_write_lock_release_for_write(
 	     internal_volume->read_write_lock,
 	     error ) != 1 )
@@ -2038,7 +2038,7 @@ ssize_t libluksde_volume_read_buffer_at_offset(
 	return( read_count );
 
 on_error:
-#if defined( HAVE_MULTI_THREAD_SUPPORT )
+#if defined( HAVE_LIBLUKSDE_MULTI_THREAD_SUPPORT )
 	libcthreads_read_write_lock_release_for_write(
 	 internal_volume->read_write_lock,
 	 NULL );
@@ -2226,7 +2226,7 @@ off64_t libluksde_volume_seek_offset(
 
 		return( -1 );
 	}
-#if defined( HAVE_MULTI_THREAD_SUPPORT )
+#if defined( HAVE_LIBLUKSDE_MULTI_THREAD_SUPPORT )
 	if( libcthreads_read_write_lock_grab_for_write(
 	     internal_volume->read_write_lock,
 	     error ) != 1 )
@@ -2258,7 +2258,7 @@ off64_t libluksde_volume_seek_offset(
 
 		offset = -1;
 	}
-#if defined( HAVE_MULTI_THREAD_SUPPORT )
+#if defined( HAVE_LIBLUKSDE_MULTI_THREAD_SUPPORT )
 	if( libcthreads_read_write_lock_release_for_write(
 	     internal_volume->read_write_lock,
 	     error ) != 1 )
@@ -2322,7 +2322,7 @@ int libluksde_volume_get_offset(
 
 		return( -1 );
 	}
-#if defined( HAVE_MULTI_THREAD_SUPPORT )
+#if defined( HAVE_LIBLUKSDE_MULTI_THREAD_SUPPORT )
 	if( libcthreads_read_write_lock_grab_for_read(
 	     internal_volume->read_write_lock,
 	     error ) != 1 )
@@ -2339,7 +2339,7 @@ int libluksde_volume_get_offset(
 #endif
 	*offset = internal_volume->current_offset;
 
-#if defined( HAVE_MULTI_THREAD_SUPPORT )
+#if defined( HAVE_LIBLUKSDE_MULTI_THREAD_SUPPORT )
 	if( libcthreads_read_write_lock_release_for_read(
 	     internal_volume->read_write_lock,
 	     error ) != 1 )
@@ -2403,7 +2403,7 @@ int libluksde_volume_get_size(
 
 		return( -1 );
 	}
-#if defined( HAVE_MULTI_THREAD_SUPPORT )
+#if defined( HAVE_LIBLUKSDE_MULTI_THREAD_SUPPORT )
 	if( libcthreads_read_write_lock_grab_for_read(
 	     internal_volume->read_write_lock,
 	     error ) != 1 )
@@ -2420,7 +2420,7 @@ int libluksde_volume_get_size(
 #endif
 	*size = internal_volume->io_handle->encrypted_volume_size;
 
-#if defined( HAVE_MULTI_THREAD_SUPPORT )
+#if defined( HAVE_LIBLUKSDE_MULTI_THREAD_SUPPORT )
 	if( libcthreads_read_write_lock_release_for_read(
 	     internal_volume->read_write_lock,
 	     error ) != 1 )
@@ -2496,7 +2496,7 @@ int libluksde_volume_get_encryption_method(
 
 		return( -1 );
 	}
-#if defined( HAVE_MULTI_THREAD_SUPPORT )
+#if defined( HAVE_LIBLUKSDE_MULTI_THREAD_SUPPORT )
 	if( libcthreads_read_write_lock_grab_for_read(
 	     internal_volume->read_write_lock,
 	     error ) != 1 )
@@ -2514,7 +2514,7 @@ int libluksde_volume_get_encryption_method(
 	*encryption_method        = internal_volume->io_handle->encryption_method;
 	*encryption_chaining_mode = internal_volume->io_handle->encryption_chaining_mode;
 
-#if defined( HAVE_MULTI_THREAD_SUPPORT )
+#if defined( HAVE_LIBLUKSDE_MULTI_THREAD_SUPPORT )
 	if( libcthreads_read_write_lock_release_for_read(
 	     internal_volume->read_write_lock,
 	     error ) != 1 )
@@ -2603,7 +2603,7 @@ int libluksde_volume_set_keys(
 
 		return( -1 );
 	}
-#if defined( HAVE_MULTI_THREAD_SUPPORT )
+#if defined( HAVE_LIBLUKSDE_MULTI_THREAD_SUPPORT )
 	if( libcthreads_read_write_lock_grab_for_write(
 	     internal_volume->read_write_lock,
 	     error ) != 1 )
@@ -2653,7 +2653,7 @@ int libluksde_volume_set_keys(
 
 	internal_volume->io_handle->keys_are_set = 1;
 
-#if defined( HAVE_MULTI_THREAD_SUPPORT )
+#if defined( HAVE_LIBLUKSDE_MULTI_THREAD_SUPPORT )
 	if( libcthreads_read_write_lock_release_for_write(
 	     internal_volume->read_write_lock,
 	     error ) != 1 )
@@ -2676,7 +2676,7 @@ on_error:
 	 0,
 	 32 );
 
-#if defined( HAVE_MULTI_THREAD_SUPPORT )
+#if defined( HAVE_LIBLUKSDE_MULTI_THREAD_SUPPORT )
 	libcthreads_read_write_lock_release_for_write(
 	 internal_volume->read_write_lock,
 	 NULL );
@@ -2732,7 +2732,7 @@ int libluksde_volume_set_utf8_password(
 
 		return( -1 );
 	}
-#if defined( HAVE_MULTI_THREAD_SUPPORT )
+#if defined( HAVE_LIBLUKSDE_MULTI_THREAD_SUPPORT )
 	if( libcthreads_read_write_lock_grab_for_write(
 	     internal_volume->read_write_lock,
 	     error ) != 1 )
@@ -2761,7 +2761,7 @@ int libluksde_volume_set_utf8_password(
 			 "%s: unable to user password.",
 			 function );
 
-#if defined( HAVE_MULTI_THREAD_SUPPORT )
+#if defined( HAVE_LIBLUKSDE_MULTI_THREAD_SUPPORT )
 			libcthreads_read_write_lock_release_for_write(
 			 internal_volume->read_write_lock,
 			 NULL );
@@ -2836,7 +2836,7 @@ int libluksde_volume_set_utf8_password(
 		 internal_volume->io_handle->user_password );
 	}
 #endif
-#if defined( HAVE_MULTI_THREAD_SUPPORT )
+#if defined( HAVE_LIBLUKSDE_MULTI_THREAD_SUPPORT )
 	if( libcthreads_read_write_lock_release_for_write(
 	     internal_volume->read_write_lock,
 	     error ) != 1 )
@@ -2867,7 +2867,7 @@ on_error:
 	}
 	internal_volume->io_handle->user_password_size = 0;
 
-#if defined( HAVE_MULTI_THREAD_SUPPORT )
+#if defined( HAVE_LIBLUKSDE_MULTI_THREAD_SUPPORT )
 	libcthreads_read_write_lock_release_for_write(
 	 internal_volume->read_write_lock,
 	 NULL );
@@ -2923,7 +2923,7 @@ int libluksde_volume_set_utf16_password(
 
 		return( -1 );
 	}
-#if defined( HAVE_MULTI_THREAD_SUPPORT )
+#if defined( HAVE_LIBLUKSDE_MULTI_THREAD_SUPPORT )
 	if( libcthreads_read_write_lock_grab_for_write(
 	     internal_volume->read_write_lock,
 	     error ) != 1 )
@@ -2952,7 +2952,7 @@ int libluksde_volume_set_utf16_password(
 			 "%s: unable to user password.",
 			 function );
 
-#if defined( HAVE_MULTI_THREAD_SUPPORT )
+#if defined( HAVE_LIBLUKSDE_MULTI_THREAD_SUPPORT )
 			libcthreads_read_write_lock_release_for_write(
 			 internal_volume->read_write_lock,
 			 NULL );
@@ -3027,7 +3027,7 @@ int libluksde_volume_set_utf16_password(
 		 internal_volume->io_handle->user_password );
 	}
 #endif
-#if defined( HAVE_MULTI_THREAD_SUPPORT )
+#if defined( HAVE_LIBLUKSDE_MULTI_THREAD_SUPPORT )
 	if( libcthreads_read_write_lock_release_for_write(
 	     internal_volume->read_write_lock,
 	     error ) != 1 )
@@ -3058,7 +3058,7 @@ on_error:
 	}
 	internal_volume->io_handle->user_password_size = 0;
 
-#if defined( HAVE_MULTI_THREAD_SUPPORT )
+#if defined( HAVE_LIBLUKSDE_MULTI_THREAD_SUPPORT )
 	libcthreads_read_write_lock_release_for_write(
 	 internal_volume->read_write_lock,
 	 NULL );

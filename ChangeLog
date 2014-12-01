@@ -27,6 +27,9 @@ Hashing support:
 Tests:
 * add tests for Python-bindings
 
+20141201
+* worked on multi-threading support
+
 20141129
 * code clean up
 
