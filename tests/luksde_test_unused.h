@@ -1,7 +1,7 @@
 /*
- * The internal libcnotify header
+ * The internal unused definition
  *
- * Copyright (c) 2013-2014, Joachim Metz <joachim.metz@gmail.com>
+ * Copyright (C) 2013-2014, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -19,31 +19,25 @@
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#if !defined( _LUKSDE_TEST_LIBCNOTIFY_H )
-#define _LUKSDE_TEST_LIBCNOTIFY_H
+#if !defined( _LUKSDE_TEST_INTERNAL_UNUSED_H )
+#define _LUKSDE_TEST_INTERNAL_UNUSED_H
 
 #include <common.h>
 
-/* Define HAVE_LOCAL_LIBCNOTIFY for local use of libcnotify
- */
-#if defined( HAVE_LOCAL_LIBCNOTIFY )
-
-#include <libcnotify_definitions.h>
-#include <libcnotify_print.h>
-#include <libcnotify_stream.h>
-#include <libcnotify_verbose.h>
-
+#if !defined( LUKSDE_TEST_ATTRIBUTE_UNUSED )
+#if defined( __GNUC__ ) && __GNUC__ >= 3
+#define LUKSDE_TEST_ATTRIBUTE_UNUSED	__attribute__ ((__unused__))
 #else
-
-/* If libtool DLL support is enabled set LIBCNOTIFY_DLL_IMPORT
- * before including libcnotify.h
- */
-#if defined( _WIN32 ) && defined( DLL_IMPORT )
-#define LIBCNOTIFY_DLL_IMPORT
+#define LUKSDE_TEST_ATTRIBUTE_UNUSED
+#endif
 #endif
 
-#include <libcnotify.h>
-
+#if defined( _MSC_VER )
+#define LUKSDE_TEST_UNREFERENCED_PARAMETER( parameter ) \
+	UNREFERENCED_PARAMETER( parameter );
+#else
+#define LUKSDE_TEST_UNREFERENCED_PARAMETER( parameter ) \
+	/* parameter */
 #endif
 
 #endif

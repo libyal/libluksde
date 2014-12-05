@@ -109,6 +109,8 @@ stamp-h1
 /pyluksde/setup.py
 /tests/input
 /tests/luksde_test_open_close
+/tests/luksde_test_read
+/tests/luksde_test_seek
 /tests/tmp
 
 # Local library dependencies specific files

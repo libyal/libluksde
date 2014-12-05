@@ -64,6 +64,18 @@ AC_DEFUN([AX_WINCRYPT_CHECK_SHA1],
   [ac_cv_wincrypt_sha1=local])
  ])
 
+dnl Function to detect if wincrypt SHA224 functions are available
+AC_DEFUN([AX_WINCRYPT_CHECK_SHA224],
+ [AX_WINCRYPT_CHECK_WINAPI_DEFINE(
+  [wincrypt.h],
+  [CALG_SHA_224])
+
+ AS_IF(
+  [test "x$ac_cv_winapi_define_CALG_SHA_224" = xyes],
+  [ac_cv_wincrypt_sha224=libadvapi32],
+  [ac_cv_wincrypt_sha224=local])
+ ])
+
 dnl Function to detect if wincrypt SHA256 functions are available
 AC_DEFUN([AX_WINCRYPT_CHECK_SHA256],
  [AX_WINCRYPT_CHECK_WINAPI_DEFINE(

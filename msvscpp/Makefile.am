@@ -19,6 +19,8 @@ MSVSCPP_FILES = \
 	libluksde/libluksde.vcproj \
 	libuna/libuna.vcproj \
 	luksde_test_open_close/luksde_test_open_close.vcproj \
+	luksde_test_read/luksde_test_read.vcproj \
+	luksde_test_seek/luksde_test_seek.vcproj \
 	luksdeinfo/luksdeinfo.vcproj \
 	luksdemount/luksdemount.vcproj \
 	pyluksde/pyluksde.vcproj \

@@ -50,6 +50,7 @@ int libluksde_password_pbkdf2(
 	uint8_t *output_ptr        = NULL;
 	static char *function      = "libluksde_password_pbkdf2";
 	size_t data_buffer_size    = 0;
+	size_t block_offset        = 0;
 	size_t hash_size           = 0;
 	size_t remaining_data_size = 0;
 	uint32_t block_index       = 0;
@@ -84,6 +85,10 @@ int libluksde_password_pbkdf2(
 	{
 		case LIBLUKSDE_HASHING_METHOD_SHA1:
 			hash_size = LIBHMAC_SHA1_HASH_SIZE;
+			break;
+
+		case LIBLUKSDE_HASHING_METHOD_SHA224:
+			hash_size = LIBHMAC_SHA224_HASH_SIZE;
 			break;
 
 		case LIBLUKSDE_HASHING_METHOD_SHA256:
@@ -222,6 +227,11 @@ int libluksde_password_pbkdf2(
 		 0 );
 
 		libcnotify_printf(
+		 "%s: hash size\t\t\t\t\t: %" PRIzd "\n",
+		 function,
+		 hash_size );
+
+		libcnotify_printf(
 		 "%s: number of iterations\t\t\t\t: %" PRIu32 "\n",
 		 function,
 		 number_of_iterations );
@@ -244,7 +254,7 @@ int libluksde_password_pbkdf2(
 	     block_index < number_of_blocks;
 	     block_index++ )
 	{
-		output_ptr = &( output_data[ block_index * hash_size ] );
+		output_ptr = &( output_data[ block_offset ] );
 
 		byte_stream_copy_from_uint32_big_endian(
 		 &( data_buffer[ salt_size ] ),
@@ -254,6 +264,17 @@ int libluksde_password_pbkdf2(
 		{
 			case LIBLUKSDE_HASHING_METHOD_SHA1:
 	                	result = libhmac_sha1_calculate_hmac(
+				          password,
+				          password_size,
+				          data_buffer,
+				          data_buffer_size,
+				          hash_buffer,
+				          hash_size,
+				          error );
+				break;
+
+			case LIBLUKSDE_HASHING_METHOD_SHA224:
+	                	result = libhmac_sha224_calculate_hmac(
 				          password,
 				          password_size,
 				          data_buffer,
@@ -321,6 +342,17 @@ int libluksde_password_pbkdf2(
 					          error );
 					break;
 
+				case LIBLUKSDE_HASHING_METHOD_SHA224:
+					result = libhmac_sha224_calculate_hmac(
+					          password,
+					          password_size,
+					          hash_buffer,
+					          hash_size,
+					          hash_buffer,
+					          hash_size,
+					          error );
+					break;
+
 				case LIBLUKSDE_HASHING_METHOD_SHA256:
 					result = libhmac_sha256_calculate_hmac(
 					          password,
@@ -355,10 +387,11 @@ int libluksde_password_pbkdf2(
 				output_ptr[ byte_index ] ^= hash_buffer[ byte_index ];
 			}
 		}
+		block_offset += hash_size;
 	}
 	if( remaining_data_size > 0 )
 	{
-		output_ptr = &( output_data[ block_index * hash_size ] );
+		output_ptr = &( output_data[ block_offset ] );
 
 		byte_stream_copy_from_uint32_big_endian(
 		 &( data_buffer[ salt_size ] ),
@@ -368,6 +401,17 @@ int libluksde_password_pbkdf2(
 		{
 			case LIBLUKSDE_HASHING_METHOD_SHA1:
 				result = libhmac_sha1_calculate_hmac(
+				          password,
+				          password_size,
+				          data_buffer,
+				          data_buffer_size,
+				          hash_buffer,
+				          hash_size,
+				          error );
+				break;
+
+			case LIBLUKSDE_HASHING_METHOD_SHA224:
+				result = libhmac_sha224_calculate_hmac(
 				          password,
 				          password_size,
 				          data_buffer,
@@ -426,6 +470,17 @@ int libluksde_password_pbkdf2(
 			{
 				case LIBLUKSDE_HASHING_METHOD_SHA1:
 					result = libhmac_sha1_calculate_hmac(
+					          password,
+					          password_size,
+					          hash_buffer,
+					          hash_size,
+					          hash_buffer,
+					          hash_size,
+					          error );
+					break;
+
+				case LIBLUKSDE_HASHING_METHOD_SHA224:
+					result = libhmac_sha224_calculate_hmac(
 					          password,
 					          password_size,
 					          hash_buffer,

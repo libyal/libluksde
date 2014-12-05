@@ -1,7 +1,7 @@
 /*
  * Library open close testing program
  *
- * Copyright (C) 2013-2014, Joachim Metz <joachim.metz@gmail.com>
+ * Copyright (c) 2013-2014, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -27,26 +27,25 @@
 
 #include <stdio.h>
 
-#include "luksde_test_libluksde.h"
 #include "luksde_test_libcerror.h"
-#include "luksde_test_libcnotify.h"
 #include "luksde_test_libcstring.h"
 #include "luksde_test_libcsystem.h"
+#include "luksde_test_libluksde.h"
 
 /* Tests single open and close of a volume
  * Returns 1 if successful, 0 if not or -1 on error
  */
 int luksde_test_single_open_close_volume(
-     const libcstring_system_character_t *filename,
+     libcstring_system_character_t *filename,
      const libcstring_system_character_t *password,
      int access_flags,
      int expected_result )
 {
-	libcerror_error_t *error = NULL;
-	libluksde_volume_t *volume  = NULL;
-	static char *function    = "luksde_test_single_open_close_volume";
-	size_t string_length     = 0;
-	int result               = 0;
+	libcerror_error_t *error   = NULL;
+	libluksde_volume_t *volume = NULL;
+	static char *function      = "luksde_test_single_open_close_volume";
+	size_t string_length       = 0;
+	int result                 = 0;
 
 	if( libluksde_volume_initialize(
 	     &volume,
@@ -182,16 +181,16 @@ on_error:
  * Returns 1 if successful, 0 if not or -1 on error
  */
 int luksde_test_multi_open_close_volume(
-     const libcstring_system_character_t *filename,
+     libcstring_system_character_t *filename,
      const libcstring_system_character_t *password,
      int access_flags,
      int expected_result )
 {
-	libcerror_error_t *error = NULL;
-	libluksde_volume_t *volume  = NULL;
-	static char *function    = "luksde_test_multi_open_close_volume";
-	size_t string_length     = 0;
-	int result               = 0;
+	libcerror_error_t *error   = NULL;
+	libluksde_volume_t *volume = NULL;
+	static char *function      = "luksde_test_multi_open_close_volume";
+	size_t string_length       = 0;
+	int result                 = 0;
 
 	if( libluksde_volume_initialize(
 	     &volume,
@@ -360,9 +359,9 @@ int wmain( int argc, wchar_t * const argv[] )
 int main( int argc, char * const argv[] )
 #endif
 {
+	libcerror_error_t *error                       = NULL;
 	libcstring_system_character_t *option_password = NULL;
 	libcstring_system_character_t *source          = NULL;
-	libcerror_error_t *error                       = NULL;
 	libcstring_system_integer_t option             = 0;
 
 	while( ( option = libcsystem_getopt(
@@ -397,7 +396,7 @@ int main( int argc, char * const argv[] )
 	}
 	source = argv[ optind ];
 
-#if defined( HAVE_DEBUG_OUTPUT ) && defined( EWF_TEST_OPEN_CLOSE_VERBOSE )
+#if defined( HAVE_DEBUG_OUTPUT ) && defined( LUKSDE_TEST_OPEN_CLOSE_VERBOSE )
 	libluksde_notify_set_verbose(
 	 1 );
 	libluksde_notify_set_stream(

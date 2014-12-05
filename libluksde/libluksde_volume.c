@@ -1389,6 +1389,18 @@ int libluksde_volume_open_read(
 
 					goto on_error;
 				}
+#if defined( HAVE_DEBUG_OUTPUT )
+				if( libcnotify_verbose != 0 )
+				{
+					libcnotify_printf(
+					 "%s: user key:\n",
+					 function );
+					libcnotify_print_data(
+					 user_key,
+					 32,
+					 0 );
+				}
+#endif
 				if( libluksde_encryption_set_keys(
 				     internal_volume->io_handle->encryption_context,
 				     user_key,
@@ -1544,6 +1556,18 @@ int libluksde_volume_open_read(
 					 0 );
 				}
 #endif
+#if defined( HAVE_DEBUG_OUTPUT )
+				if( libcnotify_verbose != 0 )
+				{
+					libcnotify_printf(
+					 "%s: check:\n",
+					 function );
+					libcnotify_print_data(
+					 internal_volume->io_handle->master_key_validation_hash,
+					 20,
+					 0 );
+				}
+#endif
 				if( memory_compare(
 				     master_key_validation_hash,
 				     internal_volume->io_handle->master_key_validation_hash,
@@ -1685,7 +1709,7 @@ on_error:
 	return( -1 );
 }
 
-/* Reads (media) data from the last current into a buffer using a Basic File IO (bfio) handle
+/* Reads (volume) data from the last current into a buffer using a Basic File IO (bfio) handle
  * This function is not multi-thread safe acquire write lock before call
  * Returns the number of bytes read or -1 on error
  */
@@ -1945,7 +1969,7 @@ ssize_t libluksde_volume_read_buffer(
 	return( read_count );
 }
 
-/* Reads (media) data at a specific offset
+/* Reads (volume) data at a specific offset
  * Returns the number of bytes read or -1 on error
  */
 ssize_t libluksde_volume_read_buffer_at_offset(
@@ -2048,7 +2072,7 @@ on_error:
 
 #ifdef TODO_WRITE_SUPPORT
 
-/* Writes (media) data at the current offset
+/* Writes (volume) data at the current offset
  * Returns the number of input bytes written, 0 when no longer bytes can be written or -1 on error
  */
 ssize_t libluksde_volume_write_buffer(
@@ -2060,7 +2084,7 @@ ssize_t libluksde_volume_write_buffer(
 	return( -1 );
 }
 
-/* Writes (media) data at a specific offset,
+/* Writes (volume) data at a specific offset,
  * Returns the number of input bytes written, 0 when no longer bytes can be written or -1 on error
  */
 ssize_t libluksde_volume_write_buffer_at_offset(
@@ -2110,7 +2134,7 @@ ssize_t libluksde_volume_write_buffer_at_offset(
 
 #endif /* TODO_WRITE_SUPPORT */
 
-/* Seeks a certain offset of the (media) data
+/* Seeks a certain offset of the (volume) data
  * This function is not multi-thread safe acquire write lock before call
  * Returns the offset if seek is successful or -1 on error
  */
@@ -2169,7 +2193,7 @@ off64_t libluksde_internal_volume_seek_offset(
 	if( libcnotify_verbose != 0 )
 	{
 		libcnotify_printf(
-		 "%s: seeking media data offset: %" PRIi64 ".\n",
+		 "%s: seeking volume data offset: %" PRIi64 ".\n",
 		 function,
 		 offset );
 	}

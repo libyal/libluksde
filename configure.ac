@@ -2,7 +2,7 @@ AC_PREREQ( 2.59 )
 
 AC_INIT(
  [libluksde],
- [20141201],
+ [20141205],
  [joachim.metz@gmail.com])
 
 AC_CONFIG_SRCDIR(
@@ -266,6 +266,7 @@ Building:
    libfguid support:                            $ac_cv_libfguid
    libhmac support:                             $ac_cv_libhmac
    SHA1 support:                                $ac_cv_libhmac_sha1
+   SHA224 support:                              $ac_cv_libhmac_sha224
    SHA256 support:                              $ac_cv_libhmac_sha256
    SHA512 support:                              $ac_cv_libhmac_sha512
    libcaes support:                             $ac_cv_libcaes

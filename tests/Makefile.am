@@ -12,33 +12,42 @@ AM_CPPFLAGS = \
 	@LIBCFILE_CPPFLAGS@ \
 	@LIBCPATH_CPPFLAGS@ \
 	@LIBBFIO_CPPFLAGS@ \
-	@LIBLUKSDE_DLL_IMPORT@ \
 	@LIBCSYSTEM_CPPFLAGS@ \
 	@PTHREAD_CPPFLAGS@ \
 	@LIBLUKSDE_DLL_IMPORT@
 
 if HAVE_PYTHON
-TESTS_PYLUKSDE  = \
+TESTS_PYLUKSDE = \
 	test_pyluksde_open_close.sh
 endif
 
 TESTS = \
-	test_open_close.sh
+	test_open_close.sh \
+	test_seek.sh \
+	test_read.sh \
+	test_luksdeinfo.sh \
+	$(TESTS_PYLUKSDE)
 
 check_SCRIPTS = \
+	pyluksde_test_open_close.py \
+	test_luksdeinfo.sh \
 	test_open_close.sh \
+	test_pyluksde_open_close.sh \
+	test_seek.sh \
+	test_read.sh \
 	test_runner.sh
 
 EXTRA_DIST = \
 	$(check_SCRIPTS)
 
 check_PROGRAMS = \
-	luksde_test_open_close
+	luksde_test_open_close \
+	luksde_test_read \
+	luksde_test_seek
 
 luksde_test_open_close_SOURCES = \
 	luksde_test_libluksde.h \
 	luksde_test_libcerror.h \
-	luksde_test_libcnotify.h \
 	luksde_test_libcstring.h \
 	luksde_test_libcsystem.h \
 	luksde_test_open_close.c \
@@ -47,7 +56,38 @@ luksde_test_open_close_SOURCES = \
 luksde_test_open_close_LDADD = \
 	@LIBCSYSTEM_LIBADD@ \
 	../libluksde/libluksde.la \
-	@LIBCNOTIFY_LIBADD@ \
+	@LIBCERROR_LIBADD@ \
+	@LIBCSTRING_LIBADD@ \
+	@PTHREAD_LIBADD@
+
+luksde_test_read_SOURCES = \
+	luksde_test_libcerror.h \
+	luksde_test_libcstring.h \
+	luksde_test_libcthreads.h \
+	luksde_test_libcsystem.h \
+	luksde_test_libluksde.h \
+	luksde_test_read.c \
+	luksde_test_unused.h
+
+luksde_test_read_LDADD = \
+	@LIBCSYSTEM_LIBADD@ \
+	../libluksde/libluksde.la \
+	@LIBCTHREADS_LIBADD@ \
+	@LIBCERROR_LIBADD@ \
+	@LIBCSTRING_LIBADD@ \
+	@PTHREAD_LIBADD@
+
+luksde_test_seek_SOURCES = \
+	luksde_test_libcerror.h \
+	luksde_test_libcstring.h \
+	luksde_test_libcsystem.h \
+	luksde_test_libluksde.h \
+	luksde_test_seek.c \
+	luksde_test_unused.h
+
+luksde_test_seek_LDADD = \
+	@LIBCSYSTEM_LIBADD@ \
+	../libluksde/libluksde.la \
 	@LIBCERROR_LIBADD@ \
 	@LIBCSTRING_LIBADD@ \
 	@PTHREAD_LIBADD@

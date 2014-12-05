@@ -1,4 +1,5 @@
 TODO
+* fix SHA-224 and SHA-256 haching support
 * documentation
   - move to asciidoc
   - add SHA224 hashing method
@@ -21,11 +22,15 @@ Crypto support:
 * add support for cast6
 
 Hashing support:
-* add support for SHA224
 * add support for RIPEMD160
+* add support for whirlpool
 
 Tests:
 * add tests for Python-bindings
+
+20141205
+* worked on test scripts
+* worked on SHA-224 hashing support
 
 20141201
 * worked on multi-threading support

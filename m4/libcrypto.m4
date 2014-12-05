@@ -1,6 +1,6 @@
 dnl Functions for libcrypto
 dnl
-dnl Version: 20130831
+dnl Version: 20141205
 
 dnl Function to detect whether openssl/evp.h can be used in combination with zlib.h
 AC_DEFUN([AX_LIBCRYPTO_CHECK_OPENSSL_EVP_ZLIB_COMPATIBILE],
@@ -107,6 +107,23 @@ AC_DEFUN([AX_LIBCRYPTO_CHECK_OPENSSL_EVP_SHA1],
   ])
  ])
 
+dnl Function to detect if openssl EVP SHA224 functions are available
+AC_DEFUN([AX_LIBCRYPTO_CHECK_OPENSSL_EVP_SHA224],
+ [AC_CHECK_LIB(
+  crypto,
+  EVP_sha224,
+  [ac_cv_libcrypto_sha224=libcrypto_evp],
+  [ac_cv_libcrypto_sha224=no])
+
+ AS_IF(
+  [test "x$ac_cv_libcrypto_sha224" = xlibcrypto_evp],
+  [AC_DEFINE(
+   [HAVE_EVP_SHA224],
+   [1],
+   [Define to 1 if you have the `EVP_sha224' function".])
+  ])
+ ])
+
 dnl Function to detect if openssl EVP SHA256 functions are available
 AC_DEFUN([AX_LIBCRYPTO_CHECK_OPENSSL_EVP_SHA256],
  [AC_CHECK_LIB(
@@ -200,6 +217,37 @@ AC_DEFUN([AX_LIBCRYPTO_CHECK_OPENSSL_SHA1],
 
  AS_IF(
   [test "x$ac_cv_libcrypto" = xno && test "x$ac_cv_libcrypto_sha1" = xlibcrypto],
+  [ac_cv_libcrypto=yes])
+ ])
+
+dnl Function to detect if openssl SHA224 functions are available
+AC_DEFUN([AX_LIBCRYPTO_CHECK_OPENSSL_SHA224],
+ [AC_CHECK_HEADERS([openssl/sha.h])
+
+ AS_IF(
+  [test "x$ac_cv_header_openssl_sha_h" = xno],
+  [ac_cv_libcrypto_sha224=no],
+  [ac_cv_libcrypto_sha224=libcrypto
+
+  AC_CHECK_LIB(
+   crypto,
+   SHA224_Init,
+   [ac_cv_libcrypto_dummy=yes],
+   [ac_cv_libcrypto_sha224=no])
+  AC_CHECK_LIB(
+   crypto,
+   SHA224_Update,
+   [ac_cv_libcrypto_dummy=yes],
+   [ac_cv_libcrypto_sha224=no])
+  AC_CHECK_LIB(
+   crypto,
+   SHA224_Final,
+   [ac_cv_libcrypto_dummy=yes],
+   [ac_cv_libcrypto_sha224=no])
+  ])
+
+ AS_IF(
+  [test "x$ac_cv_libcrypto" = xno && test "x$ac_cv_libcrypto_sha224" = xlibcrypto],
   [ac_cv_libcrypto=yes])
  ])
 
@@ -454,6 +502,26 @@ AC_DEFUN([AX_LIBCRYPTO_CHECK_SHA1],
  AS_IF(
   [test "x$ac_cv_libcrypto_sha1" = xno],
   [AX_LIBCRYPTO_CHECK_OPENSSL_SHA1])
+ ])
+
+dnl Function to detect if libcrypto SHA224 functions are available
+AC_DEFUN([AX_LIBCRYPTO_CHECK_SHA224],
+ [ac_cv_libcrypto_sha224=no
+
+ dnl Check for libcrypto (openssl) EVP MD support
+ AS_IF(
+  [test "x$ac_cv_libcrypto_evp" = xyes && test "x$ac_cv_libcrypto_evp_md" != xyes],
+  [AX_LIBCRYPTO_CHECK_OPENSSL_EVP_MD])
+
+ dnl Check for libcrypto (openssl) EVP SHA224 support
+ AS_IF(
+  [test "x$ac_cv_libcrypto_evp_md" = xyes],
+  [AX_LIBCRYPTO_CHECK_OPENSSL_EVP_SHA224])
+
+ dnl Check for libcrypto (openssl) SHA224 support
+ AS_IF(
+  [test "x$ac_cv_libcrypto_sha224" = xno],
+  [AX_LIBCRYPTO_CHECK_OPENSSL_SHA224])
  ])
 
 dnl Function to detect if libcrypto SHA256 functions are available

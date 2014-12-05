@@ -31,6 +31,7 @@
 #include <libhmac_definitions.h>
 #include <libhmac_md5.h>
 #include <libhmac_sha1.h>
+#include <libhmac_sha224.h>
 #include <libhmac_sha256.h>
 #include <libhmac_sha512.h>
 #include <libhmac_support.h>
