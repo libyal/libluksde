@@ -32,10 +32,8 @@
 #include "pyluksde_unused.h"
 
 PyTypeObject pyluksde_encryption_methods_type_object = {
-	PyObject_HEAD_INIT( NULL )
+	PyVarObject_HEAD_INIT( NULL, 0 )
 
-	/* ob_size */
-	0,
 	/* tp_name */
 	"pyluksde.encryption_methods",
 	/* tp_basicsize */
@@ -134,6 +132,8 @@ PyTypeObject pyluksde_encryption_methods_type_object = {
 int pyluksde_encryption_methods_init_type(
      PyTypeObject *type_object )
 {
+	PyObject *value_object = NULL;
+
 	if( type_object == NULL )
 	{
 		return( -1 );
@@ -144,59 +144,101 @@ int pyluksde_encryption_methods_init_type(
 	{
 		return( -1 );
 	}
+#if PY_MAJOR_VERSION >= 3
+	value_object = PyLong_FromLong(
+	                LIBLUKSDE_ENCRYPTION_METHOD_AES );
+#else
+	value_object = PyInt_FromLong(
+	                LIBLUKSDE_ENCRYPTION_METHOD_AES );
+#endif
 	if( PyDict_SetItemString(
 	     type_object->tp_dict,
 	     "AES",
-	     PyInt_FromLong(
-	      LIBLUKSDE_ENCRYPTION_METHOD_AES ) ) != 0 )
+	     value_object ) != 0 )
 	{
 		goto on_error;
 	}
+#if PY_MAJOR_VERSION >= 3
+	value_object = PyLong_FromLong(
+	                LIBLUKSDE_ENCRYPTION_METHOD_ANUBIS );
+#else
+	value_object = PyInt_FromLong(
+	                LIBLUKSDE_ENCRYPTION_METHOD_ANUBIS );
+#endif
 	if( PyDict_SetItemString(
 	     type_object->tp_dict,
 	     "ANUBIS",
-	     PyInt_FromLong(
-	      LIBLUKSDE_ENCRYPTION_METHOD_ANUBIS ) ) != 0 )
+	     value_object ) != 0 )
 	{
 		goto on_error;
 	}
+#if PY_MAJOR_VERSION >= 3
+	value_object = PyLong_FromLong(
+	                LIBLUKSDE_ENCRYPTION_METHOD_BLOWFISH );
+#else
+	value_object = PyInt_FromLong(
+	                LIBLUKSDE_ENCRYPTION_METHOD_BLOWFISH );
+#endif
 	if( PyDict_SetItemString(
 	     type_object->tp_dict,
 	     "BLOWFISH",
-	     PyInt_FromLong(
-	      LIBLUKSDE_ENCRYPTION_METHOD_BLOWFISH ) ) != 0 )
+	     value_object ) != 0 )
 	{
 		goto on_error;
 	}
+#if PY_MAJOR_VERSION >= 3
+	value_object = PyLong_FromLong(
+	                LIBLUKSDE_ENCRYPTION_METHOD_CAST5 );
+#else
+	value_object = PyInt_FromLong(
+	                LIBLUKSDE_ENCRYPTION_METHOD_CAST5 );
+#endif
 	if( PyDict_SetItemString(
 	     type_object->tp_dict,
 	     "CAST5",
-	     PyInt_FromLong(
-	      LIBLUKSDE_ENCRYPTION_METHOD_CAST5 ) ) != 0 )
+	     value_object ) != 0 )
 	{
 		goto on_error;
 	}
+#if PY_MAJOR_VERSION >= 3
+	value_object = PyLong_FromLong(
+	                LIBLUKSDE_ENCRYPTION_METHOD_CAST6 );
+#else
+	value_object = PyInt_FromLong(
+	                LIBLUKSDE_ENCRYPTION_METHOD_CAST6 );
+#endif
 	if( PyDict_SetItemString(
 	     type_object->tp_dict,
 	     "CAST6",
-	     PyInt_FromLong(
-	      LIBLUKSDE_ENCRYPTION_METHOD_CAST6 ) ) != 0 )
+	     value_object ) != 0 )
 	{
 		goto on_error;
 	}
+#if PY_MAJOR_VERSION >= 3
+	value_object = PyLong_FromLong(
+	                LIBLUKSDE_ENCRYPTION_METHOD_SERPENT );
+#else
+	value_object = PyInt_FromLong(
+	                LIBLUKSDE_ENCRYPTION_METHOD_SERPENT );
+#endif
 	if( PyDict_SetItemString(
 	     type_object->tp_dict,
 	     "SERPENT",
-	     PyInt_FromLong(
-	      LIBLUKSDE_ENCRYPTION_METHOD_SERPENT ) ) != 0 )
+	     value_object ) != 0 )
 	{
 		goto on_error;
 	}
+#if PY_MAJOR_VERSION >= 3
+	value_object = PyLong_FromLong(
+	                LIBLUKSDE_ENCRYPTION_METHOD_TWOFISH );
+#else
+	value_object = PyInt_FromLong(
+	                LIBLUKSDE_ENCRYPTION_METHOD_TWOFISH );
+#endif
 	if( PyDict_SetItemString(
 	     type_object->tp_dict,
 	     "TWOFISH",
-	     PyInt_FromLong(
-	      LIBLUKSDE_ENCRYPTION_METHOD_TWOFISH ) ) != 0 )
+	     value_object ) != 0 )
 	{
 		goto on_error;
 	}
@@ -281,7 +323,8 @@ int pyluksde_encryption_methods_init(
 void pyluksde_encryption_methods_free(
       pyluksde_encryption_methods_t *pyluksde_encryption_methods )
 {
-	static char *function = "pyluksde_encryption_methods_free";
+	struct _typeobject *ob_type = NULL;
+	static char *function       = "pyluksde_encryption_methods_free";
 
 	if( pyluksde_encryption_methods == NULL )
 	{
@@ -292,25 +335,28 @@ void pyluksde_encryption_methods_free(
 
 		return;
 	}
-	if( pyluksde_encryption_methods->ob_type == NULL )
+	ob_type = Py_TYPE(
+	           pyluksde_encryption_methods );
+
+	if( ob_type == NULL )
 	{
 		PyErr_Format(
-		 PyExc_TypeError,
-		 "%s: invalid encryption methods - missing ob_type.",
+		 PyExc_ValueError,
+		 "%s: missing ob_type.",
 		 function );
 
 		return;
 	}
-	if( pyluksde_encryption_methods->ob_type->tp_free == NULL )
+	if( ob_type->tp_free == NULL )
 	{
 		PyErr_Format(
-		 PyExc_TypeError,
-		 "%s: invalid encryption methods - invalid ob_type - missing tp_free.",
+		 PyExc_ValueError,
+		 "%s: invalid ob_type - missing tp_free.",
 		 function );
 
 		return;
 	}
-	pyluksde_encryption_methods->ob_type->tp_free(
+	ob_type->tp_free(
 	 (PyObject*) pyluksde_encryption_methods );
 }
 

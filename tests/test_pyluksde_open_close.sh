@@ -69,7 +69,7 @@ test_open_close_password()
 	INPUT_FILE=$2;
 	BASENAME=`basename ${INPUT_FILE}`;
 	RESULT=${EXIT_FAILURE};
-	PASSWORDFILE="input/.luksdeinfo/${DIRNAME}/${BASENAME}.password";
+	PASSWORDFILE="input/.pyluksde/${DIRNAME}/${BASENAME}.password";
 
 	if test -f "${PASSWORDFILE}";
 	then
@@ -99,7 +99,7 @@ test_open_close_password()
 	return ${RESULT};
 }
 
-PYTHON=`which python`;
+PYTHON=`which python${PYTHON_VERSION} 2> /dev/null`;
 
 if ! test -x ${PYTHON};
 then
@@ -138,9 +138,9 @@ then
 else
 	IGNORELIST="";
 
-	if test -f "input/.libluksde/ignore";
+	if test -f "input/.pyluksde/ignore";
 	then
-		IGNORELIST=`cat input/.libluksde/ignore | sed '/^#/d'`;
+		IGNORELIST=`cat input/.pyluksde/ignore | sed '/^#/d'`;
 	fi
 	for TESTDIR in input/*;
 	do
@@ -150,9 +150,9 @@ else
 
 			if ! list_contains "${IGNORELIST}" "${DIRNAME}";
 			then
-				if test -f "input/.libluksde/${DIRNAME}/files";
+				if test -f "input/.pyluksde/${DIRNAME}/files";
 				then
-					TEST_FILES=`cat input/.libluksde/${DIRNAME}/files | sed "s?^?${TESTDIR}/?"`;
+					TEST_FILES=`cat input/.pyluksde/${DIRNAME}/files | sed "s?^?${TESTDIR}/?"`;
 				else
 					TEST_FILES=`ls -1 ${TESTDIR}/* 2> /dev/null`;
 				fi
@@ -160,7 +160,7 @@ else
 				do
 					BASENAME=`basename ${TEST_FILE}`;
 
-					if test -f "input/.luksdeinfo/${DIRNAME}/${BASENAME}.password";
+					if test -f "input/.pyluksde/${DIRNAME}/${BASENAME}.password";
 					then
 						if ! test_open_close_password "${DIRNAME}" "${TEST_FILE}";
 						then

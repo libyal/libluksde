@@ -32,10 +32,8 @@
 #include "pyluksde_unused.h"
 
 PyTypeObject pyluksde_initialization_vector_modes_type_object = {
-	PyObject_HEAD_INIT( NULL )
+	PyVarObject_HEAD_INIT( NULL, 0 )
 
-	/* ob_size */
-	0,
 	/* tp_name */
 	"pyluksde.initialization_vector_modes",
 	/* tp_basicsize */
@@ -134,6 +132,8 @@ PyTypeObject pyluksde_initialization_vector_modes_type_object = {
 int pyluksde_initialization_vector_modes_init_type(
      PyTypeObject *type_object )
 {
+	PyObject *value_object = NULL;
+
 	if( type_object == NULL )
 	{
 		return( -1 );
@@ -144,51 +144,87 @@ int pyluksde_initialization_vector_modes_init_type(
 	{
 		return( -1 );
 	}
+#if PY_MAJOR_VERSION >= 3
+	value_object = PyLong_FromLong(
+	                LIBLUKSDE_INITIALIZATION_VECTOR_MODE_BENBI );
+#else
+	value_object = PyInt_FromLong(
+	                LIBLUKSDE_INITIALIZATION_VECTOR_MODE_BENBI );
+#endif
 	if( PyDict_SetItemString(
 	     type_object->tp_dict,
 	     "BENBI",
-	     PyInt_FromLong(
-	      LIBLUKSDE_INITIALIZATION_VECTOR_MODE_BENBI ) ) != 0 )
+	     value_object ) != 0 )
 	{
 		goto on_error;
 	}
+#if PY_MAJOR_VERSION >= 3
+	value_object = PyLong_FromLong(
+	                LIBLUKSDE_INITIALIZATION_VECTOR_MODE_ESSIV );
+#else
+	value_object = PyInt_FromLong(
+	                LIBLUKSDE_INITIALIZATION_VECTOR_MODE_ESSIV );
+#endif
 	if( PyDict_SetItemString(
 	     type_object->tp_dict,
 	     "ESSIV",
-	     PyInt_FromLong(
-	      LIBLUKSDE_INITIALIZATION_VECTOR_MODE_ESSIV ) ) != 0 )
+	     value_object ) != 0 )
 	{
 		goto on_error;
 	}
+#if PY_MAJOR_VERSION >= 3
+	value_object = PyLong_FromLong(
+	                LIBLUKSDE_INITIALIZATION_VECTOR_MODE_LMK );
+#else
+	value_object = PyInt_FromLong(
+	                LIBLUKSDE_INITIALIZATION_VECTOR_MODE_LMK );
+#endif
 	if( PyDict_SetItemString(
 	     type_object->tp_dict,
 	     "LMK",
-	     PyInt_FromLong(
-	      LIBLUKSDE_INITIALIZATION_VECTOR_MODE_LMK ) ) != 0 )
+	     value_object ) != 0 )
 	{
 		goto on_error;
 	}
+#if PY_MAJOR_VERSION >= 3
+	value_object = PyLong_FromLong(
+	                LIBLUKSDE_INITIALIZATION_VECTOR_MODE_NULL );
+#else
+	value_object = PyInt_FromLong(
+	                LIBLUKSDE_INITIALIZATION_VECTOR_MODE_NULL );
+#endif
 	if( PyDict_SetItemString(
 	     type_object->tp_dict,
 	     "NULL",
-	     PyInt_FromLong(
-	      LIBLUKSDE_INITIALIZATION_VECTOR_MODE_NULL ) ) != 0 )
+	     value_object ) != 0 )
 	{
 		goto on_error;
 	}
+#if PY_MAJOR_VERSION >= 3
+	value_object = PyLong_FromLong(
+	                LIBLUKSDE_INITIALIZATION_VECTOR_MODE_PLAIN32 );
+#else
+	value_object = PyInt_FromLong(
+	                LIBLUKSDE_INITIALIZATION_VECTOR_MODE_PLAIN32 );
+#endif
 	if( PyDict_SetItemString(
 	     type_object->tp_dict,
 	     "PLAIN32",
-	     PyInt_FromLong(
-	      LIBLUKSDE_INITIALIZATION_VECTOR_MODE_PLAIN32 ) ) != 0 )
+	     value_object ) != 0 )
 	{
 		goto on_error;
 	}
+#if PY_MAJOR_VERSION >= 3
+	value_object = PyLong_FromLong(
+	                LIBLUKSDE_INITIALIZATION_VECTOR_MODE_PLAIN64 );
+#else
+	value_object = PyInt_FromLong(
+	                LIBLUKSDE_INITIALIZATION_VECTOR_MODE_PLAIN64 );
+#endif
 	if( PyDict_SetItemString(
 	     type_object->tp_dict,
 	     "PLAIN64",
-	     PyInt_FromLong(
-	      LIBLUKSDE_INITIALIZATION_VECTOR_MODE_PLAIN64 ) ) != 0 )
+	     value_object ) != 0 )
 	{
 		goto on_error;
 	}
@@ -273,7 +309,8 @@ int pyluksde_initialization_vector_modes_init(
 void pyluksde_initialization_vector_modes_free(
       pyluksde_initialization_vector_modes_t *pyluksde_initialization_vector_modes )
 {
-	static char *function = "pyluksde_initialization_vector_modes_free";
+	struct _typeobject *ob_type = NULL;
+	static char *function       = "pyluksde_initialization_vector_modes_free";
 
 	if( pyluksde_initialization_vector_modes == NULL )
 	{
@@ -284,25 +321,28 @@ void pyluksde_initialization_vector_modes_free(
 
 		return;
 	}
-	if( pyluksde_initialization_vector_modes->ob_type == NULL )
+	ob_type = Py_TYPE(
+	           pyluksde_initialization_vector_modes );
+
+	if( ob_type == NULL )
 	{
 		PyErr_Format(
-		 PyExc_TypeError,
-		 "%s: invalid initialization vector modes - missing ob_type.",
+		 PyExc_ValueError,
+		 "%s: missing ob_type.",
 		 function );
 
 		return;
 	}
-	if( pyluksde_initialization_vector_modes->ob_type->tp_free == NULL )
+	if( ob_type->tp_free == NULL )
 	{
 		PyErr_Format(
-		 PyExc_TypeError,
-		 "%s: invalid initialization vector modes - invalid ob_type - missing tp_free.",
+		 PyExc_ValueError,
+		 "%s: invalid ob_type - missing tp_free.",
 		 function );
 
 		return;
 	}
-	pyluksde_initialization_vector_modes->ob_type->tp_free(
+	ob_type->tp_free(
 	 (PyObject*) pyluksde_initialization_vector_modes );
 }
 

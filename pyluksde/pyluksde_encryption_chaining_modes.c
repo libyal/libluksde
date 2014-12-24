@@ -32,10 +32,8 @@
 #include "pyluksde_unused.h"
 
 PyTypeObject pyluksde_encryption_chaining_modes_type_object = {
-	PyObject_HEAD_INIT( NULL )
+	PyVarObject_HEAD_INIT( NULL, 0 )
 
-	/* ob_size */
-	0,
 	/* tp_name */
 	"pyluksde.encryption_chaining_modes",
 	/* tp_basicsize */
@@ -134,6 +132,8 @@ PyTypeObject pyluksde_encryption_chaining_modes_type_object = {
 int pyluksde_encryption_chaining_modes_init_type(
      PyTypeObject *type_object )
 {
+	PyObject *value_object = NULL;
+
 	if( type_object == NULL )
 	{
 		return( -1 );
@@ -144,27 +144,45 @@ int pyluksde_encryption_chaining_modes_init_type(
 	{
 		return( -1 );
 	}
+#if PY_MAJOR_VERSION >= 3
+	value_object = PyLong_FromLong(
+	                LIBLUKSDE_ENCRYPTION_CHAINING_MODE_CBC );
+#else
+	value_object = PyInt_FromLong(
+	                LIBLUKSDE_ENCRYPTION_CHAINING_MODE_CBC );
+#endif
 	if( PyDict_SetItemString(
 	     type_object->tp_dict,
 	     "CBC",
-	     PyInt_FromLong(
-	      LIBLUKSDE_ENCRYPTION_CHAINING_MODE_CBC ) ) != 0 )
+	     value_object ) != 0 )
 	{
 		goto on_error;
 	}
+#if PY_MAJOR_VERSION >= 3
+	value_object = PyLong_FromLong(
+	                LIBLUKSDE_ENCRYPTION_CHAINING_MODE_ECB );
+#else
+	value_object = PyInt_FromLong(
+	                LIBLUKSDE_ENCRYPTION_CHAINING_MODE_ECB );
+#endif
 	if( PyDict_SetItemString(
 	     type_object->tp_dict,
 	     "ECB",
-	     PyInt_FromLong(
-	      LIBLUKSDE_ENCRYPTION_CHAINING_MODE_ECB ) ) != 0 )
+	     value_object ) != 0 )
 	{
 		goto on_error;
 	}
+#if PY_MAJOR_VERSION >= 3
+	value_object = PyLong_FromLong(
+	                LIBLUKSDE_ENCRYPTION_CHAINING_MODE_XTS );
+#else
+	value_object = PyInt_FromLong(
+	                LIBLUKSDE_ENCRYPTION_CHAINING_MODE_XTS );
+#endif
 	if( PyDict_SetItemString(
 	     type_object->tp_dict,
 	     "XTS",
-	     PyInt_FromLong(
-	      LIBLUKSDE_ENCRYPTION_CHAINING_MODE_XTS ) ) != 0 )
+	     value_object ) != 0 )
 	{
 		goto on_error;
 	}
@@ -249,7 +267,8 @@ int pyluksde_encryption_chaining_modes_init(
 void pyluksde_encryption_chaining_modes_free(
       pyluksde_encryption_chaining_modes_t *pyluksde_encryption_chaining_modes )
 {
-	static char *function = "pyluksde_encryption_chaining_modes_free";
+	struct _typeobject *ob_type = NULL;
+	static char *function       = "pyluksde_encryption_chaining_modes_free";
 
 	if( pyluksde_encryption_chaining_modes == NULL )
 	{
@@ -260,25 +279,28 @@ void pyluksde_encryption_chaining_modes_free(
 
 		return;
 	}
-	if( pyluksde_encryption_chaining_modes->ob_type == NULL )
+	ob_type = Py_TYPE(
+	           pyluksde_encryption_chaining_modes );
+
+	if( ob_type == NULL )
 	{
 		PyErr_Format(
-		 PyExc_TypeError,
-		 "%s: invalid encryption chaining modes - missing ob_type.",
+		 PyExc_ValueError,
+		 "%s: missing ob_type.",
 		 function );
 
 		return;
 	}
-	if( pyluksde_encryption_chaining_modes->ob_type->tp_free == NULL )
+	if( ob_type->tp_free == NULL )
 	{
 		PyErr_Format(
-		 PyExc_TypeError,
-		 "%s: invalid encryption chaining modes - invalid ob_type - missing tp_free.",
+		 PyExc_ValueError,
+		 "%s: invalid ob_type - missing tp_free.",
 		 function );
 
 		return;
 	}
-	pyluksde_encryption_chaining_modes->ob_type->tp_free(
+	ob_type->tp_free(
 	 (PyObject*) pyluksde_encryption_chaining_modes );
 }
 
