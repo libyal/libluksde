@@ -28,6 +28,9 @@ Hashing support:
 Tests:
 * add tests for Python-bindings
 
+20141226
+* changes for updated dependencies
+
 20141224
 * worked on Python 3 support
 * worked on tests
