@@ -1,13 +1,12 @@
 Source: libluksde
-Section: unknown
+Section: libs
 Priority: extra
 Maintainer: Joachim Metz <joachim.metz@gmail.com>
 Build-Depends: debhelper (>= 7), autotools-dev, libssl-dev, libfuse-dev, python-dev
-Standards-Version: 3.8.3
+Standards-Version: 3.9.5
 Homepage: https://github.com/libyal/libluksde/
 
 Package: libluksde
-Section: libs
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Suggests: libluksde-dbg
@@ -17,28 +16,28 @@ Description: Library to access the Linux Unified Key Setup (LUKS) Disk Encryptio
 Package: libluksde-dbg
 Architecture: any
 Section: debug
-Depends: libluksde (= ${Source-Version}), ${misc:Depends}
+Depends: libluksde (= ${binary:Version}), ${misc:Depends}
 Description: Debugging symbols for libluksde
  Debugging symbols for libluksde.
 
 Package: libluksde-dev
 Section: libdevel
 Architecture: any
-Depends: libluksde (= ${Source-Version})
+Depends: libluksde (= ${binary:Version}), ${misc:Depends}
 Description: Header files and libraries for developing applications for libluksde
  Header files and libraries for developing applications for libluksde.
 
 Package: libluksde-tools
 Section: utils
 Architecture: any
-Depends: libluksde (= ${Source-Version}), ${shlibs:Depends}
+Depends: libluksde (= ${binary:Version}), ${shlibs:Depends}, ${misc:Depends}
 Description: Several tools for reading Linux Unified Key Setup (LUKS) Disk Encryption volumes
  Several tools for reading Linux Unified Key Setup (LUKS) Disk Encryption volumes.
 
 Package: libluksde-python
 Section: python
 Architecture: any
-Depends: libluksde (= ${Source-Version}), ${shlibs:Depends}, ${python:Depends}
+Depends: libluksde (= ${binary:Version}), ${shlibs:Depends}, ${misc:Depends}
 Suggests: libluksde-python-dbg
 Description: Python bindings for libluksde
  Python bindings for libluksde.
@@ -46,7 +45,7 @@ Description: Python bindings for libluksde
 Package: libluksde-python-dbg
 Section: debug
 Architecture: any
-Depends: libluksde-python (= ${Source-Version})
+Depends: libluksde-python (= ${binary:Version}), ${misc:Depends}
 Description: Debugging symbols for libluksde-python
  Debugging symbols for libluksde-python.
 
