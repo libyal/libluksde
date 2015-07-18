@@ -28,6 +28,9 @@ Hashing support:
 Tests:
 * add tests for Python-bindings
 
+20150718
+* worked on signature check
+
 20150106
 * 2015 update
 

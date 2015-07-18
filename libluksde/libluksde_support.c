@@ -351,7 +351,7 @@ int libluksde_check_volume_signature_file_io_handle(
 		 "%s: unable to open file.",
 		 function );
 
-		return( -1 );
+		goto on_error;
 	}
 	else if( file_io_handle_is_open == 0 )
 	{
@@ -367,7 +367,7 @@ int libluksde_check_volume_signature_file_io_handle(
 			 "%s: unable to open file.",
 			 function );
 
-			return( -1 );
+			goto on_error;
 		}
 	}
 	if( libbfio_handle_seek_offset(
@@ -383,13 +383,7 @@ int libluksde_check_volume_signature_file_io_handle(
 		 "%s: unable to seek file header offset: 0.",
 		 function );
 
-		if( file_io_handle_is_open == 0 )
-		{
-			libbfio_handle_close(
-			 file_io_handle,
-			 error );
-		}
-		return( -1 );
+		goto on_error;
 	}
 	read_count = libbfio_handle_read_buffer(
 	              file_io_handle,
@@ -406,13 +400,7 @@ int libluksde_check_volume_signature_file_io_handle(
 		 "%s: unable to read signature.",
 		 function );
 
-		if( file_io_handle_is_open == 0 )
-		{
-			libbfio_handle_close(
-			 file_io_handle,
-			 error );
-		}
-		return( -1 );
+		goto on_error;
 	}
 	if( file_io_handle_is_open == 0 )
 	{
@@ -427,7 +415,7 @@ int libluksde_check_volume_signature_file_io_handle(
 			 "%s: unable to close file.",
 			 function );
 
-			return( -1 );
+			goto on_error;
 		}
 	}
 	if( memory_compare(
@@ -438,5 +426,14 @@ int libluksde_check_volume_signature_file_io_handle(
 		return( 1 );
 	}
 	return( 0 );
+
+on_error:
+	if( file_io_handle_is_open == 0 )
+	{
+		libbfio_handle_close(
+		 file_io_handle,
+		 NULL );
+	}
+	return( -1 );
 }
 
