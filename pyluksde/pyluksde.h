@@ -1,7 +1,7 @@
 /*
  * Python bindings for libluksde (pyluksde)
  *
- * Copyright (C) 2013-2015, Joachim Metz <joachim.metz@gmail.com>
+ * Copyright (C) 2013-2016, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -45,8 +45,13 @@ PyObject *pyluksde_check_volume_signature_file_object(
            PyObject *arguments,
            PyObject *keywords );
 
+#if PY_MAJOR_VERSION >= 3
+PyMODINIT_FUNC PyInit_pyluksde(
+                void );
+#else
 PyMODINIT_FUNC initpyluksde(
                 void );
+#endif
 
 #if defined( __cplusplus )
 }
