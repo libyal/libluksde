@@ -1,4 +1,10 @@
-if HAVE_PYTHON
+# Note that we cannot use: AUTOMAKE_OPTIONS = subdir-objects
+# subdir-objects will compile the source files to a single version of Python.
+# Since subdir-objects is being deprecated we copy the source files instead.
+am__installdirs = "$(DESTDIR)$(pyexecdir2)"
+pyexecdir = $(pyexecdir2)
+
+if HAVE_PYTHON2
 AM_CFLAGS = \
 	-I$(top_srcdir)/include \
 	-I$(top_srcdir)/common \
@@ -12,9 +18,9 @@ AM_CFLAGS = \
 	@LIBCPATH_CPPFLAGS@ \
 	@LIBBFIO_CPPFLAGS@
 
-pyexec_LTLIBRARIES = pyluksde.la
+am_pyluksde_la_rpath = -rpath $(pyexecdir2)
 
-pyluksde_la_SOURCES = \
+BUILT_SOURCES = \
 	pyluksde.c pyluksde.h \
 	pyluksde_encryption_chaining_modes.c pyluksde_encryption_chaining_modes.h \
 	pyluksde_encryption_methods.c pyluksde_encryption_methods.h \
@@ -32,6 +38,10 @@ pyluksde_la_SOURCES = \
 	pyluksde_unused.h \
 	pyluksde_volume.c pyluksde_volume.h
 
+pyexec_LTLIBRARIES = pyluksde.la
+
+nodist_pyluksde_la_SOURCES = $(BUILT_SOURCES)
+
 pyluksde_la_LIBADD = \
 	@LIBCSTRING_LIBADD@ \
 	@LIBCERROR_LIBADD@ \
@@ -44,13 +54,19 @@ pyluksde_la_LIBADD = \
 	@LIBCPATH_LIBADD@ \
 	@LIBBFIO_LIBADD@
 
-pyluksde_la_CPPFLAGS = $(PYTHON_CPPFLAGS)
-pyluksde_la_LDFLAGS  = -module -avoid-version $(PYTHON_LDFLAGS)
+pyluksde_la_CPPFLAGS = $(PYTHON2_CPPFLAGS)
+pyluksde_la_LDFLAGS  = -module -avoid-version $(PYTHON2_LDFLAGS)
+
+$(BUILT_SOURCES):
+	/bin/cp -f $(top_srcdir)/pyluksde/$@ $@
 
 endif
 
 MAINTAINERCLEANFILES = \
 	Makefile.in
+
+clean-local:
+	/bin/rm -f pyluksde*.[ch]
 
 distclean: clean
 	/bin/rm -f Makefile

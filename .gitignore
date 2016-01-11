@@ -112,9 +112,9 @@ stamp-h[1-9]
 /include/libluksde/types.h
 /libluksde/libluksde.rc
 /libluksde/libluksde_definitions.h
+/pyluksde-python[23]/*.[ch]
 /luksdetools/luksdeinfo
 /luksdetools/luksdemount
-/pyluksde/setup.py
 /tests/input
 /tests/luksde_test_open_close
 /tests/luksde_test_read

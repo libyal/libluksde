@@ -23,6 +23,8 @@ SUBDIRS = \
 	libcsystem \
 	luksdetools \
 	pyluksde \
+	pyluksde-python2 \
+	pyluksde-python3 \
 	po \
 	manuals \
 	tests \
@@ -36,8 +38,10 @@ DPKG_FILES = \
 	dpkg/copyright \
 	dpkg/copyright.in \
 	dpkg/rules \
-	dpkg/libluksde-dev.docs \
 	dpkg/libluksde.docs \
+	dpkg/libluksde-dev.docs \
+	dpkg/libluksde-python.docs \
+	dpkg/libluksde-python3.docs \
 	dpkg/libluksde-tools.docs \
 	dpkg/source/format
 
@@ -48,6 +52,9 @@ GETTEXT_FILES = \
 PKGCONFIG_FILES = \
 	libluksde.pc.in
 
+SETUP_PY_FILES = \
+	setup.py
+
 SPEC_FILES = \
 	libluksde.spec \
 	libluksde.spec.in
@@ -56,6 +63,7 @@ EXTRA_DIST = \
 	$(DPKG_FILES) \
 	$(GETTEXT_FILES) \
 	$(PKGCONFIG_FILES) \
+	$(SETUP_PY_FILES) \
 	$(SPEC_FILES)
 
 MAINTAINERCLEANFILES = \
