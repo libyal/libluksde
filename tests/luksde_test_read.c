@@ -20,12 +20,11 @@
  */
 
 #include <common.h>
+#include <file_stream.h>
 
 #if defined( HAVE_STDLIB_H ) || defined( WINAPI )
 #include <stdlib.h>
 #endif
-
-#include <stdio.h>
 
 #include "luksde_test_libcerror.h"
 #include "luksde_test_libcstring.h"
@@ -79,11 +78,11 @@ int luksde_test_seek_offset(
 	{
 		if( result != 1 )
 		{
-			libluksde_error_backtrace_fprint(
+			libcerror_error_backtrace_fprint(
 			 error,
 			 stderr );
 		}
-		libluksde_error_free(
+		libcerror_error_free(
 		 &error );
 	}
 	return( result );
@@ -153,11 +152,11 @@ int luksde_test_read_buffer(
 	{
 		if( result != 1 )
 		{
-			libluksde_error_backtrace_fprint(
+			libcerror_error_backtrace_fprint(
 			 error,
 			 stderr );
 		}
-		libluksde_error_free(
+		libcerror_error_free(
 		 &error );
 	}
 	return( result );
@@ -268,11 +267,11 @@ int luksde_test_read_buffer_at_offset(
 	{
 		if( result != 1 )
 		{
-			libluksde_error_backtrace_fprint(
+			libcerror_error_backtrace_fprint(
 			 error,
 			 stderr );
 		}
-		libluksde_error_free(
+		libcerror_error_free(
 		 &error );
 	}
 	return( result );
@@ -722,7 +721,7 @@ int luksde_test_read_from_volume_multi_thread(
 
 		expected_offset = (off64_t) number_of_iterations * LUKSDE_TEST_READ_BUFFER_SIZE;
 
-		if( expected_offset > volume_size )
+		if( (size64_t) expected_offset > volume_size )
 		{
 			expected_offset = volume_size;
 
@@ -1031,10 +1030,10 @@ int main( int argc, char * const argv[] )
 on_error:
 	if( error != NULL )
 	{
-		libluksde_error_backtrace_fprint(
+		libcerror_error_backtrace_fprint(
 		 error,
 		 stderr );
-		libluksde_error_free(
+		libcerror_error_free(
 		 &error );
 	}
 	if( volume != NULL )

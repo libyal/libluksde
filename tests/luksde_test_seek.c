@@ -20,17 +20,17 @@
  */
 
 #include <common.h>
+#include <file_stream.h>
 
 #if defined( HAVE_STDLIB_H ) || defined( WINAPI )
 #include <stdlib.h>
 #endif
 
-#include <stdio.h>
-
 #include "luksde_test_libcerror.h"
 #include "luksde_test_libcstring.h"
 #include "luksde_test_libcsystem.h"
 #include "luksde_test_libluksde.h"
+#include "luksde_test_unused.h"
 
 /* Define to make luksde_test_seek generate verbose output
 #define LUKSDE_TEST_SEEK_VERBOSE
@@ -102,15 +102,15 @@ int luksde_test_seek_offset(
 	 stdout,
 	 "\n" );
 
-	if( error != NULL)
+	if( error != NULL )
 	{
 		if( result != 1 )
 		{
-			libluksde_error_backtrace_fprint(
+			libcerror_error_backtrace_fprint(
 			 error,
 			 stderr );
 		}
-		libluksde_error_free(
+		libcerror_error_free(
 		 &error );
 	}
 	return( result );
@@ -119,7 +119,7 @@ int luksde_test_seek_offset(
 /* Tests seeking in a volume
  * Returns 1 if successful, 0 if not or -1 on error
  */
-int luksde_test_seek_volume(
+int luksde_test_seek(
      libluksde_volume_t *volume,
      size64_t volume_size )
 {
@@ -418,6 +418,248 @@ int luksde_test_seek_volume(
 	return( result );
 }
 
+/* Tests seeking in a volume
+ * Returns 1 if successful, 0 if not or -1 on error
+ */
+int luksde_test_seek_volume(
+     libcstring_system_character_t *source,
+     libcstring_system_character_t *password,
+     libcerror_error_t **error )
+{
+	libluksde_volume_t *volume = NULL;
+	size64_t volume_size       = 0;
+	size_t string_length       = 0;
+	int result                 = 0;
+
+	if( libluksde_volume_initialize(
+	     &volume,
+	     error ) != 1 )
+	{
+		fprintf(
+		 stderr,
+		 "Unable to create volume.\n" );
+
+		goto on_error;
+	}
+	if( password != NULL )
+	{
+		string_length = libcstring_system_string_length(
+		                 password );
+
+#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+		if( libluksde_volume_set_utf16_password(
+		     volume,
+		     (uint16_t *) password,
+		     string_length,
+		     error ) != 1 )
+#else
+		if( libluksde_volume_set_utf8_password(
+		     volume,
+		     (uint8_t *) password,
+		     string_length,
+		     error ) != 1 )
+#endif
+		{
+			fprintf(
+			 stderr,
+			 "Unable to set password." );
+
+			goto on_error;
+		}
+	}
+#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+	if( libluksde_volume_open_wide(
+	     volume,
+	     source,
+	     LIBLUKSDE_OPEN_READ,
+	     error ) != 1 )
+#else
+	if( libluksde_volume_open(
+	     volume,
+	     source,
+	     LIBLUKSDE_OPEN_READ,
+	     error ) != 1 )
+#endif
+	{
+		fprintf(
+		 stderr,
+		 "Unable to open volume.\n" );
+
+		goto on_error;
+	}
+	if( libluksde_volume_get_size(
+	     volume,
+	     &volume_size,
+	     error ) != 1 )
+	{
+		fprintf(
+		 stderr,
+		 "Unable to retrieve volume size.\n" );
+
+		goto on_error;
+	}
+	result = luksde_test_seek(
+	          volume,
+	          volume_size );
+
+	if( result == -1 )
+	{
+		fprintf(
+		 stderr,
+		 "Unable to seek in volume.\n" );
+
+		goto on_error;
+	}
+	if( libluksde_volume_close(
+	     volume,
+	     error ) != 0 )
+	{
+		fprintf(
+		 stderr,
+		 "Unable to close volume.\n" );
+
+		goto on_error;
+	}
+	if( libluksde_volume_free(
+	     &volume,
+	     error ) != 1 )
+	{
+		fprintf(
+		 stderr,
+		 "Unable to free volume.\n" );
+
+		goto on_error;
+	}
+	return( result );
+
+on_error:
+	if( volume != NULL )
+	{
+		libluksde_volume_close(
+		 volume,
+		 NULL );
+		libluksde_volume_free(
+		 &volume,
+		 NULL );
+	}
+	return( -1 );
+}
+
+/* Tests seeking in a volume without opening it
+ * Returns 1 if successful, 0 if not or -1 on error
+ */
+int luksde_test_seek_volume_no_open(
+     libcstring_system_character_t *source LUKSDE_TEST_ATTRIBUTE_UNUSED,
+     libcstring_system_character_t *password,
+     libcerror_error_t **error )
+{
+	libluksde_volume_t *volume = NULL;
+	size_t string_length       = 0;
+	off64_t result_offset      = 0;
+	int result                 = 0;
+
+	LUKSDE_TEST_UNREFERENCED_PARAMETER( source );
+
+	if( libluksde_volume_initialize(
+	     &volume,
+	     error ) != 1 )
+	{
+		fprintf(
+		 stderr,
+		 "Unable to create volume.\n" );
+
+		goto on_error;
+	}
+	if( password != NULL )
+	{
+		string_length = libcstring_system_string_length(
+		                 password );
+
+#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+		if( libluksde_volume_set_utf16_password(
+		     volume,
+		     (uint16_t *) password,
+		     string_length,
+		     error ) != 1 )
+#else
+		if( libluksde_volume_set_utf8_password(
+		     volume,
+		     (uint8_t *) password,
+		     string_length,
+		     error ) != 1 )
+#endif
+		{
+			fprintf(
+			 stderr,
+			 "Unable to set password." );
+
+			goto on_error;
+		}
+	}
+	fprintf(
+	 stdout,
+	 "Testing seek without open: \t" );
+
+	result_offset = libluksde_volume_seek_offset(
+	                 volume,
+	                 0,
+	                 SEEK_SET,
+	                 error );
+
+	if( result_offset == -1 )
+	{
+		result = 1;
+	}
+	if( result != 0 )
+	{
+		fprintf(
+		 stdout,
+		 "(PASS)" );
+	}
+	else
+	{
+		fprintf(
+		 stdout,
+		 "(FAIL)" );
+	}
+	fprintf(
+	 stdout,
+	 "\n" );
+
+	if( ( error != NULL )
+	 && ( *error != NULL ) )
+	{
+		if( result != 1 )
+		{
+			libcerror_error_backtrace_fprint(
+			 *error,
+			 stderr );
+		}
+		libcerror_error_free(
+		 error );
+	}
+	if( libluksde_volume_free(
+	     &volume,
+	     error ) != 1 )
+	{
+		fprintf(
+		 stderr,
+		 "Unable to free volume.\n" );
+
+		goto on_error;
+	}
+	return( result );
+
+on_error:
+	if( volume != NULL )
+	{
+		libluksde_volume_free(
+		 &volume,
+		 NULL );
+	}
+	return( -1 );
+}
+
 /* The main program
  */
 #if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
@@ -427,12 +669,10 @@ int main( int argc, char * const argv[] )
 #endif
 {
 	libcerror_error_t *error                       = NULL;
-	libluksde_volume_t *volume                     = NULL;
 	libcstring_system_character_t *option_password = NULL;
 	libcstring_system_character_t *source          = NULL;
 	libcstring_system_integer_t option             = 0;
-	size64_t volume_size                           = 0;
-	size_t string_length                           = 0;
+	int result                                     = 0;
 
 	while( ( option = libcsystem_getopt(
 	                   argc,
@@ -473,78 +713,12 @@ int main( int argc, char * const argv[] )
 	 stderr,
 	 NULL );
 #endif
-	/* Initialization
-	 */
-	if( libluksde_volume_initialize(
-	     &volume,
-	     &error ) != 1 )
-	{
-		fprintf(
-		 stderr,
-		 "Unable to create volume.\n" );
+	result = luksde_test_seek_volume(
+	          source,
+	          option_password,
+	          &error );
 
-		goto on_error;
-	}
-	if( option_password != NULL )
-	{
-		string_length = libcstring_system_string_length(
-		                 option_password );
-
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
-		if( libluksde_volume_set_utf16_password(
-		     volume,
-		     (uint16_t *) option_password,
-		     string_length,
-		     &error ) != 1 )
-#else
-		if( libluksde_volume_set_utf8_password(
-		     volume,
-		     (uint8_t *) option_password,
-		     string_length,
-		     &error ) != 1 )
-#endif
-		{
-			fprintf(
-			 stderr,
-			 "Unable to set password." );
-
-			goto on_error;
-		}
-	}
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
-	if( libluksde_volume_open_wide(
-	     volume,
-	     source,
-	     LIBLUKSDE_OPEN_READ,
-	     &error ) != 1 )
-#else
-	if( libluksde_volume_open(
-	     volume,
-	     source,
-	     LIBLUKSDE_OPEN_READ,
-	     &error ) != 1 )
-#endif
-	{
-		fprintf(
-		 stderr,
-		 "Unable to open volume.\n" );
-
-		goto on_error;
-	}
-	if( libluksde_volume_get_size(
-	     volume,
-	     &volume_size,
-	     &error ) != 1 )
-	{
-		fprintf(
-		 stderr,
-		 "Unable to retrieve volume size.\n" );
-
-		goto on_error;
-	}
-	if( luksde_test_seek_volume(
-	     volume,
-	     volume_size ) != 1 )
+	if( result != 1 )
 	{
 		fprintf(
 		 stderr,
@@ -552,25 +726,16 @@ int main( int argc, char * const argv[] )
 
 		goto on_error;
 	}
-	/* Clean up
-	 */
-	if( libluksde_volume_close(
-	     volume,
-	     &error ) != 0 )
-	{
-		fprintf(
-		 stderr,
-		 "Unable to close volume.\n" );
+	result = luksde_test_seek_volume_no_open(
+	          source,
+	          option_password,
+	          &error );
 
-		goto on_error;
-	}
-	if( libluksde_volume_free(
-	     &volume,
-	     &error ) != 1 )
+	if( result != 1 )
 	{
 		fprintf(
 		 stderr,
-		 "Unable to free volume.\n" );
+		 "Unable to seek in volume without open.\n" );
 
 		goto on_error;
 	}
@@ -579,20 +744,11 @@ int main( int argc, char * const argv[] )
 on_error:
 	if( error != NULL )
 	{
-		libluksde_error_backtrace_fprint(
+		libcerror_error_backtrace_fprint(
 		 error,
 		 stderr );
-		libluksde_error_free(
+		libcerror_error_free(
 		 &error );
-	}
-	if( volume != NULL )
-	{
-		libluksde_volume_close(
-		 volume,
-		 NULL );
-		libluksde_volume_free(
-		 &volume,
-		 NULL );
 	}
 	return( EXIT_FAILURE );
 }

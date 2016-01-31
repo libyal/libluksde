@@ -16,9 +16,11 @@ AM_CPPFLAGS = \
 	@PTHREAD_CPPFLAGS@ \
 	@LIBLUKSDE_DLL_IMPORT@
 
-if HAVE_PYTHON
+if HAVE_PYTHON_TESTS
 TESTS_PYLUKSDE = \
-	test_pyluksde_open_close.sh
+	test_pyluksde_open_close.sh \
+	test_pyluksde_seek.sh \
+	test_pyluksde_read.sh
 endif
 
 TESTS = \
@@ -30,12 +32,16 @@ TESTS = \
 
 check_SCRIPTS = \
 	pyluksde_test_open_close.py \
+	pyluksde_test_read.py \
+	pyluksde_test_seek.py \
 	test_luksdeinfo.sh \
 	test_open_close.sh \
 	test_pyluksde_open_close.sh \
-	test_seek.sh \
+	test_pyluksde_read.sh \
+	test_pyluksde_seek.sh \
 	test_read.sh \
-	test_runner.sh
+	test_runner.sh \
+	test_seek.sh
 
 EXTRA_DIST = \
 	$(check_SCRIPTS)
@@ -50,12 +56,14 @@ luksde_test_open_close_SOURCES = \
 	luksde_test_libcerror.h \
 	luksde_test_libcstring.h \
 	luksde_test_libcsystem.h \
+	luksde_test_libcthreads.h \
 	luksde_test_open_close.c \
 	luksde_test_unused.h
 
 luksde_test_open_close_LDADD = \
 	@LIBCSYSTEM_LIBADD@ \
 	../libluksde/libluksde.la \
+	@LIBCTHREADS_LIBADD@ \
 	@LIBCERROR_LIBADD@ \
 	@LIBCSTRING_LIBADD@ \
 	@PTHREAD_LIBADD@
@@ -81,6 +89,7 @@ luksde_test_seek_SOURCES = \
 	luksde_test_libcerror.h \
 	luksde_test_libcstring.h \
 	luksde_test_libcsystem.h \
+	luksde_test_libcthreads.h \
 	luksde_test_libluksde.h \
 	luksde_test_seek.c \
 	luksde_test_unused.h
@@ -88,6 +97,7 @@ luksde_test_seek_SOURCES = \
 luksde_test_seek_LDADD = \
 	@LIBCSYSTEM_LIBADD@ \
 	../libluksde/libluksde.la \
+	@LIBCTHREADS_LIBADD@ \
 	@LIBCERROR_LIBADD@ \
 	@LIBCSTRING_LIBADD@ \
 	@PTHREAD_LIBADD@
