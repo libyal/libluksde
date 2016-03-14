@@ -198,6 +198,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\tests\luksde_test_libcthreads.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\tests\luksde_test_libluksde.h"
 				>
 			</File>

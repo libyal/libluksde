@@ -80,11 +80,11 @@ enum LIBLUKSDE_CODEPAGES
 	LIBLUKSDE_CODEPAGE_WINDOWS_1258			= 1258
 };
 
-#endif
+#endif /* !defined( HAVE_LOCAL_LIBLUKSDE ) */
 
 #if defined( __cplusplus )
 }
 #endif
 
-#endif
+#endif /* !defined( _LIBLUKSDE_INTERNAL_CODEPAGE_H ) */
 

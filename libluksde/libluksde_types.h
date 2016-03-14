@@ -39,9 +39,9 @@ typedef struct libluksde_volume {}	libluksde_volume_t;
 #else
 typedef intptr_t libluksde_volume_t;
 
-#endif
+#endif /* defined( HAVE_DEBUG_OUTPUT ) && !defined( WINAPI ) */
 
 #endif /* defined( HAVE_LOCAL_LIBLUKSDE ) */
 
-#endif
+#endif /* !defined( _LIBLUKSDE_INTERNAL_TYPES_H ) */
 

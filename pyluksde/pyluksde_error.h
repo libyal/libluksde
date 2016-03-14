@@ -28,7 +28,7 @@
 #include "pyluksde_libcerror.h"
 #include "pyluksde_python.h"
 
-#define PYLUKSDE_ERROR_STRING_SIZE		2048
+#define PYLUKSDE_ERROR_STRING_SIZE	2048
 
 #if defined( __cplusplus )
 extern "C" {
@@ -56,5 +56,5 @@ void pyluksde_error_raise(
 }
 #endif
 
-#endif
+#endif /* !defined( _PYLUKSDE_ERROR_H ) */
 

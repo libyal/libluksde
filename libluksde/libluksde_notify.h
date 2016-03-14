@@ -53,11 +53,11 @@ LIBLUKSDE_EXTERN \
 int libluksde_notify_stream_close(
      libcerror_error_t **error );
 
-#endif
+#endif /* !defined( HAVE_LOCAL_LIBLUKSDE ) */
 
 #if defined( __cplusplus )
 }
 #endif
 
-#endif
+#endif /* !defined( _LIBLUKSDE_NOTIFY_H ) */
 

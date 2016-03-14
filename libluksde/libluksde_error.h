@@ -64,11 +64,11 @@ int libluksde_error_backtrace_sprint(
      char *string,
      size_t size );
 
-#endif
+#endif /* !defined( HAVE_LOCAL_LIBLUKSDE ) */
 
 #if defined( __cplusplus )
 }
 #endif
 
-#endif
+#endif /* !defined( _LIBLUKSDE_INTERNAL_ERROR_H ) */
 
