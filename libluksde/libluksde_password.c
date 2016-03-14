@@ -161,6 +161,20 @@ int libluksde_password_pbkdf2(
 		return( -1 );
 	}
 	if( memory_set(
+	     hash_buffer,
+	     0,
+	     32 ) == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_MEMORY,
+		 LIBCERROR_MEMORY_ERROR_COPY_FAILED,
+		 "%s: unable to clear hash buffer.",
+		 function );
+
+		goto on_error;
+	}
+	if( memory_set(
 	     output_data,
 	     0,
 	     output_data_size ) == NULL )

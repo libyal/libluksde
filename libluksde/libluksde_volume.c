@@ -1819,7 +1819,7 @@ ssize_t libluksde_internal_volume_read_buffer_from_file_io_handle(
 	{
 		if( libfdata_vector_get_element_value_at_offset(
 		     internal_volume->sectors_vector,
-		     (intptr_t *) internal_volume->file_io_handle,
+		     (intptr_t *) file_io_handle,
 		     internal_volume->sectors_cache,
 		     internal_volume->current_offset,
 		     &element_data_offset,

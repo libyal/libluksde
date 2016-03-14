@@ -1,13 +1,16 @@
 libluksde is a library to access LUKS Disk Encryption encrypted volumes.
 
 Project information:
+
 * Status: experimental
 * Licence: LGPLv3+
 
 Supported encryption methods:
+
 * AES (AES-CBC)
 
 Unsupported encryption methods:
+
 * AES (AES-ECB)
 * AES (AES-XTS)
 * anubis
@@ -17,31 +20,37 @@ Unsupported encryption methods:
 * twofish
 
 Supported initialization vector modes:
+
 * ESSIV (SHA1, SHA256)
 * null
 * plain, plain64
 
 Unsupported initialization vector modes:
+
 * benbi
 * lmk
 * plumb
 
 Supported hashing methods:
+
 * SHA1
 * SHA224
 * SHA256
 
 Unsupported hashing methods:
+
 * RIPEMD160
 
 Work in progress:
-* Python 3 support
+
 * Thread-safety in volume API functions
 
 Planned:
+
 * Dokan library support
 
 For more information see:
+
 * Project documentation: https://github.com/libyal/libluksde/wiki/Home
 * How to build from source: https://github.com/libyal/libluksde/wiki/Building
 
