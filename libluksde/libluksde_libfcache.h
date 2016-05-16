@@ -1,5 +1,5 @@
 /*
- * The libfcache header wrapper
+ * The internal libfcache header
  *
  * Copyright (C) 2013-2016, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -44,7 +44,7 @@
 
 #include <libfcache.h>
 
-#endif
+#endif /* defined( HAVE_LOCAL_LIBFCACHE ) */
 
-#endif
+#endif /* !defined( _LIBLUKSDE_LIBFCACHE_H ) */
 

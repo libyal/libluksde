@@ -18,38 +18,42 @@ AM_CPPFLAGS = \
 
 if HAVE_PYTHON_TESTS
 TESTS_PYLUKSDE = \
-	test_pyluksde_open_close.sh \
-	test_pyluksde_seek.sh \
-	test_pyluksde_read.sh
+	test_python_functions.sh
 endif
 
 TESTS = \
-	test_open_close.sh \
-	test_seek.sh \
-	test_read.sh \
+	test_api_functions.sh \
 	test_luksdeinfo.sh \
 	$(TESTS_PYLUKSDE)
 
 check_SCRIPTS = \
+	pyluksde_test_get_version.py \
 	pyluksde_test_open_close.py \
 	pyluksde_test_read.py \
 	pyluksde_test_seek.py \
+	test_api_functions.sh  \
 	test_luksdeinfo.sh \
-	test_open_close.sh \
-	test_pyluksde_open_close.sh \
-	test_pyluksde_read.sh \
-	test_pyluksde_seek.sh \
-	test_read.sh \
-	test_runner.sh \
-	test_seek.sh
+	test_python_functions.sh \
+	test_runner.sh
 
 EXTRA_DIST = \
 	$(check_SCRIPTS)
 
 check_PROGRAMS = \
+	luksde_test_get_version \
 	luksde_test_open_close \
 	luksde_test_read \
 	luksde_test_seek
+
+luksde_test_get_version_SOURCES = \
+	luksde_test_get_version.c \
+	luksde_test_libcstring.h \
+	luksde_test_libluksde.h \
+	luksde_test_unused.h
+
+luksde_test_get_version_LDADD = \
+	../libluksde/libluksde.la \
+	@LIBCSTRING_LIBADD@
 
 luksde_test_open_close_SOURCES = \
 	luksde_test_libluksde.h \

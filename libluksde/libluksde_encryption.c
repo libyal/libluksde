@@ -356,7 +356,7 @@ int libluksde_encryption_set_keys(
 	switch( context->method )
 	{
 		case LIBLUKSDE_ENCRYPTION_METHOD_AES:
-			result = libcaes_crypt_set_key(
+			result = libcaes_context_set_key(
 			          context->decryption_context,
 			          LIBCAES_CRYPT_MODE_DECRYPT,
 			          key,
@@ -381,7 +381,7 @@ int libluksde_encryption_set_keys(
 	switch( context->method )
 	{
 		case LIBLUKSDE_ENCRYPTION_METHOD_AES:
-			result = libcaes_crypt_set_key(
+			result = libcaes_context_set_key(
 			          context->encryption_context,
 			          LIBCAES_CRYPT_MODE_ENCRYPT,
 			          key,
@@ -456,7 +456,7 @@ int libluksde_encryption_set_keys(
 		switch( context->method )
 		{
 			case LIBLUKSDE_ENCRYPTION_METHOD_AES:
-				result = libcaes_crypt_set_key(
+				result = libcaes_context_set_key(
 					  context->essiv_encryption_context,
 					  LIBCAES_CRYPT_MODE_ENCRYPT,
 					  essiv_key,

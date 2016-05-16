@@ -15,6 +15,12 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libfguid", "libfguid\libfgu
 		{BD3A95FA-A3DE-4B79-A889-A7E5ECA4B69C} = {BD3A95FA-A3DE-4B79-A889-A7E5ECA4B69C}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "luksde_test_get_version", "luksde_test_get_version\luksde_test_get_version.vcproj", "{56D92A9E-4B16-41B2-A5EE-3572C14CB07F}"
+	ProjectSection(ProjectDependencies) = postProject
+		{A7016870-B059-47B5-BF89-AAE4F5AC3E5C} = {A7016870-B059-47B5-BF89-AAE4F5AC3E5C}
+		{20FFC4C9-F44C-45F6-A827-4819B4DF3C9F} = {20FFC4C9-F44C-45F6-A827-4819B4DF3C9F}
+	EndProjectSection
+EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "luksde_test_open_close", "luksde_test_open_close\luksde_test_open_close.vcproj", "{078665DD-E344-4762-A330-9D2930C35611}"
 	ProjectSection(ProjectDependencies) = postProject
 		{A2B861D5-6751-43A9-B085-8D48F8754AC5} = {A2B861D5-6751-43A9-B085-8D48F8754AC5}
@@ -231,6 +237,10 @@ Global
 		{8C13E498-6369-4792-A0CF-B7134C54561B}.Release|Win32.Build.0 = Release|Win32
 		{8C13E498-6369-4792-A0CF-B7134C54561B}.VSDebug|Win32.ActiveCfg = VSDebug|Win32
 		{8C13E498-6369-4792-A0CF-B7134C54561B}.VSDebug|Win32.Build.0 = VSDebug|Win32
+		{56D92A9E-4B16-41B2-A5EE-3572C14CB07F}.Release|Win32.ActiveCfg = Release|Win32
+		{56D92A9E-4B16-41B2-A5EE-3572C14CB07F}.Release|Win32.Build.0 = Release|Win32
+		{56D92A9E-4B16-41B2-A5EE-3572C14CB07F}.VSDebug|Win32.ActiveCfg = VSDebug|Win32
+		{56D92A9E-4B16-41B2-A5EE-3572C14CB07F}.VSDebug|Win32.Build.0 = VSDebug|Win32
 		{078665DD-E344-4762-A330-9D2930C35611}.Release|Win32.ActiveCfg = Release|Win32
 		{078665DD-E344-4762-A330-9D2930C35611}.Release|Win32.Build.0 = Release|Win32
 		{078665DD-E344-4762-A330-9D2930C35611}.VSDebug|Win32.ActiveCfg = VSDebug|Win32

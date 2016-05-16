@@ -18,6 +18,7 @@ MSVSCPP_FILES = \
 	libhmac/libhmac.vcproj \
 	libluksde/libluksde.vcproj \
 	libuna/libuna.vcproj \
+	luksde_test_get_version/luksde_test_get_version.vcproj \
 	luksde_test_open_close/luksde_test_open_close.vcproj \
 	luksde_test_read/luksde_test_read.vcproj \
 	luksde_test_seek/luksde_test_seek.vcproj \

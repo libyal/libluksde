@@ -1,5 +1,5 @@
 /*
- * The internal unused definition
+ * The unused definition
  *
  * Copyright (C) 2013-2016, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -19,26 +19,32 @@
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#if !defined( _LUKSDE_TEST_INTERNAL_UNUSED_H )
-#define _LUKSDE_TEST_INTERNAL_UNUSED_H
+#if !defined( _LUKSDE_TEST_UNUSED_H )
+#define _LUKSDE_TEST_UNUSED_H
 
 #include <common.h>
 
 #if !defined( LUKSDE_TEST_ATTRIBUTE_UNUSED )
+
 #if defined( __GNUC__ ) && __GNUC__ >= 3
 #define LUKSDE_TEST_ATTRIBUTE_UNUSED	__attribute__ ((__unused__))
+
 #else
 #define LUKSDE_TEST_ATTRIBUTE_UNUSED
-#endif
-#endif
+
+#endif /* defined( __GNUC__ ) && __GNUC__ >= 3 */
+
+#endif /* !defined( LUKSDE_TEST_ATTRIBUTE_UNUSED ) */
 
 #if defined( _MSC_VER )
 #define LUKSDE_TEST_UNREFERENCED_PARAMETER( parameter ) \
 	UNREFERENCED_PARAMETER( parameter );
+
 #else
 #define LUKSDE_TEST_UNREFERENCED_PARAMETER( parameter ) \
 	/* parameter */
-#endif
 
-#endif
+#endif /* defined( _MSC_VER ) */
+
+#endif /* !defined( _LUKSDE_TEST_UNUSED_H ) */
 
