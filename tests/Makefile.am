@@ -40,15 +40,28 @@ EXTRA_DIST = \
 	$(check_SCRIPTS)
 
 check_PROGRAMS = \
+	luksde_test_error \
 	luksde_test_get_version \
 	luksde_test_open_close \
 	luksde_test_read \
 	luksde_test_seek
 
+luksde_test_error_SOURCES = \
+	luksde_test_error.c \
+	luksde_test_libcstring.h \
+	luksde_test_libluksde.h \
+	luksde_test_macros.h \
+	luksde_test_unused.h
+
+luksde_test_error_LDADD = \
+	../libluksde/libluksde.la \
+	@LIBCSTRING_LIBADD@
+
 luksde_test_get_version_SOURCES = \
 	luksde_test_get_version.c \
 	luksde_test_libcstring.h \
 	luksde_test_libluksde.h \
+	luksde_test_macros.h \
 	luksde_test_unused.h
 
 luksde_test_get_version_LDADD = \

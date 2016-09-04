@@ -1,5 +1,5 @@
 /*
- * The internal libcnotify header
+ * Memory allocation functions for testing
  *
  * Copyright (C) 2013-2016, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -19,32 +19,32 @@
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#if !defined( _LUKSDETOOLS_LIBCNOTIFY_H )
-#define _LUKSDETOOLS_LIBCNOTIFY_H
+#if !defined( _LUKSDE_TEST_MEMORY_H )
+#define _LUKSDE_TEST_MEMORY_H
 
 #include <common.h>
 
-/* Define HAVE_LOCAL_LIBCNOTIFY for local use of libcnotify
- */
-#if defined( HAVE_LOCAL_LIBCNOTIFY )
-
-#include <libcnotify_definitions.h>
-#include <libcnotify_print.h>
-#include <libcnotify_stream.h>
-#include <libcnotify_verbose.h>
-
-#else
-
-/* If libtool DLL support is enabled set LIBCNOTIFY_DLL_IMPORT
- * before including libcnotify.h
- */
-#if defined( _WIN32 ) && defined( DLL_IMPORT ) && !defined( HAVE_STATIC_EXECUTABLES )
-#define LIBCNOTIFY_DLL_IMPORT
+#if defined( __cplusplus )
+extern "C" {
 #endif
 
-#include <libcnotify.h>
+#if defined( HAVE_GNU_DL_DLSYM ) && defined( __GNUC__ ) && !defined( __clang__ )
 
-#endif /* defined( HAVE_LOCAL_LIBCNOTIFY ) */
+#define HAVE_LUKSDE_TEST_MEMORY		1
 
-#endif /* !defined( _LUKSDETOOLS_LIBCNOTIFY_H ) */
+extern int luksde_test_malloc_attempts_before_fail;
+
+extern int luksde_test_memcpy_attempts_before_fail;
+
+extern int luksde_test_memset_attempts_before_fail;
+
+extern int luksde_test_realloc_attempts_before_fail;
+
+#endif /* defined( HAVE_GNU_DL_DLSYM ) && defined( __GNUC__ ) && !defined( __clang__ ) */
+
+#if defined( __cplusplus )
+}
+#endif
+
+#endif /* !defined( _LUKSDE_TEST_MEMORY_H ) */
 

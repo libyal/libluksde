@@ -123,6 +123,7 @@ stamp-h[1-9]
 /luksdetools/luksdeinfo
 /luksdetools/luksdemount
 /tests/input
+/tests/luksde_test_error
 /tests/luksde_test_get_version
 /tests/luksde_test_open_close
 /tests/luksde_test_read

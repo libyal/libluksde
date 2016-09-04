@@ -20,7 +20,6 @@
  */
 
 #include <common.h>
-#include <file_stream.h>
 
 #if defined( HAVE_STDLIB_H ) || defined( WINAPI )
 #include <stdlib.h>
@@ -28,6 +27,7 @@
 
 #include "luksde_test_libcstring.h"
 #include "luksde_test_libluksde.h"
+#include "luksde_test_macros.h"
 #include "luksde_test_unused.h"
 
 /* Tests retrieving the library version
@@ -46,11 +46,15 @@ int luksde_test_get_version(
 	          LIBLUKSDE_VERSION_STRING,
 	          9 );
 
-	if( result != 0 )
-	{
-		return( 0 );
-	}
+	LUKSDE_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 0 );
+
 	return( 1 );
+
+on_error:
+	return( 0 );
 }
 
 /* The main program
@@ -68,10 +72,13 @@ int main(
 	LUKSDE_TEST_UNREFERENCED_PARAMETER( argc )
 	LUKSDE_TEST_UNREFERENCED_PARAMETER( argv )
 
-	if( luksde_test_get_version() != 1 )
-	{
-		return( EXIT_FAILURE );
-	}
+	LUKSDE_TEST_RUN(
+	 "libluksde_get_version",
+	 luksde_test_get_version() )
+
 	return( EXIT_SUCCESS );
+
+on_error:
+	return( EXIT_FAILURE );
 }
 

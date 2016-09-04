@@ -18,6 +18,7 @@ MSVSCPP_FILES = \
 	libhmac/libhmac.vcproj \
 	libluksde/libluksde.vcproj \
 	libuna/libuna.vcproj \
+	luksde_test_error/luksde_test_error.vcproj \
 	luksde_test_get_version/luksde_test_get_version.vcproj \
 	luksde_test_open_close/luksde_test_open_close.vcproj \
 	luksde_test_read/luksde_test_read.vcproj \
@@ -27,17 +28,8 @@ MSVSCPP_FILES = \
 	pyluksde/pyluksde.vcproj \
 	libluksde.sln
 
-SCRIPT_FILES = \
-	scripts/vs2008_x64.sh \
-	scripts/vs2008_x64_sln.sed \
-	scripts/vs2008_x64_vcproj.sed \
-	scripts/vs2010_x64.sh \
-	scripts/vs2010_x64_sln.sed \
-	scripts/vs2010_x64_vcxproj.sed
-
 EXTRA_DIST = \
-	$(MSVSCPP_FILES) \
-	$(SCRIPT_FILES)
+	$(MSVSCPP_FILES)
 
 MAINTAINERCLEANFILES = \
 	Makefile.in
