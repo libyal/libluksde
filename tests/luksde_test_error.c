@@ -123,23 +123,23 @@ int main(
 
 	LUKSDE_TEST_RUN(
 	 "libluksde_error_free",
-	 luksde_test_error_free() )
+	 luksde_test_error_free );
 
 	LUKSDE_TEST_RUN(
 	 "libluksde_error_fprint",
-	 luksde_test_error_fprint() )
+	 luksde_test_error_fprint );
 
 	LUKSDE_TEST_RUN(
 	 "libluksde_error_sprint",
-	 luksde_test_error_sprint() )
+	 luksde_test_error_sprint );
 
 	LUKSDE_TEST_RUN(
 	 "libluksde_error_backtrace_fprint",
-	 luksde_test_error_backtrace_fprint() )
+	 luksde_test_error_backtrace_fprint );
 
 	LUKSDE_TEST_RUN(
 	 "libluksde_error_backtrace_sprint",
-	 luksde_test_error_backtrace_sprint() )
+	 luksde_test_error_backtrace_sprint );
 
 	return( EXIT_SUCCESS );
 

@@ -74,7 +74,7 @@ int main(
 
 	LUKSDE_TEST_RUN(
 	 "libluksde_get_version",
-	 luksde_test_get_version() )
+	 luksde_test_get_version );
 
 	return( EXIT_SUCCESS );
 
