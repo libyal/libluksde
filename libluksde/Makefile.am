@@ -1,7 +1,6 @@
 AM_CPPFLAGS = \
 	-I$(top_srcdir)/include \
 	-I$(top_srcdir)/common \
-	@LIBCSTRING_CPPFLAGS@ \
 	@LIBCERROR_CPPFLAGS@ \
 	@LIBCTHREADS_CPPFLAGS@ \
 	@LIBCDATA_CPPFLAGS@ \
@@ -38,7 +37,6 @@ libluksde_la_SOURCES = \
 	libluksde_libcerror.h \
 	libluksde_libclocale.h \
 	libluksde_libcnotify.h \
-	libluksde_libcstring.h \
 	libluksde_libcthreads.h \
 	libluksde_libfcache.h \
 	libluksde_libfdata.h \
@@ -55,7 +53,6 @@ libluksde_la_SOURCES = \
 	luksde_volume.h
 
 libluksde_la_LIBADD = \
-	@LIBCSTRING_LIBADD@ \
 	@LIBCERROR_LIBADD@ \
 	@LIBCTHREADS_LIBADD@ \
 	@LIBCDATA_LIBADD@ \

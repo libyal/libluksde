@@ -1,7 +1,6 @@
 AM_CPPFLAGS = \
 	-I$(top_srcdir)/include \
 	-I$(top_srcdir)/common \
-	@LIBCSTRING_CPPFLAGS@ \
 	@LIBCERROR_CPPFLAGS@ \
 	@LIBCDATA_CPPFLAGS@ \
 	@LIBCLOCALE_CPPFLAGS@ \
@@ -31,7 +30,6 @@ luksdeinfo_SOURCES = \
 	luksdetools_libclocale.h \
 	luksdetools_libcnotify.h \
 	luksdetools_libcsplit.h \
-	luksdetools_libcstring.h \
 	luksdetools_libcsystem.h \
 	luksdetools_libuna.h \
 	info_handle.c info_handle.h
@@ -48,7 +46,6 @@ luksdeinfo_LDADD = \
 	@LIBCNOTIFY_LIBADD@ \
 	@LIBCLOCALE_LIBADD@ \
 	@LIBCERROR_LIBADD@ \
-	@LIBCSTRING_LIBADD@ \
 	@LIBINTL@
 
 luksdemount_SOURCES = \
@@ -60,7 +57,6 @@ luksdemount_SOURCES = \
 	luksdetools_libclocale.h \
 	luksdetools_libcnotify.h \
 	luksdetools_libcsplit.h \
-	luksdetools_libcstring.h \
 	luksdetools_libcsystem.h \
 	mount_handle.c mount_handle.h
 
@@ -77,7 +73,6 @@ luksdemount_LDADD = \
 	@LIBCNOTIFY_LIBADD@ \
 	@LIBCLOCALE_LIBADD@ \
 	@LIBCERROR_LIBADD@ \
-	@LIBCSTRING_LIBADD@ \
 	@LIBINTL@
 
 MAINTAINERCLEANFILES = \

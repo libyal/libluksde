@@ -30,7 +30,6 @@
 #include "luksdetools_libcerror.h"
 #include "luksdetools_libcnotify.h"
 #include "luksdetools_libclocale.h"
-#include "luksdetools_libcstring.h"
 #include "luksdetools_libcsystem.h"
 #include "luksdetools_libuna.h"
 

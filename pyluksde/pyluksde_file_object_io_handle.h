@@ -27,7 +27,6 @@
 
 #include "pyluksde_libbfio.h"
 #include "pyluksde_libcerror.h"
-#include "pyluksde_libcstring.h"
 #include "pyluksde_python.h"
 
 #if defined( __cplusplus )

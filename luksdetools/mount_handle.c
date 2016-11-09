@@ -21,13 +21,15 @@
 
 #include <common.h>
 #include <memory.h>
+#include <narrow_string.h>
+#include <system_string.h>
 #include <types.h>
+#include <wide_string.h>
 
 #include "luksdetools_libluksde.h"
 #include "luksdetools_libbfio.h"
 #include "luksdetools_libcerror.h"
 #include "luksdetools_libcsplit.h"
-#include "luksdetools_libcstring.h"
 #include "luksdetools_libcsystem.h"
 #include "luksdetools_libuna.h"
 #include "mount_handle.h"
@@ -252,12 +254,12 @@ int mount_handle_signal_abort(
  */
 int mount_handle_set_keys(
      mount_handle_t *mount_handle,
-     const libcstring_system_character_t *string,
+     const system_character_t *string,
      libcerror_error_t **error )
 {
 	uint8_t key_data[ 64 ];
 
-	libcstring_system_character_t *string_segment    = NULL;
+	system_character_t *string_segment               = NULL;
 	static char *function                            = "mount_handle_set_keys";
 	size_t full_volume_encryption_key_size           = 0;
 	size_t string_length                             = 0;
@@ -265,7 +267,7 @@ int mount_handle_set_keys(
 	uint32_t base16_variant                          = 0;
 	int number_of_segments                           = 0;
 
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 	libcsplit_wide_split_string_t *string_elements   = NULL;
 #else
 	libcsplit_narrow_split_string_t *string_elements = NULL;
@@ -282,10 +284,10 @@ int mount_handle_set_keys(
 
 		return( -1 );
 	}
-	string_length = libcstring_system_string_length(
+	string_length = system_string_length(
 	                 string );
 
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 	if( libcsplit_wide_string_split(
 	     string,
 	     string_length + 1,
@@ -310,7 +312,7 @@ int mount_handle_set_keys(
 
 		goto on_error;
 	}
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 	if( libcsplit_wide_split_string_get_number_of_segments(
 	     string_elements,
 	     &number_of_segments,
@@ -359,7 +361,7 @@ int mount_handle_set_keys(
 	}
 	base16_variant = LIBUNA_BASE16_VARIANT_RFC4648;
 
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 	if( _BYTE_STREAM_HOST_IS_ENDIAN_BIG )
 	{
 		base16_variant |= LIBUNA_BASE16_VARIANT_ENCODING_UTF16_BIG_ENDIAN;
@@ -369,7 +371,7 @@ int mount_handle_set_keys(
 		base16_variant |= LIBUNA_BASE16_VARIANT_ENCODING_UTF16_LITTLE_ENDIAN;
 	}
 #endif
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 	if( libcsplit_wide_split_string_get_segment_by_index(
 	     string_elements,
 	     0,
@@ -512,7 +514,7 @@ int mount_handle_set_keys(
 
 		goto on_error;
 	}
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 	if( libcsplit_wide_split_string_free(
 	     &string_elements,
 	     error ) != 1 )
@@ -536,7 +538,7 @@ int mount_handle_set_keys(
 on_error:
 	if( string_elements != NULL )
 	{
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 		libcsplit_wide_split_string_free(
 		 &string_elements,
 		 NULL );
@@ -559,7 +561,7 @@ on_error:
  */
 int mount_handle_set_password(
      mount_handle_t *mount_handle,
-     const libcstring_system_character_t *string,
+     const system_character_t *string,
      libcerror_error_t **error )
 {
 	static char *function = "mount_handle_set_password";
@@ -587,10 +589,10 @@ int mount_handle_set_password(
 
 		return( -1 );
 	}
-	string_length = libcstring_system_string_length(
+	string_length = system_string_length(
 	                 string );
 
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 	if( libluksde_volume_set_utf16_password(
 	     mount_handle->input_volume,
 	     (uint16_t *) string,
@@ -621,7 +623,7 @@ int mount_handle_set_password(
  */
 int mount_handle_set_volume_offset(
      mount_handle_t *mount_handle,
-     const libcstring_system_character_t *string,
+     const system_character_t *string,
      libcerror_error_t **error )
 {
 	static char *function = "mount_handle_set_volume_offset";
@@ -639,7 +641,7 @@ int mount_handle_set_volume_offset(
 
 		return( -1 );
 	}
-	string_length = libcstring_system_string_length(
+	string_length = system_string_length(
 	                 string );
 
 	if( libcsystem_string_decimal_copy_to_64_bit(
@@ -667,7 +669,7 @@ int mount_handle_set_volume_offset(
  */
 int mount_handle_open_input(
      mount_handle_t *mount_handle,
-     const libcstring_system_character_t *filename,
+     const system_character_t *filename,
      libcerror_error_t **error )
 {
 	static char *function  = "mount_handle_open_input";
@@ -685,10 +687,10 @@ int mount_handle_open_input(
 
 		return( -1 );
 	}
-	filename_length = libcstring_system_string_length(
+	filename_length = system_string_length(
 	                   filename );
 
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 	if( libbfio_file_range_set_name_wide(
 	     mount_handle->input_file_io_handle,
 	     filename,

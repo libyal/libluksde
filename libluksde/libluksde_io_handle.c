@@ -32,7 +32,6 @@
 #include "libluksde_libbfio.h"
 #include "libluksde_libcerror.h"
 #include "libluksde_libcnotify.h"
-#include "libluksde_libcstring.h"
 #include "libluksde_libfcache.h"
 #include "libluksde_libfdata.h"
 #include "libluksde_libuna.h"

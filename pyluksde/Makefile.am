@@ -2,7 +2,6 @@ if HAVE_PYTHON
 AM_CFLAGS = \
 	-I$(top_srcdir)/include \
 	-I$(top_srcdir)/common \
-	@LIBCSTRING_CPPFLAGS@ \
 	@LIBCERROR_CPPFLAGS@ \
 	@LIBCDATA_CPPFLAGS@ \
 	@LIBCLOCALE_CPPFLAGS@ \
@@ -27,13 +26,11 @@ pyluksde_la_SOURCES = \
 	pyluksde_libbfio.h \
 	pyluksde_libcerror.h \
 	pyluksde_libclocale.h \
-	pyluksde_libcstring.h \
 	pyluksde_python.h \
 	pyluksde_unused.h \
 	pyluksde_volume.c pyluksde_volume.h
 
 pyluksde_la_LIBADD = \
-	@LIBCSTRING_LIBADD@ \
 	@LIBCERROR_LIBADD@ \
 	../libluksde/libluksde.la \
 	@LIBCDATA_LIBADD@ \

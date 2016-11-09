@@ -24,6 +24,10 @@
 
 #include <common.h>
 
+/* Define HAVE_LOCAL_LIBLUKSDE for local use of libluksde
+ */
+#if !defined( HAVE_LOCAL_LIBLUKSDE )
+
 /* If libtool DLL support is enabled set LIBLUKSDE_DLL_EXPORT
  * before including libluksde/extern.h
  */
@@ -33,5 +37,10 @@
 
 #include <libluksde/extern.h>
 
+#else
+#define LIBLUKSDE_EXTERN	extern
+
 #endif
+
+#endif /* !defined( _LIBLUKSDE_INTERNAL_EXTERN_H ) */
 

@@ -28,7 +28,6 @@
 #include "pyluksde_integer.h"
 #include "pyluksde_libbfio.h"
 #include "pyluksde_libcerror.h"
-#include "pyluksde_libcstring.h"
 #include "pyluksde_python.h"
 
 /* Creates a file object IO handle

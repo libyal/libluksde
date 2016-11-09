@@ -29,9 +29,9 @@
 
 /* Define HAVE_LOCAL_LIBLUKSDE for local use of libluksde
  */
-#if !defined( HAVE_LOCAL_LIBLUKSDE ) && defined( HAVE_DLLMAIN )
+#if !defined( HAVE_LOCAL_LIBLUKSDE )
 
-#if defined( WINAPI )
+#if defined( WINAPI ) && defined( HAVE_DLLMAIN )
 
 #if defined( _MANAGED )
 #pragma managed( push, off )
@@ -51,7 +51,7 @@ BOOL WINAPI DllMain(
 		case DLL_PROCESS_ATTACH:
 			DisableThreadLibraryCalls(
 			 hinstDLL );
-		break;
+			break;
 
 		case DLL_THREAD_ATTACH:
 			break;
@@ -77,3 +77,4 @@ int libluksde_is_dll(
 #endif /* defined( WINAPI ) && defined( HAVE_DLLMAIN ) */
 
 #endif /* !defined( HAVE_LOCAL_LIBLUKSDE ) */
+

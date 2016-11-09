@@ -19,8 +19,8 @@
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#if !defined( _LIBEVT_TYPES_H )
-#define _LIBEVT_TYPES_H
+#if !defined( _LIBLUKSDE_TYPES_H )
+#define _LIBLUKSDE_TYPES_H
 
 #include <libluksde/features.h>
 
@@ -187,14 +187,14 @@ typedef int64_t off64_t;
  */
 #if !defined( __USE_UNIX98 )
 #define __USE_UNIX98
-#define LIBCSTRING_DEFINITION_UNIX98
+#define LIBLUKSDE_DEFINITION_UNIX98
 #endif
 
 #include <wchar.h>
 
-#if defined( LIBCSTRING_DEFINITION_UNIX98 )
+#if defined( LIBLUKSDE_DEFINITION_UNIX98 )
 #undef __USE_UNIX98
-#undef LIBCSTRING_DEFINITION_UNIX98
+#undef LIBLUKSDE_DEFINITION_UNIX98
 #endif
 
 #endif
@@ -207,5 +207,5 @@ typedef intptr_t libluksde_volume_t;
 }
 #endif
 
-#endif
+#endif /* !defined( _LIBLUKSDE_TYPES_H ) */
 

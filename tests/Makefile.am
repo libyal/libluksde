@@ -1,7 +1,6 @@
 AM_CPPFLAGS = \
 	-I$(top_srcdir)/include \
 	-I$(top_srcdir)/common \
-	@LIBCSTRING_CPPFLAGS@ \
 	@LIBCERROR_CPPFLAGS@ \
 	@LIBCTHREADS_CPPFLAGS@ \
 	@LIBCDATA_CPPFLAGS@ \
@@ -41,37 +40,23 @@ EXTRA_DIST = \
 
 check_PROGRAMS = \
 	luksde_test_error \
-	luksde_test_get_version \
 	luksde_test_open_close \
 	luksde_test_read \
-	luksde_test_seek
+	luksde_test_seek \
+	luksde_test_support
 
 luksde_test_error_SOURCES = \
 	luksde_test_error.c \
-	luksde_test_libcstring.h \
 	luksde_test_libluksde.h \
 	luksde_test_macros.h \
 	luksde_test_unused.h
 
 luksde_test_error_LDADD = \
-	../libluksde/libluksde.la \
-	@LIBCSTRING_LIBADD@
-
-luksde_test_get_version_SOURCES = \
-	luksde_test_get_version.c \
-	luksde_test_libcstring.h \
-	luksde_test_libluksde.h \
-	luksde_test_macros.h \
-	luksde_test_unused.h
-
-luksde_test_get_version_LDADD = \
-	../libluksde/libluksde.la \
-	@LIBCSTRING_LIBADD@
+	../libluksde/libluksde.la
 
 luksde_test_open_close_SOURCES = \
 	luksde_test_libluksde.h \
 	luksde_test_libcerror.h \
-	luksde_test_libcstring.h \
 	luksde_test_libcsystem.h \
 	luksde_test_libcthreads.h \
 	luksde_test_open_close.c \
@@ -81,13 +66,11 @@ luksde_test_open_close_LDADD = \
 	@LIBCSYSTEM_LIBADD@ \
 	../libluksde/libluksde.la \
 	@LIBCTHREADS_LIBADD@ \
-	@LIBCERROR_LIBADD@ \
-	@LIBCSTRING_LIBADD@ \
+	@LIBCERROR_LIBADD@
 	@PTHREAD_LIBADD@
 
 luksde_test_read_SOURCES = \
 	luksde_test_libcerror.h \
-	luksde_test_libcstring.h \
 	luksde_test_libcthreads.h \
 	luksde_test_libcsystem.h \
 	luksde_test_libluksde.h \
@@ -98,13 +81,11 @@ luksde_test_read_LDADD = \
 	@LIBCSYSTEM_LIBADD@ \
 	../libluksde/libluksde.la \
 	@LIBCTHREADS_LIBADD@ \
-	@LIBCERROR_LIBADD@ \
-	@LIBCSTRING_LIBADD@ \
+	@LIBCERROR_LIBADD@
 	@PTHREAD_LIBADD@
 
 luksde_test_seek_SOURCES = \
 	luksde_test_libcerror.h \
-	luksde_test_libcstring.h \
 	luksde_test_libcsystem.h \
 	luksde_test_libcthreads.h \
 	luksde_test_libluksde.h \
@@ -115,9 +96,19 @@ luksde_test_seek_LDADD = \
 	@LIBCSYSTEM_LIBADD@ \
 	../libluksde/libluksde.la \
 	@LIBCTHREADS_LIBADD@ \
-	@LIBCERROR_LIBADD@ \
-	@LIBCSTRING_LIBADD@ \
+	@LIBCERROR_LIBADD@
 	@PTHREAD_LIBADD@
+
+luksde_test_support_SOURCES = \
+	luksde_test_libcerror.h \
+	luksde_test_libluksde.h \
+	luksde_test_macros.h \
+	luksde_test_support.c \
+	luksde_test_unused.h
+
+luksde_test_support_LDADD = \
+	../libluksde/libluksde.la \
+	@LIBCERROR_LIBADD@
 
 MAINTAINERCLEANFILES = \
 	Makefile.in

@@ -32,14 +32,14 @@ typedef intptr_t libluksde_error_t;
  */
 enum LIBLUKSDE_ERROR_DOMAINS
 {
-	LIBLUKSDE_ERROR_DOMAIN_ARGUMENTS			= (int) 'a',
-	LIBLUKSDE_ERROR_DOMAIN_CONVERSION			= (int) 'c',
-	LIBLUKSDE_ERROR_DOMAIN_COMPRESSION			= (int) 'C',
-	LIBLUKSDE_ERROR_DOMAIN_IO				= (int) 'I',
+	LIBLUKSDE_ERROR_DOMAIN_ARGUMENTS		= (int) 'a',
+	LIBLUKSDE_ERROR_DOMAIN_CONVERSION		= (int) 'c',
+	LIBLUKSDE_ERROR_DOMAIN_COMPRESSION		= (int) 'C',
+	LIBLUKSDE_ERROR_DOMAIN_IO			= (int) 'I',
 	LIBLUKSDE_ERROR_DOMAIN_INPUT			= (int) 'i',
 	LIBLUKSDE_ERROR_DOMAIN_MEMORY			= (int) 'm',
 	LIBLUKSDE_ERROR_DOMAIN_OUTPUT			= (int) 'o',
-	LIBLUKSDE_ERROR_DOMAIN_RUNTIME			= (int) 'r',
+	LIBLUKSDE_ERROR_DOMAIN_RUNTIME			= (int) 'r'
 };
 
 /* The argument error codes
@@ -47,7 +47,7 @@ enum LIBLUKSDE_ERROR_DOMAINS
  */
 enum LIBLUKSDE_ARGUMENT_ERROR
 {
-	LIBLUKSDE_ARGUMENT_ERROR_GENERIC			= 0,
+	LIBLUKSDE_ARGUMENT_ERROR_GENERIC		= 0,
 
 	/* The argument contains an invalid value
 	 */
@@ -68,11 +68,11 @@ enum LIBLUKSDE_ARGUMENT_ERROR
 
 	/* The argument contains a value that is too small
 	 */
-	LIBLUKSDE_ARGUMENT_ERROR_VALUE_TOO_SMALL		= 5,
+	LIBLUKSDE_ARGUMENT_ERROR_VALUE_TOO_SMALL	= 5,
 
 	/* The argument contains a value that is too large
 	 */
-	LIBLUKSDE_ARGUMENT_ERROR_VALUE_TOO_LARGE		= 6,
+	LIBLUKSDE_ARGUMENT_ERROR_VALUE_TOO_LARGE	= 6,
 
 	/* The argument contains a value that is out of bounds
 	 */
@@ -80,11 +80,11 @@ enum LIBLUKSDE_ARGUMENT_ERROR
 
 	/* The argument contains a value that is not supported
 	 */
-	LIBLUKSDE_ARGUMENT_ERROR_UNSUPPORTED_VALUE		= 8,
+	LIBLUKSDE_ARGUMENT_ERROR_UNSUPPORTED_VALUE	= 8,
 
 	/* The argument contains a value that conficts with another argument
 	 */
-	LIBLUKSDE_ARGUMENT_ERROR_CONFLICTING_VALUE		= 9
+	LIBLUKSDE_ARGUMENT_ERROR_CONFLICTING_VALUE	= 9
 };
 
 /* The conversion error codes
@@ -92,7 +92,7 @@ enum LIBLUKSDE_ARGUMENT_ERROR
  */
 enum LIBLUKSDE_CONVERSION_ERROR
 {
-	LIBLUKSDE_CONVERSION_ERROR_GENERIC			= 0,
+	LIBLUKSDE_CONVERSION_ERROR_GENERIC		= 0,
 
 	/* The conversion failed on the input
 	 */
@@ -100,7 +100,7 @@ enum LIBLUKSDE_CONVERSION_ERROR
 
 	/* The conversion failed on the output
 	 */
-	LIBLUKSDE_CONVERSION_ERROR_OUTPUT_FAILED		= 2
+	LIBLUKSDE_CONVERSION_ERROR_OUTPUT_FAILED	= 2
 };
 
 /* The compression error codes
@@ -124,7 +124,7 @@ enum LIBLUKSDE_COMPRESSION_ERROR
  */
 enum LIBLUKSDE_IO_ERROR
 {
-	LIBLUKSDE_IO_ERROR_GENERIC				= 0,
+	LIBLUKSDE_IO_ERROR_GENERIC			= 0,
 
 	/* The open failed
 	 */
@@ -148,7 +148,7 @@ enum LIBLUKSDE_IO_ERROR
 
 	/* Access denied
 	 */
-	LIBLUKSDE_IO_ERROR_ACCESS_DENIED			= 6,
+	LIBLUKSDE_IO_ERROR_ACCESS_DENIED		= 6,
 
 	/* The resource is invalid i.e. a missing file
 	 */
@@ -160,7 +160,7 @@ enum LIBLUKSDE_IO_ERROR
 
 	/* The unlink failed
 	 */
-	LIBLUKSDE_IO_ERROR_UNLINK_FAILED			= 9
+	LIBLUKSDE_IO_ERROR_UNLINK_FAILED		= 9
 };
 
 /* The input error codes
@@ -172,11 +172,11 @@ enum LIBLUKSDE_INPUT_ERROR
 
 	/* The input contains invalid data
 	 */
-	LIBLUKSDE_INPUT_ERROR_INVALID_DATA			= 1,
+	LIBLUKSDE_INPUT_ERROR_INVALID_DATA		= 1,
 
 	/* The input contains an unsupported signature
 	 */
-	LIBLUKSDE_INPUT_ERROR_SIGNATURE_MISMATCH		= 2,
+	LIBLUKSDE_INPUT_ERROR_SIGNATURE_MISMATCH	= 2,
 
 	/* A checksum in the input did not match
 	 */
@@ -201,11 +201,22 @@ enum LIBLUKSDE_MEMORY_ERROR
 
 	/* The memory failed to be copied
 	 */
-	LIBLUKSDE_MEMORY_ERROR_COPY_FAILED			= 2,
+	LIBLUKSDE_MEMORY_ERROR_COPY_FAILED		= 2,
 
 	/* The memory failed to be set
 	 */
-	LIBLUKSDE_MEMORY_ERROR_SET_FAILED			= 3
+	LIBLUKSDE_MEMORY_ERROR_SET_FAILED		= 3
+};
+
+/* The output error codes
+ */
+enum LIBLUKSDE_OUTPUT_ERROR
+{
+	LIBLUKSDE_OUTPUT_ERROR_GENERIC			= 0,
+
+	/* There is insuficient space to write the output
+	 */
+	LIBLUKSDE_OUTPUT_ERROR_INSUFFICIENT_SPACE	= 1
 };
 
 /* The runtime error codes
@@ -221,11 +232,11 @@ enum LIBLUKSDE_RUNTIME_ERROR
 
 	/* The value was already set
 	 */
-	LIBLUKSDE_RUNTIME_ERROR_VALUE_ALREADY_SET		= 2,
+	LIBLUKSDE_RUNTIME_ERROR_VALUE_ALREADY_SET	= 2,
 
 	/* The creation and/or initialization of an internal structure failed
 	 */
-	LIBLUKSDE_RUNTIME_ERROR_INITIALIZE_FAILED		= 3,
+	LIBLUKSDE_RUNTIME_ERROR_INITIALIZE_FAILED	= 3,
 
 	/* The resize of an internal structure failed
 	 */
@@ -237,11 +248,11 @@ enum LIBLUKSDE_RUNTIME_ERROR
 
 	/* The value could not be determined
 	 */
-	LIBLUKSDE_RUNTIME_ERROR_GET_FAILED			= 6,
+	LIBLUKSDE_RUNTIME_ERROR_GET_FAILED		= 6,
 
 	/* The value could not be set
 	 */
-	LIBLUKSDE_RUNTIME_ERROR_SET_FAILED			= 7,
+	LIBLUKSDE_RUNTIME_ERROR_SET_FAILED		= 7,
 
 	/* The value could not be appended/prepended
 	 */
@@ -269,23 +280,12 @@ enum LIBLUKSDE_RUNTIME_ERROR
 
 	/* The value is unsupported
 	 */
-	LIBLUKSDE_RUNTIME_ERROR_UNSUPPORTED_VALUE		= 14,
+	LIBLUKSDE_RUNTIME_ERROR_UNSUPPORTED_VALUE	= 14,
 
 	/* An abort was requested
 	 */
 	LIBLUKSDE_RUNTIME_ERROR_ABORT_REQUESTED		= 15
 };
 
-/* The output error codes
- */
-enum LIBLUKSDE_OUTPUT_ERROR
-{
-	LIBLUKSDE_OUTPUT_ERROR_GENERIC			= 0,
-
-	/* There is insuficient space to write the output
-	 */
-	LIBLUKSDE_OUTPUT_ERROR_INSUFFICIENT_SPACE		= 1
-};
-
-#endif
+#endif /* !defined( _LIBLUKSDE_ERROR_H ) */
 

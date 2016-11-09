@@ -21,7 +21,10 @@
 
 #include <common.h>
 #include <memory.h>
+#include <narrow_string.h>
+#include <system_string.h>
 #include <types.h>
+#include <wide_string.h>
 
 #include <stdio.h>
 
@@ -67,7 +70,6 @@
 #include "luksdetools_libcerror.h"
 #include "luksdetools_libclocale.h"
 #include "luksdetools_libcnotify.h"
-#include "luksdetools_libcstring.h"
 #include "luksdetools_libcsystem.h"
 #include "mount_handle.h"
 
@@ -188,11 +190,11 @@ int luksdemount_fuse_open(
 
 		goto on_error;
 	}
-	path_length = libcstring_narrow_string_length(
+	path_length = narrow_string_length(
 	               path );
 
 	if( ( path_length != luksdemount_fuse_path_length )
-	 || ( libcstring_narrow_string_compare(
+	 || ( narrow_string_compare(
 	       path,
 	       luksdemount_fuse_path,
 	       luksdemount_fuse_path_length ) != 0 ) )
@@ -289,11 +291,11 @@ int luksdemount_fuse_read(
 
 		goto on_error;
 	}
-	path_length = libcstring_narrow_string_length(
+	path_length = narrow_string_length(
 	               path );
 
 	if( ( path_length != luksdemount_fuse_path_length )
-	 || ( libcstring_narrow_string_compare(
+	 || ( narrow_string_compare(
 	       path,
 	       luksdemount_fuse_path,
 	       luksdemount_fuse_path_length ) != 0 ) )
@@ -389,7 +391,7 @@ int luksdemount_fuse_readdir(
 
 		goto on_error;
 	}
-	path_length = libcstring_narrow_string_length(
+	path_length = narrow_string_length(
 	               path );
 
 	if( ( path_length != 1 )
@@ -529,7 +531,7 @@ int luksdemount_fuse_getattr(
 
 		goto on_error;
 	}
-	path_length = libcstring_narrow_string_length(
+	path_length = narrow_string_length(
 	               path );
 
 	if( path_length == 1 )
@@ -544,7 +546,7 @@ int luksdemount_fuse_getattr(
 	}
 	else if( path_length == luksdemount_fuse_path_length )
 	{
-		if( libcstring_narrow_string_compare(
+		if( narrow_string_compare(
 		     path,
 		     luksdemount_fuse_path,
 		     luksdemount_fuse_path_length ) == 0 )
@@ -748,7 +750,7 @@ int __stdcall luksdemount_dokan_CreateFile(
 
 		goto on_error;
 	}
-	path_length = libcstring_wide_string_length(
+	path_length = wide_string_length(
 	               path );
 
 	if( path_length == 1 )
@@ -771,7 +773,7 @@ int __stdcall luksdemount_dokan_CreateFile(
 	else
 	{
 		if( ( path_length != luksdemount_dokan_path_length )
-		 || ( libcstring_wide_string_compare(
+		 || ( wide_string_compare(
 		       path,
 		       luksdemount_dokan_path,
 		       luksdemount_dokan_path_length ) != 0 ) )
@@ -829,7 +831,7 @@ int __stdcall luksdemount_dokan_OpenDirectory(
 
 		goto on_error;
 	}
-	path_length = libcstring_wide_string_length(
+	path_length = wide_string_length(
 	               path );
 
 	if( ( path_length != 1 )
@@ -957,11 +959,11 @@ int __stdcall luksdemount_dokan_ReadFile(
 
 		goto on_error;
 	}
-	path_length = libcstring_wide_string_length(
+	path_length = wide_string_length(
 	               path );
 
 	if( ( path_length != luksdemount_dokan_path_length )
-	 || ( libcstring_wide_string_compare(
+	 || ( wide_string_compare(
 	       path,
 	       luksdemount_dokan_path,
 	       luksdemount_dokan_path_length ) != 0 ) )
@@ -1073,7 +1075,7 @@ int __stdcall luksdemount_dokan_FindFiles(
 
 		goto on_error;
 	}
-	path_length = libcstring_wide_string_length(
+	path_length = wide_string_length(
 	               path );
 
 	if( ( path_length != 1 )
@@ -1107,7 +1109,7 @@ int __stdcall luksdemount_dokan_FindFiles(
 
 		goto on_error;
 	}
-	if( libcstring_wide_string_copy(
+	if( wide_string_copy(
 	     find_data.cFileName,
 	     L".",
 	     1 ) == NULL )
@@ -1123,7 +1125,7 @@ int __stdcall luksdemount_dokan_FindFiles(
 
 		goto on_error;
 	}
-	if( libcstring_wide_string_copy(
+	if( wide_string_copy(
 	     find_data.cAlternateFileName,
 	     L".",
 	     1 ) == NULL )
@@ -1177,7 +1179,7 @@ int __stdcall luksdemount_dokan_FindFiles(
 
 		goto on_error;
 	}
-	if( libcstring_wide_string_copy(
+	if( wide_string_copy(
 	     find_data.cFileName,
 	     L"..",
 	     2 ) == NULL )
@@ -1193,7 +1195,7 @@ int __stdcall luksdemount_dokan_FindFiles(
 
 		goto on_error;
 	}
-	if( libcstring_wide_string_copy(
+	if( wide_string_copy(
 	     find_data.cAlternateFileName,
 	     L"..",
 	     2 ) == NULL )
@@ -1263,7 +1265,7 @@ int __stdcall luksdemount_dokan_FindFiles(
 
 		goto on_error;
 	}
-	if( libcstring_wide_string_copy(
+	if( wide_string_copy(
 	     find_data.cFileName,
 	     &( luksdemount_dokan_path[ 1 ] ),
 	     luksdemount_dokan_path_length - 1 ) == NULL )
@@ -1279,7 +1281,7 @@ int __stdcall luksdemount_dokan_FindFiles(
 
 		goto on_error;
 	}
-	if( libcstring_wide_string_copy(
+	if( wide_string_copy(
 	     find_data.cAlternateFileName,
 	     &( luksdemount_dokan_path[ 1 ] ),
 	     luksdemount_dokan_path_length - 1 ) == NULL )
@@ -1369,7 +1371,7 @@ int __stdcall luksdemount_dokan_GetFileInformation(
 
 		goto on_error;
 	}
-	path_length = libcstring_wide_string_length(
+	path_length = wide_string_length(
 	               path );
 
 	if( path_length == 1 )
@@ -1398,7 +1400,7 @@ int __stdcall luksdemount_dokan_GetFileInformation(
 	else
 	{
 		if( ( path_length != luksdemount_dokan_path_length )
-		 || ( libcstring_wide_string_compare(
+		 || ( wide_string_compare(
 		       path,
 		       luksdemount_dokan_path,
 		       luksdemount_dokan_path_length ) != 0 ) )
@@ -1563,30 +1565,30 @@ int __stdcall luksdemount_dokan_Unmount(
 
 /* The main program
  */
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 int wmain( int argc, wchar_t * const argv[] )
 #else
 int main( int argc, char * const argv[] )
 #endif
 {
-	libluksde_error_t *error                               = NULL;
-	libcstring_system_character_t *mount_point             = NULL;
-	libcstring_system_character_t *option_extended_options = NULL;
-	libcstring_system_character_t *option_keys             = NULL;
-	libcstring_system_character_t *option_password         = NULL;
-	libcstring_system_character_t *option_volume_offset    = NULL;
-	libcstring_system_character_t *source                  = NULL;
-	char *program                                          = "luksdemount";
-	libcstring_system_integer_t option                     = 0;
-	int result                                             = 0;
-	int verbose                                            = 0;
+	libluksde_error_t *error                    = NULL;
+	system_character_t *mount_point             = NULL;
+	system_character_t *option_extended_options = NULL;
+	system_character_t *option_keys             = NULL;
+	system_character_t *option_password         = NULL;
+	system_character_t *option_volume_offset    = NULL;
+	system_character_t *source                  = NULL;
+	char *program                               = "luksdemount";
+	system_integer_t option                     = 0;
+	int result                                  = 0;
+	int verbose                                 = 0;
 
 #if defined( HAVE_LIBFUSE ) || defined( HAVE_LIBOSXFUSE )
 	struct fuse_operations luksdemount_fuse_operations;
 
-	struct fuse_args luksdemount_fuse_arguments            = FUSE_ARGS_INIT(0, NULL);
-	struct fuse_chan *luksdemount_fuse_channel             = NULL;
-	struct fuse *luksdemount_fuse_handle                   = NULL;
+	struct fuse_args luksdemount_fuse_arguments = FUSE_ARGS_INIT(0, NULL);
+	struct fuse_chan *luksdemount_fuse_channel  = NULL;
+	struct fuse *luksdemount_fuse_handle        = NULL;
 
 #elif defined( HAVE_LIBDOKAN )
 	DOKAN_OPERATIONS luksdemount_dokan_operations;
@@ -1626,15 +1628,15 @@ int main( int argc, char * const argv[] )
 	while( ( option = libcsystem_getopt(
 	                   argc,
 	                   argv,
-	                   _LIBCSTRING_SYSTEM_STRING( "hk:o:p:vVX:" ) ) ) != (libcstring_system_integer_t) -1 )
+	                   _SYSTEM_STRING( "hk:o:p:vVX:" ) ) ) != (system_integer_t) -1 )
 	{
 		switch( option )
 		{
-			case (libcstring_system_integer_t) '?':
+			case (system_integer_t) '?':
 			default:
 				fprintf(
 				 stderr,
-				 "Invalid argument: %" PRIs_LIBCSTRING_SYSTEM "\n",
+				 "Invalid argument: %" PRIs_SYSTEM "\n",
 				 argv[ optind - 1 ] );
 
 				usage_fprint(
@@ -1642,39 +1644,39 @@ int main( int argc, char * const argv[] )
 
 				return( EXIT_FAILURE );
 
-			case (libcstring_system_integer_t) 'h':
+			case (system_integer_t) 'h':
 				usage_fprint(
 				 stdout );
 
 				return( EXIT_SUCCESS );
 
-			case (libcstring_system_integer_t) 'k':
+			case (system_integer_t) 'k':
 				option_keys = optarg;
 
 				break;
 
-			case (libcstring_system_integer_t) 'o':
+			case (system_integer_t) 'o':
 				option_volume_offset = optarg;
 
 				break;
 
-			case (libcstring_system_integer_t) 'p':
+			case (system_integer_t) 'p':
 				option_password = optarg;
 
 				break;
 
-			case (libcstring_system_integer_t) 'v':
+			case (system_integer_t) 'v':
 				verbose = 1;
 
 				break;
 
-			case (libcstring_system_integer_t) 'V':
+			case (system_integer_t) 'V':
 				luksdeoutput_copyright_fprint(
 				 stdout );
 
 				return( EXIT_SUCCESS );
 
-			case (libcstring_system_integer_t) 'X':
+			case (system_integer_t) 'X':
 				option_extended_options = optarg;
 
 				break;
@@ -1775,7 +1777,7 @@ int main( int argc, char * const argv[] )
 	{
 		fprintf(
 		 stderr,
-		 "Unable to open: %" PRIs_LIBCSTRING_SYSTEM ".\n",
+		 "Unable to open: %" PRIs_SYSTEM ".\n",
 		 source );
 
 		goto on_error;

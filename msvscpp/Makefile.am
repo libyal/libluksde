@@ -9,7 +9,6 @@ MSVSCPP_FILES = \
 	libcnotify/libcnotify.vcproj \
 	libcpath/libcpath.vcproj \
 	libcsplit/libcsplit.vcproj \
-	libcstring/libcstring.vcproj \
 	libcsystem/libcsystem.vcproj \
 	libcthreads/libcthreads.vcproj \
 	libfcache/libfcache.vcproj \
@@ -19,10 +18,10 @@ MSVSCPP_FILES = \
 	libluksde/libluksde.vcproj \
 	libuna/libuna.vcproj \
 	luksde_test_error/luksde_test_error.vcproj \
-	luksde_test_get_version/luksde_test_get_version.vcproj \
 	luksde_test_open_close/luksde_test_open_close.vcproj \
 	luksde_test_read/luksde_test_read.vcproj \
 	luksde_test_seek/luksde_test_seek.vcproj \
+	luksde_test_support/luksde_test_support.vcproj \
 	luksdeinfo/luksdeinfo.vcproj \
 	luksdemount/luksdemount.vcproj \
 	pyluksde/pyluksde.vcproj \

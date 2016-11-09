@@ -21,6 +21,7 @@
 
 #include <common.h>
 #include <memory.h>
+#include <system_string.h>
 #include <types.h>
 
 #include <stdio.h>
@@ -39,7 +40,6 @@
 #include "luksdetools_libcerror.h"
 #include "luksdetools_libclocale.h"
 #include "luksdetools_libcnotify.h"
-#include "luksdetools_libcstring.h"
 #include "luksdetools_libcsystem.h"
 
 info_handle_t *luksdeinfo_info_handle = NULL;
@@ -111,21 +111,21 @@ void luksdeinfo_signal_handler(
 
 /* The main program
  */
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 int wmain( int argc, wchar_t * const argv[] )
 #else
 int main( int argc, char * const argv[] )
 #endif
 {
-	libluksde_error_t *error                            = NULL;
-	libcstring_system_character_t *option_keys          = NULL;
-	libcstring_system_character_t *option_password      = NULL;
-	libcstring_system_character_t *option_volume_offset = NULL;
-	libcstring_system_character_t *source               = NULL;
-	char *program                                       = "luksdeinfo";
-	libcstring_system_integer_t option                  = 0;
-	int result                                          = 0;
-	int verbose                                         = 0;
+	libluksde_error_t *error                 = NULL;
+	system_character_t *option_keys          = NULL;
+	system_character_t *option_password      = NULL;
+	system_character_t *option_volume_offset = NULL;
+	system_character_t *source               = NULL;
+	char *program                            = "luksdeinfo";
+	system_integer_t option                  = 0;
+	int result                               = 0;
+	int verbose                              = 0;
 
 	libcnotify_stream_set(
 	 stderr,
@@ -160,15 +160,15 @@ int main( int argc, char * const argv[] )
 	while( ( option = libcsystem_getopt(
 	                   argc,
 	                   argv,
-	                   _LIBCSTRING_SYSTEM_STRING( "hk:o:p:vV" ) ) ) != (libcstring_system_integer_t) -1 )
+	                   _SYSTEM_STRING( "hk:o:p:vV" ) ) ) != (system_integer_t) -1 )
 	{
 		switch( option )
 		{
-			case (libcstring_system_integer_t) '?':
+			case (system_integer_t) '?':
 			default:
 				fprintf(
 				 stderr,
-				 "Invalid argument: %" PRIs_LIBCSTRING_SYSTEM "\n",
+				 "Invalid argument: %" PRIs_SYSTEM "\n",
 				 argv[ optind - 1 ] );
 
 				usage_fprint(
@@ -176,33 +176,33 @@ int main( int argc, char * const argv[] )
 
 				return( EXIT_FAILURE );
 
-			case (libcstring_system_integer_t) 'h':
+			case (system_integer_t) 'h':
 				usage_fprint(
 				 stdout );
 
 				return( EXIT_SUCCESS );
 
-			case (libcstring_system_integer_t) 'k':
+			case (system_integer_t) 'k':
 				option_keys = optarg;
 
 				break;
 
-			case (libcstring_system_integer_t) 'o':
+			case (system_integer_t) 'o':
 				option_volume_offset = optarg;
 
 				break;
 
-			case (libcstring_system_integer_t) 'p':
+			case (system_integer_t) 'p':
 				option_password = optarg;
 
 				break;
 
-			case (libcstring_system_integer_t) 'v':
+			case (system_integer_t) 'v':
 				verbose = 1;
 
 				break;
 
-			case (libcstring_system_integer_t) 'V':
+			case (system_integer_t) 'V':
 				luksdeoutput_copyright_fprint(
 				 stdout );
 
@@ -291,7 +291,7 @@ int main( int argc, char * const argv[] )
 	{
 		fprintf(
 		 stderr,
-		 "Unable to open: %" PRIs_LIBCSTRING_SYSTEM ".\n",
+		 "Unable to open: %" PRIs_SYSTEM ".\n",
 		 source );
 
 		goto on_error;

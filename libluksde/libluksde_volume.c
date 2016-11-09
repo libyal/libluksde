@@ -21,7 +21,9 @@
 
 #include <common.h>
 #include <memory.h>
+#include <narrow_string.h>
 #include <types.h>
+#include <wide_string.h>
 
 #include "libluksde_codepage.h"
 #include "libluksde_debug.h"
@@ -32,7 +34,6 @@
 #include "libluksde_libbfio.h"
 #include "libluksde_libcerror.h"
 #include "libluksde_libcnotify.h"
-#include "libluksde_libcstring.h"
 #include "libluksde_libcthreads.h"
 #include "libluksde_libfcache.h"
 #include "libluksde_libfdata.h"
@@ -331,7 +332,7 @@ int libluksde_volume_open(
 
 		return( -1 );
 	}
-	filename_length = libcstring_narrow_string_length(
+	filename_length = narrow_string_length(
 	                   filename );
 
 	if( filename_length == 0 )
@@ -534,7 +535,7 @@ int libluksde_volume_open_wide(
 
 		return( -1 );
 	}
-	filename_length = libcstring_wide_string_length(
+	filename_length = wide_string_length(
 	                   filename );
 
 	if( filename_length == 0 )

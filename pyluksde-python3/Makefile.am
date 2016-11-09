@@ -8,7 +8,6 @@ if HAVE_PYTHON3
 AM_CFLAGS = \
 	-I$(top_srcdir)/include \
 	-I$(top_srcdir)/common \
-	@LIBCSTRING_CPPFLAGS@ \
 	@LIBCERROR_CPPFLAGS@ \
 	@LIBCDATA_CPPFLAGS@ \
 	@LIBCLOCALE_CPPFLAGS@ \
@@ -33,7 +32,6 @@ BUILT_SOURCES = \
 	pyluksde_libbfio.h \
 	pyluksde_libcerror.h \
 	pyluksde_libclocale.h \
-	pyluksde_libcstring.h \
 	pyluksde_python.h \
 	pyluksde_unused.h \
 	pyluksde_volume.c pyluksde_volume.h
@@ -43,7 +41,6 @@ pyexec_LTLIBRARIES = pyluksde.la
 nodist_pyluksde_la_SOURCES = $(BUILT_SOURCES)
 
 pyluksde_la_LIBADD = \
-	@LIBCSTRING_LIBADD@ \
 	@LIBCERROR_LIBADD@ \
 	../libluksde/libluksde.la \
 	@LIBCDATA_LIBADD@ \

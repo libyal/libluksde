@@ -20,6 +20,7 @@
  */
 
 #include <common.h>
+#include <narrow_string.h>
 #include <types.h>
 
 #if defined( HAVE_STDLIB_H ) || defined( HAVE_WINAPI )
@@ -32,7 +33,6 @@
 #include "pyluksde_libbfio.h"
 #include "pyluksde_libcerror.h"
 #include "pyluksde_libclocale.h"
-#include "pyluksde_libcstring.h"
 #include "pyluksde_libluksde.h"
 #include "pyluksde_python.h"
 #include "pyluksde_unused.h"
@@ -520,7 +520,7 @@ PyObject *pyluksde_volume_open(
 	char *mode                   = NULL;
 	int result                   = 0;
 
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 	const wchar_t *filename_wide = NULL;
 #else
 	PyObject *utf8_string_object = NULL;
@@ -580,7 +580,7 @@ PyObject *pyluksde_volume_open(
 	{
 		PyErr_Clear();
 
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 		filename_wide = (wchar_t *) PyUnicode_AsUnicode(
 		                             string_object );
 		Py_BEGIN_ALLOW_THREADS
@@ -1334,7 +1334,7 @@ PyObject *pyluksde_volume_set_password(
 
 		return( NULL );
 	}
-	password_string_length = libcstring_narrow_string_length(
+	password_string_length = narrow_string_length(
 	                          password_string );
 
 	Py_BEGIN_ALLOW_THREADS
