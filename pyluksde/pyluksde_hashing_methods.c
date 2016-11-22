@@ -73,7 +73,7 @@ PyTypeObject pyluksde_hashing_methods_type_object = {
 	/* tp_flags */
 	Py_TPFLAGS_DEFAULT,
 	/* tp_doc */
-	"pyluksde hashing_methods object (wraps LIBLUKSDE_HASHING_METHODS)",
+	"pyluksde hashing methods object (wraps LIBLUKSDE_HASHING_METHODS)",
 	/* tp_traverse */
 	0,
 	/* tp_clear */
@@ -174,6 +174,20 @@ int pyluksde_hashing_methods_init_type(
 	}
 #if PY_MAJOR_VERSION >= 3
 	value_object = PyLong_FromLong(
+	                LIBLUKSDE_HASHING_METHOD_SHA224 );
+#else
+	value_object = PyInt_FromLong(
+	                LIBLUKSDE_HASHING_METHOD_SHA224 );
+#endif
+	if( PyDict_SetItemString(
+	     type_object->tp_dict,
+	     "SHA224",
+	     value_object ) != 0 )
+	{
+		goto on_error;
+	}
+#if PY_MAJOR_VERSION >= 3
+	value_object = PyLong_FromLong(
 	                LIBLUKSDE_HASHING_METHOD_SHA256 );
 #else
 	value_object = PyInt_FromLong(
@@ -219,39 +233,39 @@ on_error:
 PyObject *pyluksde_hashing_methods_new(
            void )
 {
-	pyluksde_hashing_methods_t *pyluksde_hashing_methods = NULL;
-	static char *function                                = "pyluksde_hashing_methods_new";
+	pyluksde_hashing_methods_t *definitions_object = NULL;
+	static char *function                          = "pyluksde_hashing_methods_new";
 
-	pyluksde_hashing_methods = PyObject_New(
-	                            struct pyluksde_hashing_methods,
-	                            &pyluksde_hashing_methods_type_object );
+	definitions_object = PyObject_New(
+	                      struct pyluksde_hashing_methods,
+	                      &pyluksde_hashing_methods_type_object );
 
-	if( pyluksde_hashing_methods == NULL )
+	if( definitions_object == NULL )
 	{
 		PyErr_Format(
 		 PyExc_MemoryError,
-		 "%s: unable to initialize hashing methods.",
+		 "%s: unable to create definitions object.",
 		 function );
 
 		goto on_error;
 	}
 	if( pyluksde_hashing_methods_init(
-	     pyluksde_hashing_methods ) != 0 )
+	     definitions_object ) != 0 )
 	{
 		PyErr_Format(
 		 PyExc_MemoryError,
-		 "%s: unable to initialize hashing methods.",
+		 "%s: unable to initialize definitions object.",
 		 function );
 
 		goto on_error;
 	}
-	return( (PyObject *) pyluksde_hashing_methods );
+	return( (PyObject *) definitions_object );
 
 on_error:
-	if( pyluksde_hashing_methods != NULL )
+	if( definitions_object != NULL )
 	{
 		Py_DecRef(
-		 (PyObject *) pyluksde_hashing_methods );
+		 (PyObject *) definitions_object );
 	}
 	return( NULL );
 }
@@ -260,15 +274,15 @@ on_error:
  * Returns 0 if successful or -1 on error
  */
 int pyluksde_hashing_methods_init(
-     pyluksde_hashing_methods_t *pyluksde_hashing_methods )
+     pyluksde_hashing_methods_t *definitions_object )
 {
 	static char *function = "pyluksde_hashing_methods_init";
 
-	if( pyluksde_hashing_methods == NULL )
+	if( definitions_object == NULL )
 	{
 		PyErr_Format(
 		 PyExc_TypeError,
-		 "%s: invalid hashing methods.",
+		 "%s: invalid definitions object.",
 		 function );
 
 		return( -1 );
@@ -279,22 +293,22 @@ int pyluksde_hashing_methods_init(
 /* Frees a hashing methods object
  */
 void pyluksde_hashing_methods_free(
-      pyluksde_hashing_methods_t *pyluksde_hashing_methods )
+      pyluksde_hashing_methods_t *definitions_object )
 {
 	struct _typeobject *ob_type = NULL;
 	static char *function       = "pyluksde_hashing_methods_free";
 
-	if( pyluksde_hashing_methods == NULL )
+	if( definitions_object == NULL )
 	{
 		PyErr_Format(
 		 PyExc_TypeError,
-		 "%s: invalid hashing methods.",
+		 "%s: invalid definitions object.",
 		 function );
 
 		return;
 	}
 	ob_type = Py_TYPE(
-	           pyluksde_hashing_methods );
+	           definitions_object );
 
 	if( ob_type == NULL )
 	{
@@ -315,6 +329,6 @@ void pyluksde_hashing_methods_free(
 		return;
 	}
 	ob_type->tp_free(
-	 (PyObject*) pyluksde_hashing_methods );
+	 (PyObject*) definitions_object );
 }
 

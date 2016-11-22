@@ -199,62 +199,62 @@ on_error:
 	return( -1 );
 }
 
-/* Creates a new encryption chaining_modes object
+/* Creates a new encryption chaining modes object
  * Returns a Python object if successful or NULL on error
  */
 PyObject *pyluksde_encryption_chaining_modes_new(
            void )
 {
-	pyluksde_encryption_chaining_modes_t *pyluksde_encryption_chaining_modes = NULL;
-	static char *function                                                    = "pyluksde_encryption_chaining_modes_new";
+	pyluksde_encryption_chaining_modes_t *definitions_object = NULL;
+	static char *function                                    = "pyluksde_encryption_chaining_modes_new";
 
-	pyluksde_encryption_chaining_modes = PyObject_New(
-	                               struct pyluksde_encryption_chaining_modes,
-	                               &pyluksde_encryption_chaining_modes_type_object );
+	definitions_object = PyObject_New(
+	                      struct pyluksde_encryption_chaining_modes,
+	                      &pyluksde_encryption_chaining_modes_type_object );
 
-	if( pyluksde_encryption_chaining_modes == NULL )
+	if( definitions_object == NULL )
 	{
 		PyErr_Format(
 		 PyExc_MemoryError,
-		 "%s: unable to initialize encryption chaining modes.",
+		 "%s: unable to create definitions object.",
 		 function );
 
 		goto on_error;
 	}
 	if( pyluksde_encryption_chaining_modes_init(
-	     pyluksde_encryption_chaining_modes ) != 0 )
+	     definitions_object ) != 0 )
 	{
 		PyErr_Format(
 		 PyExc_MemoryError,
-		 "%s: unable to initialize encryption chaining modes.",
+		 "%s: unable to initialize definitions object.",
 		 function );
 
 		goto on_error;
 	}
-	return( (PyObject *) pyluksde_encryption_chaining_modes );
+	return( (PyObject *) definitions_object );
 
 on_error:
-	if( pyluksde_encryption_chaining_modes != NULL )
+	if( definitions_object != NULL )
 	{
 		Py_DecRef(
-		 (PyObject *) pyluksde_encryption_chaining_modes );
+		 (PyObject *) definitions_object );
 	}
 	return( NULL );
 }
 
-/* Intializes a encryption chaining modes object
+/* Intializes an encryption chaining modes object
  * Returns 0 if successful or -1 on error
  */
 int pyluksde_encryption_chaining_modes_init(
-     pyluksde_encryption_chaining_modes_t *pyluksde_encryption_chaining_modes )
+     pyluksde_encryption_chaining_modes_t *definitions_object )
 {
 	static char *function = "pyluksde_encryption_chaining_modes_init";
 
-	if( pyluksde_encryption_chaining_modes == NULL )
+	if( definitions_object == NULL )
 	{
 		PyErr_Format(
 		 PyExc_TypeError,
-		 "%s: invalid encryption chaining modes.",
+		 "%s: invalid definitions object.",
 		 function );
 
 		return( -1 );
@@ -262,25 +262,25 @@ int pyluksde_encryption_chaining_modes_init(
 	return( 0 );
 }
 
-/* Frees a encryption chaining modes object
+/* Frees an encryption chaining modes object
  */
 void pyluksde_encryption_chaining_modes_free(
-      pyluksde_encryption_chaining_modes_t *pyluksde_encryption_chaining_modes )
+      pyluksde_encryption_chaining_modes_t *definitions_object )
 {
 	struct _typeobject *ob_type = NULL;
 	static char *function       = "pyluksde_encryption_chaining_modes_free";
 
-	if( pyluksde_encryption_chaining_modes == NULL )
+	if( definitions_object == NULL )
 	{
 		PyErr_Format(
 		 PyExc_TypeError,
-		 "%s: invalid encryption chaining modes.",
+		 "%s: invalid definitions object.",
 		 function );
 
 		return;
 	}
 	ob_type = Py_TYPE(
-	           pyluksde_encryption_chaining_modes );
+	           definitions_object );
 
 	if( ob_type == NULL )
 	{
@@ -301,6 +301,6 @@ void pyluksde_encryption_chaining_modes_free(
 		return;
 	}
 	ob_type->tp_free(
-	 (PyObject*) pyluksde_encryption_chaining_modes );
+	 (PyObject*) definitions_object );
 }
 

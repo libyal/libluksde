@@ -50,14 +50,14 @@ PyObject *pyluksde_encryption_chaining_modes_new(
            void );
 
 int pyluksde_encryption_chaining_modes_init(
-     pyluksde_encryption_chaining_modes_t *pyluksde_encryption_chaining_modes );
+     pyluksde_encryption_chaining_modes_t *definitions_object );
 
 void pyluksde_encryption_chaining_modes_free(
-      pyluksde_encryption_chaining_modes_t *pyluksde_encryption_chaining_modes );
+      pyluksde_encryption_chaining_modes_t *definitions_object );
 
 #if defined( __cplusplus )
 }
 #endif
 
-#endif
+#endif /* !defined( _PYLUKSDE_ENCRYPTION_CHAINING_MODES_H ) */
 

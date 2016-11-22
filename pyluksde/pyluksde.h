@@ -57,5 +57,5 @@ PyMODINIT_FUNC initpyluksde(
 }
 #endif
 
-#endif
+#endif /* !defined( _PYLUKSDE_H ) */
 

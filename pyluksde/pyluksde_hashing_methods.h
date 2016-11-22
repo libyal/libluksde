@@ -50,14 +50,14 @@ PyObject *pyluksde_hashing_methods_new(
            void );
 
 int pyluksde_hashing_methods_init(
-     pyluksde_hashing_methods_t *pyluksde_hashing_methods );
+     pyluksde_hashing_methods_t *definitions_object );
 
 void pyluksde_hashing_methods_free(
-      pyluksde_hashing_methods_t *pyluksde_hashing_methods );
+      pyluksde_hashing_methods_t *definitions_object );
 
 #if defined( __cplusplus )
 }
 #endif
 
-#endif
+#endif /* !defined( _PYLUKSDE_HASHING_METHODS_H ) */
 

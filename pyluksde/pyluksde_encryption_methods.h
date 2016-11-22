@@ -50,14 +50,14 @@ PyObject *pyluksde_encryption_methods_new(
            void );
 
 int pyluksde_encryption_methods_init(
-     pyluksde_encryption_methods_t *pyluksde_encryption_methods );
+     pyluksde_encryption_methods_t *definitions_object );
 
 void pyluksde_encryption_methods_free(
-      pyluksde_encryption_methods_t *pyluksde_encryption_methods );
+      pyluksde_encryption_methods_t *definitions_object );
 
 #if defined( __cplusplus )
 }
 #endif
 
-#endif
+#endif /* !defined( _PYLUKSDE_ENCRYPTION_METHODS_H ) */
 

@@ -50,14 +50,14 @@ PyObject *pyluksde_initialization_vector_modes_new(
            void );
 
 int pyluksde_initialization_vector_modes_init(
-     pyluksde_initialization_vector_modes_t *pyluksde_initialization_vector_modes );
+     pyluksde_initialization_vector_modes_t *definitions_object );
 
 void pyluksde_initialization_vector_modes_free(
-      pyluksde_initialization_vector_modes_t *pyluksde_initialization_vector_modes );
+      pyluksde_initialization_vector_modes_t *definitions_object );
 
 #if defined( __cplusplus )
 }
 #endif
 
-#endif
+#endif /* !defined( _PYLUKSDE_INITIALIZATION_VECTOR_MODES_H ) */
 

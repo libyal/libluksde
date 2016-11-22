@@ -241,62 +241,62 @@ on_error:
 	return( -1 );
 }
 
-/* Creates a new initialization vector_modes object
+/* Creates a new initialization vector modes object
  * Returns a Python object if successful or NULL on error
  */
 PyObject *pyluksde_initialization_vector_modes_new(
            void )
 {
-	pyluksde_initialization_vector_modes_t *pyluksde_initialization_vector_modes = NULL;
-	static char *function                                                        = "pyluksde_initialization_vector_modes_new";
+	pyluksde_initialization_vector_modes_t *definitions_object = NULL;
+	static char *function                                      = "pyluksde_initialization_vector_modes_new";
 
-	pyluksde_initialization_vector_modes = PyObject_New(
-	                                        struct pyluksde_initialization_vector_modes,
-	                                        &pyluksde_initialization_vector_modes_type_object );
+	definitions_object = PyObject_New(
+	                      struct pyluksde_initialization_vector_modes,
+	                      &pyluksde_initialization_vector_modes_type_object );
 
-	if( pyluksde_initialization_vector_modes == NULL )
+	if( definitions_object == NULL )
 	{
 		PyErr_Format(
 		 PyExc_MemoryError,
-		 "%s: unable to initialize initialization vector modes.",
+		 "%s: unable to create definitions object.",
 		 function );
 
 		goto on_error;
 	}
 	if( pyluksde_initialization_vector_modes_init(
-	     pyluksde_initialization_vector_modes ) != 0 )
+	     definitions_object ) != 0 )
 	{
 		PyErr_Format(
 		 PyExc_MemoryError,
-		 "%s: unable to initialize initialization vector modes.",
+		 "%s: unable to initialize definitions object.",
 		 function );
 
 		goto on_error;
 	}
-	return( (PyObject *) pyluksde_initialization_vector_modes );
+	return( (PyObject *) definitions_object );
 
 on_error:
-	if( pyluksde_initialization_vector_modes != NULL )
+	if( definitions_object != NULL )
 	{
 		Py_DecRef(
-		 (PyObject *) pyluksde_initialization_vector_modes );
+		 (PyObject *) definitions_object );
 	}
 	return( NULL );
 }
 
-/* Intializes a initialization vector modes object
+/* Intializes an initialization vector modes object
  * Returns 0 if successful or -1 on error
  */
 int pyluksde_initialization_vector_modes_init(
-     pyluksde_initialization_vector_modes_t *pyluksde_initialization_vector_modes )
+     pyluksde_initialization_vector_modes_t *definitions_object )
 {
 	static char *function = "pyluksde_initialization_vector_modes_init";
 
-	if( pyluksde_initialization_vector_modes == NULL )
+	if( definitions_object == NULL )
 	{
 		PyErr_Format(
 		 PyExc_TypeError,
-		 "%s: invalid initialization vector modes.",
+		 "%s: invalid definitions object.",
 		 function );
 
 		return( -1 );
@@ -304,25 +304,25 @@ int pyluksde_initialization_vector_modes_init(
 	return( 0 );
 }
 
-/* Frees a initialization vector modes object
+/* Frees an initialization vector modes object
  */
 void pyluksde_initialization_vector_modes_free(
-      pyluksde_initialization_vector_modes_t *pyluksde_initialization_vector_modes )
+      pyluksde_initialization_vector_modes_t *definitions_object )
 {
 	struct _typeobject *ob_type = NULL;
 	static char *function       = "pyluksde_initialization_vector_modes_free";
 
-	if( pyluksde_initialization_vector_modes == NULL )
+	if( definitions_object == NULL )
 	{
 		PyErr_Format(
 		 PyExc_TypeError,
-		 "%s: invalid initialization vector modes.",
+		 "%s: invalid definitions object.",
 		 function );
 
 		return;
 	}
 	ob_type = Py_TYPE(
-	           pyluksde_initialization_vector_modes );
+	           definitions_object );
 
 	if( ob_type == NULL )
 	{
@@ -343,6 +343,6 @@ void pyluksde_initialization_vector_modes_free(
 		return;
 	}
 	ob_type->tp_free(
-	 (PyObject*) pyluksde_initialization_vector_modes );
+	 (PyObject*) definitions_object );
 }
 
