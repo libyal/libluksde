@@ -1,4 +1,5 @@
 TODO
+* rename set_keys to set_key or add additional keys
 * fix SHA-224 and SHA-256 haching support
 * documentation
   - move to asciidoc
@@ -25,62 +26,8 @@ Hashing support:
 * add support for RIPEMD160
 * add support for whirlpool
 
-Tests:
-* add tests for Python-bindings
-
-20160111
-* worked on Python 3 support
-
-20160108
-* 2016 update
-
-20150718
-* worked on signature check
-
-20150106
-* 2015 update
-
-20141226
-* changes for updated dependencies
-
-20141224
-* worked on Python 3 support
-* worked on tests
-
-20141205
-* worked on test scripts
-* worked on SHA-224 hashing support
-
-20141201
-* worked on multi-threading support
-
-20141129
-* code clean up
-
-20141113
-* worked on multi-threading support
-* worked on ESSIV SHA256 support
-* worked on SHA256 password hash support
-
-20141112
-* code clean up
-* worked on multi-threading support
-* updated msvscpp files
-
-20141028
-* bug fix in Python-bindings
-
-20141027
-* changes for deployment
-
-20141023
-* changes for deployment
-* updated msvscpp files
-
-20141017
-* changes for deployment
-
 20141001
+* see `git log' for more recent change log
 * removed README.macosx
 * changes for project site move
 
