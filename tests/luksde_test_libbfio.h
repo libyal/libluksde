@@ -1,5 +1,5 @@
 /*
- * The internal libcaes header
+ * The libbfio header wrapper
  *
  * Copyright (C) 2013-2016, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -19,33 +19,40 @@
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#if !defined( _LIBLUKSDE_LIBCAES_H )
-#define _LIBLUKSDE_LIBCAES_H
+#if !defined( _LUKSDE_TEST_LIBBFIO_H )
+#define _LUKSDE_TEST_LIBBFIO_H
 
 #include <common.h>
 
-/* Define HAVE_LOCAL_LIBCAES for local use of libcaes
+/* Define HAVE_LOCAL_LIBBFIO for local use of libbfio
  */
-#if defined( HAVE_LOCAL_LIBCAES )
+#if defined( HAVE_LOCAL_LIBBFIO )
 
-#include <libcaes_context.h>
-#include <libcaes_definitions.h>
-#include <libcaes_support.h>
-#include <libcaes_tweaked_context.h>
-#include <libcaes_types.h>
+#include <libbfio_definitions.h>
+#include <libbfio_file.h>
+#include <libbfio_file_pool.h>
+#include <libbfio_file_range.h>
+#include <libbfio_handle.h>
+#include <libbfio_memory_range.h>
+#include <libbfio_pool.h>
+#include <libbfio_types.h>
 
 #else
 
-/* If libtool DLL support is enabled set LIBCAES_DLL_IMPORT
- * before including libcaes.h
+/* If libtool DLL support is enabled set LIBBFIO_DLL_IMPORT
+ * before including libbfio.h
  */
 #if defined( _WIN32 ) && defined( DLL_IMPORT )
-#define LIBCAES_DLL_IMPORT
+#define LIBBFIO_DLL_IMPORT
 #endif
 
-#include <libcaes.h>
+#include <libbfio.h>
 
-#endif /* defined( HAVE_LOCAL_LIBCAES ) */
+#if defined( HAVE_MULTI_THREAD_SUPPORT ) && !defined( LIBBFIO_HAVE_MULTI_THREAD_SUPPORT )
+#error Multi-threading support requires libbfio with multi-threading support
+#endif
 
-#endif /* !defined( _LIBLUKSDE_LIBCAES_H ) */
+#endif /* defined( HAVE_LOCAL_LIBBFIO ) */
+
+#endif /* !defined( _LUKSDE_TEST_LIBBFIO_H ) */
 

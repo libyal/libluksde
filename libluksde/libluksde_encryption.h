@@ -103,5 +103,5 @@ int libluksde_encryption_crypt(
 }
 #endif
 
-#endif
+#endif /* !defined( _LIBLUKSDE_ENCRYPTION_H ) */
 

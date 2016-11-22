@@ -72,5 +72,5 @@ int libluksde_sector_data_read(
 }
 #endif
 
-#endif
+#endif /* !defined( _LIBLUKSDE_SECTOR_DATA_H ) */
 

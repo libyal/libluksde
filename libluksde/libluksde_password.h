@@ -46,5 +46,5 @@ int libluksde_password_pbkdf2(
 }
 #endif
 
-#endif
+#endif /* !defined( _LIBLUKSDE_PASSWORD_H ) */
 

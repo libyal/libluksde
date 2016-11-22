@@ -24,11 +24,11 @@
 
 #include <libluksde/types.h>
 
-#define LIBLUKSDE_VERSION				@VERSION@
+#define LIBLUKSDE_VERSION		@VERSION@
 
 /* The version string
  */
-#define LIBLUKSDE_VERSION_STRING			"@VERSION@"
+#define LIBLUKSDE_VERSION_STRING	"@VERSION@"
 
 /* The file access
  * bit 1        set to 1 for read access
@@ -37,18 +37,18 @@
  */
 enum LIBLUKSDE_ACCESS_FLAGS
 {
-	LIBLUKSDE_ACCESS_FLAG_READ			= 0x01,
+	LIBLUKSDE_ACCESS_FLAG_READ	= 0x01,
 /* Reserved: not supported yet */
-	LIBLUKSDE_ACCESS_FLAG_WRITE			= 0x02
+	LIBLUKSDE_ACCESS_FLAG_WRITE	= 0x02
 };
 
 /* The file access macros
  */
-#define LIBLUKSDE_OPEN_READ				( LIBLUKSDE_ACCESS_FLAG_READ )
+#define LIBLUKSDE_OPEN_READ		( LIBLUKSDE_ACCESS_FLAG_READ )
 /* Reserved: not supported yet */
-#define LIBLUKSDE_OPEN_WRITE				( LIBLUKSDE_ACCESS_FLAG_WRITE )
+#define LIBLUKSDE_OPEN_WRITE		( LIBLUKSDE_ACCESS_FLAG_WRITE )
 /* Reserved: not supported yet */
-#define LIBLUKSDE_OPEN_READ_WRITE			( LIBLUKSDE_ACCESS_FLAG_READ | LIBLUKSDE_ACCESS_FLAG_WRITE )
+#define LIBLUKSDE_OPEN_READ_WRITE	( LIBLUKSDE_ACCESS_FLAG_READ | LIBLUKSDE_ACCESS_FLAG_WRITE )
 
 /* The encryption methods
  */

@@ -33,5 +33,5 @@
 
 #include <libluksde.h>
 
-#endif
+#endif /* !defined( _LUKSDETOOLS_LIBLUKSDE_H ) */
 

@@ -165,5 +165,5 @@ int libluksde_io_handle_read_sector(
 }
 #endif
 
-#endif
+#endif /* !defined( _LIBLUKSDE_IO_HANDLE_H ) */
 

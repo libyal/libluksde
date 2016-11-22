@@ -78,5 +78,5 @@ int libluksde_check_volume_signature_file_io_handle(
 }
 #endif
 
-#endif
+#endif /* !defined( _LIBLUKSDE_SUPPORT_H ) */
 

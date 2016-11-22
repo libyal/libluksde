@@ -74,5 +74,5 @@ int libluksde_key_slot_read(
 }
 #endif
 
-#endif
+#endif /* !defined( _LIBLUKSDE_KEY_SLOT_H ) */
 

@@ -38,9 +38,9 @@
 #include <libluksde/extern.h>
 
 #else
-#define LIBLUKSDE_EXTERN	extern
+#define LIBLUKSDE_EXTERN	/* extern */
 
-#endif
+#endif /* !defined( HAVE_LOCAL_LIBLUKSDE ) */
 
 #endif /* !defined( _LIBLUKSDE_INTERNAL_EXTERN_H ) */
 

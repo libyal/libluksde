@@ -2,9 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9,00"
-	Name="luksde_test_read"
-	ProjectGUID="{D5389505-B4AB-4661-97C6-59FA83E75497}"
-	RootNamespace="luksde_test_read"
+	Name="luksde_test_key_slot"
+	ProjectGUID="{F7965C6C-C99B-44DA-A173-620560F2F8A5}"
+	RootNamespace="luksde_test_key_slot"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="131072"
 	>
@@ -176,7 +176,11 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath="..\..\tests\luksde_test_read.c"
+				RelativePath="..\..\tests\luksde_test_key_slot.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\tests\luksde_test_memory.c"
 				>
 			</File>
 		</Filter>
@@ -190,15 +194,15 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\tests\luksde_test_libcsystem.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\tests\luksde_test_libcthreads.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\tests\luksde_test_libluksde.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\tests\luksde_test_macros.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\tests\luksde_test_memory.h"
 				>
 			</File>
 			<File

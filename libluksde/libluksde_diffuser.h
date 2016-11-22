@@ -60,5 +60,5 @@ int libluksde_diffuser_split(
 }
 #endif
 
-#endif
+#endif /* !defined( _LIBLUKSDE_DIFFUSER_H ) */
 

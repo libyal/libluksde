@@ -38,7 +38,7 @@
 #include "luksde_test_macros.h"
 #include "luksde_test_memory.h"
 
-#if SIZEOF_WCHAR_T != 2 && SIZEOF_WCHAR_T != 4
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER ) && SIZEOF_WCHAR_T != 2 && SIZEOF_WCHAR_T != 4
 #error Unsupported size of wchar_t
 #endif
 
@@ -256,8 +256,8 @@ int luksde_test_volume_get_wide_source(
      libcerror_error_t **error )
 {
 	static char *function   = "luksde_test_volume_get_wide_source";
-	size_t wide_source_size = 0;
 	size_t source_length    = 0;
+	size_t wide_source_size = 0;
 
 #if !defined( HAVE_WIDE_SYSTEM_CHARACTER )
 	int result              = 0;
@@ -584,11 +584,17 @@ int luksde_test_volume_close_source(
 int luksde_test_volume_initialize(
      void )
 {
-	libcerror_error_t *error = NULL;
+	libcerror_error_t *error        = NULL;
 	libluksde_volume_t *volume      = NULL;
-	int result               = 0;
+	int result                      = 0;
 
-	/* Test libluksde_volume_initialize
+#if defined( HAVE_LUKSDE_TEST_MEMORY )
+	int number_of_malloc_fail_tests = 1;
+	int number_of_memset_fail_tests = 1;
+	int test_number                 = 0;
+#endif
+
+	/* Test regular cases
 	 */
 	result = libluksde_volume_initialize(
 	          &volume,
@@ -664,79 +670,89 @@ int luksde_test_volume_initialize(
 
 #if defined( HAVE_LUKSDE_TEST_MEMORY )
 
-	/* Test libluksde_volume_initialize with malloc failing
-	 */
-	luksde_test_malloc_attempts_before_fail = 0;
-
-	result = libluksde_volume_initialize(
-	          &volume,
-	          &error );
-
-	if( luksde_test_malloc_attempts_before_fail != -1 )
+	for( test_number = 0;
+	     test_number < number_of_malloc_fail_tests;
+	     test_number++ )
 	{
-		luksde_test_malloc_attempts_before_fail = -1;
+		/* Test libluksde_volume_initialize with malloc failing
+		 */
+		luksde_test_malloc_attempts_before_fail = test_number;
 
-		if( volume != NULL )
+		result = libluksde_volume_initialize(
+		          &volume,
+		          &error );
+
+		if( luksde_test_malloc_attempts_before_fail != -1 )
 		{
-			libluksde_volume_free(
-			 &volume,
-			 NULL );
+			luksde_test_malloc_attempts_before_fail = -1;
+
+			if( volume != NULL )
+			{
+				libluksde_volume_free(
+				 &volume,
+				 NULL );
+			}
+		}
+		else
+		{
+			LUKSDE_TEST_ASSERT_EQUAL_INT(
+			 "result",
+			 result,
+			 -1 );
+
+			LUKSDE_TEST_ASSERT_IS_NULL(
+			 "volume",
+			 volume );
+
+			LUKSDE_TEST_ASSERT_IS_NOT_NULL(
+			 "error",
+			 error );
+
+			libcerror_error_free(
+			 &error );
 		}
 	}
-	else
+	for( test_number = 0;
+	     test_number < number_of_memset_fail_tests;
+	     test_number++ )
 	{
-		LUKSDE_TEST_ASSERT_EQUAL_INT(
-		 "result",
-		 result,
-		 -1 );
+		/* Test libluksde_volume_initialize with memset failing
+		 */
+		luksde_test_memset_attempts_before_fail = test_number;
 
-		LUKSDE_TEST_ASSERT_IS_NULL(
-		 "volume",
-		 volume );
+		result = libluksde_volume_initialize(
+		          &volume,
+		          &error );
 
-		LUKSDE_TEST_ASSERT_IS_NOT_NULL(
-		 "error",
-		 error );
-
-		libcerror_error_free(
-		 &error );
-	}
-	/* Test libluksde_volume_initialize with memset failing
-	 */
-	luksde_test_memset_attempts_before_fail = 0;
-
-	result = libluksde_volume_initialize(
-	          &volume,
-	          &error );
-
-	if( luksde_test_memset_attempts_before_fail != -1 )
-	{
-		luksde_test_memset_attempts_before_fail = -1;
-
-		if( volume != NULL )
+		if( luksde_test_memset_attempts_before_fail != -1 )
 		{
-			libluksde_volume_free(
-			 &volume,
-			 NULL );
+			luksde_test_memset_attempts_before_fail = -1;
+
+			if( volume != NULL )
+			{
+				libluksde_volume_free(
+				 &volume,
+				 NULL );
+			}
 		}
-	}
-	else
-	{
-		LUKSDE_TEST_ASSERT_EQUAL_INT(
-		 "result",
-		 result,
-		 -1 );
+		else
+		{
+			LUKSDE_TEST_ASSERT_EQUAL_INT(
+			 "result",
+			 result,
+			 -1 );
 
-		LUKSDE_TEST_ASSERT_IS_NULL(
-		 "volume",
-		 volume );
+			LUKSDE_TEST_ASSERT_IS_NULL(
+			 "volume",
+			 volume );
 
-		LUKSDE_TEST_ASSERT_IS_NOT_NULL(
-		 "error",
-		 error );
+			LUKSDE_TEST_ASSERT_IS_NOT_NULL(
+			 "error",
+			 error );
 
-		libcerror_error_free(
-		 &error );
+			libcerror_error_free(
+			 &error );
+		}
 	}
 #endif /* defined( HAVE_LUKSDE_TEST_MEMORY ) */
 
@@ -795,7 +811,7 @@ on_error:
 	return( 0 );
 }
 
-/* Tests the libluksde_volume_open functions
+/* Tests the libluksde_volume_open function
  * Returns 1 if successful or 0 if not
  */
 int luksde_test_volume_open(
@@ -803,9 +819,9 @@ int luksde_test_volume_open(
 {
 	char narrow_source[ 256 ];
 
-	libcerror_error_t *error = NULL;
-	libluksde_volume_t *volume      = NULL;
-	int result               = 0;
+	libcerror_error_t *error   = NULL;
+	libluksde_volume_t *volume = NULL;
+	int result                 = 0;
 
 	/* Initialize test
 	 */
@@ -858,21 +874,28 @@ int luksde_test_volume_open(
          "error",
          error );
 
-	/* Clean up
+	/* Test error cases
 	 */
-	result = libluksde_volume_close(
+	result = libluksde_volume_open(
 	          volume,
+	          narrow_source,
+	          LIBLUKSDE_OPEN_READ,
 	          &error );
 
 	LUKSDE_TEST_ASSERT_EQUAL_INT(
 	 "result",
 	 result,
-	 0 );
+	 -1 );
 
-        LUKSDE_TEST_ASSERT_IS_NULL(
+        LUKSDE_TEST_ASSERT_IS_NOT_NULL(
          "error",
          error );
 
+	libcerror_error_free(
+	 &error );
+
+	/* Clean up
+	 */
 	result = libluksde_volume_free(
 	          &volume,
 	          &error );
@@ -909,7 +932,7 @@ on_error:
 
 #if defined( HAVE_WIDE_CHARACTER_TYPE )
 
-/* Tests the libluksde_volume_open_wide functions
+/* Tests the libluksde_volume_open_wide function
  * Returns 1 if successful or 0 if not
  */
 int luksde_test_volume_open_wide(
@@ -917,9 +940,9 @@ int luksde_test_volume_open_wide(
 {
 	wchar_t wide_source[ 256 ];
 
-	libcerror_error_t *error = NULL;
-	libluksde_volume_t *volume      = NULL;
-	int result               = 0;
+	libcerror_error_t *error   = NULL;
+	libluksde_volume_t *volume = NULL;
+	int result                 = 0;
 
 	/* Initialize test
 	 */
@@ -972,21 +995,28 @@ int luksde_test_volume_open_wide(
          "error",
          error );
 
-	/* Clean up
+	/* Test error cases
 	 */
-	result = libluksde_volume_close(
+	result = libluksde_volume_open_wide(
 	          volume,
+	          wide_source,
+	          LIBLUKSDE_OPEN_READ,
 	          &error );
 
 	LUKSDE_TEST_ASSERT_EQUAL_INT(
 	 "result",
 	 result,
-	 0 );
+	 -1 );
 
-        LUKSDE_TEST_ASSERT_IS_NULL(
+        LUKSDE_TEST_ASSERT_IS_NOT_NULL(
          "error",
          error );
 
+	libcerror_error_free(
+	 &error );
+
+	/* Clean up
+	 */
 	result = libluksde_volume_free(
 	          &volume,
 	          &error );
@@ -1023,6 +1053,394 @@ on_error:
 
 #endif /* defined( HAVE_WIDE_CHARACTER_TYPE ) */
 
+/* Tests the libluksde_volume_close function
+ * Returns 1 if successful or 0 if not
+ */
+int luksde_test_volume_close(
+     void )
+{
+	libcerror_error_t *error = NULL;
+	int result               = 0;
+
+	/* Test error cases
+	 */
+	result = libluksde_volume_close(
+	          NULL,
+	          &error );
+
+	LUKSDE_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+        LUKSDE_TEST_ASSERT_IS_NOT_NULL(
+         "error",
+         error );
+
+	libcerror_error_free(
+	 &error );
+
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	return( 0 );
+}
+
+/* Tests the libluksde_volume_open and libluksde_volume_close functions
+ * Returns 1 if successful or 0 if not
+ */
+int luksde_test_volume_open_close(
+     const system_character_t *source )
+{
+	libcerror_error_t *error   = NULL;
+	libluksde_volume_t *volume = NULL;
+	int result                 = 0;
+
+	/* Initialize test
+	 */
+	result = libluksde_volume_initialize(
+	          &volume,
+	          &error );
+
+	LUKSDE_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+        LUKSDE_TEST_ASSERT_IS_NOT_NULL(
+         "volume",
+         volume );
+
+        LUKSDE_TEST_ASSERT_IS_NULL(
+         "error",
+         error );
+
+	/* Test open and close
+	 */
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
+	result = libluksde_volume_open_wide(
+	          volume,
+	          source,
+	          LIBLUKSDE_OPEN_READ,
+	          &error );
+#else
+	result = libluksde_volume_open(
+	          volume,
+	          source,
+	          LIBLUKSDE_OPEN_READ,
+	          &error );
+#endif
+
+	LUKSDE_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+        LUKSDE_TEST_ASSERT_IS_NULL(
+         "error",
+         error );
+
+	result = libluksde_volume_close(
+	          volume,
+	          &error );
+
+	LUKSDE_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 0 );
+
+        LUKSDE_TEST_ASSERT_IS_NULL(
+         "error",
+         error );
+
+	/* Test open and close a second time to validate clean up on close
+	 */
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
+	result = libluksde_volume_open_wide(
+	          volume,
+	          source,
+	          LIBLUKSDE_OPEN_READ,
+	          &error );
+#else
+	result = libluksde_volume_open(
+	          volume,
+	          source,
+	          LIBLUKSDE_OPEN_READ,
+	          &error );
+#endif
+
+	LUKSDE_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+        LUKSDE_TEST_ASSERT_IS_NULL(
+         "error",
+         error );
+
+	result = libluksde_volume_close(
+	          volume,
+	          &error );
+
+	LUKSDE_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 0 );
+
+        LUKSDE_TEST_ASSERT_IS_NULL(
+         "error",
+         error );
+
+	/* Clean up
+	 */
+	result = libluksde_volume_free(
+	          &volume,
+	          &error );
+
+	LUKSDE_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+        LUKSDE_TEST_ASSERT_IS_NULL(
+         "volume",
+         volume );
+
+        LUKSDE_TEST_ASSERT_IS_NULL(
+         "error",
+         error );
+
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	if( volume != NULL )
+	{
+		libluksde_volume_free(
+		 &volume,
+		 NULL );
+	}
+	return( 0 );
+}
+
+/* Tests the libluksde_volume_signal_abort function
+ * Returns 1 if successful or 0 if not
+ */
+int luksde_test_volume_signal_abort(
+     libluksde_volume_t *volume )
+{
+	libcerror_error_t *error = NULL;
+	int result               = 0;
+
+	/* Test regular cases
+	 */
+	result = libluksde_volume_signal_abort(
+	          volume,
+	          &error );
+
+	LUKSDE_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+        LUKSDE_TEST_ASSERT_IS_NULL(
+         "error",
+         error );
+
+	/* Test error cases
+	 */
+	result = libluksde_volume_signal_abort(
+	          NULL,
+	          &error );
+
+	LUKSDE_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+        LUKSDE_TEST_ASSERT_IS_NOT_NULL(
+         "error",
+         error );
+
+	libcerror_error_free(
+	 &error );
+
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	return( 0 );
+}
+
+/* Tests the libluksde_volume_get_offset function
+ * Returns 1 if successful or 0 if not
+ */
+int luksde_test_volume_get_offset(
+     libluksde_volume_t *volume )
+{
+	libcerror_error_t *error = NULL;
+	off64_t offset           = 0;
+	int offset_is_set        = 0;
+	int result               = 0;
+
+	/* Test regular cases
+	 */
+	result = libluksde_volume_get_offset(
+	          volume,
+	          &offset,
+	          &error );
+
+	LUKSDE_TEST_ASSERT_NOT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	LUKSDE_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	offset_is_set = result;
+
+	/* Test error cases
+	 */
+	result = libluksde_volume_get_offset(
+	          NULL,
+	          &offset,
+	          &error );
+
+	LUKSDE_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	LUKSDE_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	if( offset_is_set != 0 )
+	{
+		result = libluksde_volume_get_offset(
+		          volume,
+		          NULL,
+		          &error );
+
+		LUKSDE_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
+
+		LUKSDE_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
+
+		libcerror_error_free(
+		 &error );
+	}
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	return( 0 );
+}
+
+/* Tests the libluksde_volume_get_size function
+ * Returns 1 if successful or 0 if not
+ */
+int luksde_test_volume_get_size(
+     libluksde_volume_t *volume )
+{
+	libcerror_error_t *error = NULL;
+	size64_t size            = 0;
+	int result               = 0;
+	int size_is_set          = 0;
+
+	/* Test regular cases
+	 */
+	result = libluksde_volume_get_size(
+	          volume,
+	          &size,
+	          &error );
+
+	LUKSDE_TEST_ASSERT_NOT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	LUKSDE_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	size_is_set = result;
+
+	/* Test error cases
+	 */
+	result = libluksde_volume_get_size(
+	          NULL,
+	          &size,
+	          &error );
+
+	LUKSDE_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	LUKSDE_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	if( size_is_set != 0 )
+	{
+		result = libluksde_volume_get_size(
+		          volume,
+		          NULL,
+		          &error );
+
+		LUKSDE_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
+
+		LUKSDE_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
+
+		libcerror_error_free(
+		 &error );
+	}
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	return( 0 );
+}
+
 /* The main program
  */
 #if defined( HAVE_WIDE_SYSTEM_CHARACTER )
@@ -1036,8 +1454,8 @@ int main(
 #endif
 {
 	libcerror_error_t *error   = NULL;
+	libluksde_volume_t *volume = NULL;
 	system_character_t *source = NULL;
-	libluksde_volume_t *volume        = NULL;
 	system_integer_t option    = 0;
 	int result                 = 0;
 
@@ -1101,7 +1519,14 @@ int main(
 
 #endif /* defined( LIBLUKSDE_HAVE_BFIO ) */
 
-		/* TODO add test for libluksde_volume_close */
+		LUKSDE_TEST_RUN(
+		 "libluksde_volume_close",
+		 luksde_test_volume_close );
+
+		LUKSDE_TEST_RUN_WITH_ARGS(
+		 "libluksde_volume_open_close",
+		 luksde_test_volume_open_close,
+		 source );
 
 		/* Initialize test
 		 */
@@ -1124,9 +1549,43 @@ int main(
 	         error );
 
 		LUKSDE_TEST_RUN_WITH_ARGS(
-		 "libluksde_volume_open",
-		 luksde_test_volume_open,
+		 "libluksde_volume_signal_abort",
+		 luksde_test_volume_signal_abort,
 		 volume );
+
+#if defined( __GNUC__ )
+
+		/* TODO: add tests for libluksde_volume_open_read */
+
+#endif /* defined( __GNUC__ ) */
+
+		/* TODO: add tests for libluksde_volume_read_buffer */
+
+		/* TODO: add tests for libluksde_volume_read_buffer_at_offset */
+
+		/* TODO: add tests for libluksde_volume_write_buffer */
+
+		/* TODO: add tests for libluksde_volume_write_buffer_at_offset */
+
+		/* TODO: add tests for libluksde_volume_seek_offset */
+
+		LUKSDE_TEST_RUN_WITH_ARGS(
+		 "libluksde_volume_get_offset",
+		 luksde_test_volume_get_offset,
+		 volume );
+
+		LUKSDE_TEST_RUN_WITH_ARGS(
+		 "libluksde_volume_get_size",
+		 luksde_test_volume_get_size,
+		 volume );
+
+		/* TODO: add tests for libluksde_volume_get_encryption_method */
+
+		/* TODO: add tests for libluksde_volume_set_keys */
+
+		/* TODO: add tests for libluksde_volume_set_utf8_password */
+
+		/* TODO: add tests for libluksde_volume_set_utf16_password */
 
 		/* Clean up
 		 */

@@ -128,4 +128,4 @@ struct luksde_volume_key_slot
 }
 #endif
 
-#endif
+#endif /* !defined( _LUKSDE_VOLUME_H ) */

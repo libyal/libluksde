@@ -225,5 +225,5 @@ int libluksde_volume_set_utf16_password(
 }
 #endif
 
-#endif
+#endif /* !defined( _LIBLUKSDE_INTERNAL_VOLUME_H ) */
 
