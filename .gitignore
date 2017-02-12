@@ -127,9 +127,7 @@ stamp-h[1-9]
 /tests/luksde_test_error
 /tests/luksde_test_key_slot
 /tests/luksde_test_notify
-/tests/luksde_test_read
 /tests/luksde_test_sector_data
-/tests/luksde_test_seek
 /tests/luksde_test_support
 /tests/luksde_test_volume
 /tests/tmp*
@@ -144,7 +142,6 @@ stamp-h[1-9]
 /libcnotify
 /libcpath
 /libcsplit
-/libcsystem
 /libcthreads
 /libfcache
 /libfdata

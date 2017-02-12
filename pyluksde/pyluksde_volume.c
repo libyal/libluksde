@@ -1,5 +1,5 @@
 /*
- * Python object definition of the libluksde volume
+ * Python object wrapper of libluksde_volume_t
  *
  * Copyright (C) 2013-2017, Joachim Metz <joachim.metz@gmail.com>
  *

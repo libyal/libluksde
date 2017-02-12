@@ -1,5 +1,5 @@
 /*
- * Library key_slot type testing program
+ * Library key_slot type test program
  *
  * Copyright (C) 2013-2017, Joachim Metz <joachim.metz@gmail.com>
  *

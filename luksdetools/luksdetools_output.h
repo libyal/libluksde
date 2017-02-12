@@ -1,5 +1,5 @@
 /*
- * The internal libluksde header
+ * Common output functions for the luksdetools
  *
  * Copyright (C) 2013-2017, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -19,19 +19,37 @@
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#if !defined( _LUKSDETOOLS_LIBLUKSDE_H )
-#define _LUKSDETOOLS_LIBLUKSDE_H
+#if !defined( _LUKSDETOOLS_OUTPUT_H )
+#define _LUKSDETOOLS_OUTPUT_H
 
 #include <common.h>
+#include <file_stream.h>
+#include <types.h>
 
-/* If Cygwin libtool DLL support is enabled set LIBLUKSDE_DLL_IMPORT
- * before including libluksde.h
- */
-#if defined( _WIN32 ) && defined( DLL_IMPORT ) && !defined( HAVE_STATIC_EXECUTABLES )
-#define LIBLUKSDE_DLL_IMPORT
+#include "luksdetools_libcerror.h"
+
+#if defined( __cplusplus )
+extern "C" {
 #endif
 
-#include <libluksde.h>
+int luksdetools_output_initialize(
+     int stdio_mode,
+     libcerror_error_t **error );
 
-#endif /* !defined( _LUKSDETOOLS_LIBLUKSDE_H ) */
+void luksdeoutput_copyright_fprint(
+      FILE *stream );
+
+void luksdeoutput_version_fprint(
+      FILE *stream,
+      const char *program );
+
+void luksdeoutput_version_detailed_fprint(
+      FILE *stream,
+      const char *program );
+
+#if defined( __cplusplus )
+}
+#endif
+
+#endif /* !defined( _LUKSDETOOLS_OUTPUT_H ) */
 

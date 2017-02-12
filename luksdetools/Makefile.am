@@ -12,7 +12,6 @@ AM_CPPFLAGS = \
 	@LIBBFIO_CPPFLAGS@ \
 	@LIBFCACHE_CPPFLAGS@ \
 	@LIBFDATA_CPPFLAGS@ \
-	@LIBCSYSTEM_CPPFLAGS@ \
 	@LIBFUSE_CPPFLAGS@ \
 	@LIBLUKSDE_DLL_IMPORT@
 
@@ -23,55 +22,59 @@ bin_PROGRAMS = \
 	luksdemount
 
 luksdeinfo_SOURCES = \
+	info_handle.c info_handle.h \
 	luksdeinfo.c \
-	luksdeoutput.c luksdeoutput.h \
+	luksdetools_getopt.c luksdetools_getopt.h \
+	luksdetools_i18n.h \
 	luksdetools_libluksde.h \
 	luksdetools_libcerror.h \
 	luksdetools_libclocale.h \
 	luksdetools_libcnotify.h \
 	luksdetools_libcsplit.h \
-	luksdetools_libcsystem.h \
 	luksdetools_libuna.h \
-	info_handle.c info_handle.h
+	luksdetools_output.c luksdetools_output.h \
+	luksdetools_signal.c luksdetools_signal.h \
+	luksdetools_unused.h
 
 luksdeinfo_LDADD = \
-	@LIBCSYSTEM_LIBADD@ \
 	@LIBBFIO_LIBADD@ \
 	@LIBCPATH_LIBADD@ \
 	@LIBCFILE_LIBADD@ \
 	@LIBUNA_LIBADD@ \
 	@LIBCSPLIT_LIBADD@ \
 	@LIBCDATA_LIBADD@ \
-	../libluksde/libluksde.la \
 	@LIBCNOTIFY_LIBADD@ \
 	@LIBCLOCALE_LIBADD@ \
+	../libluksde/libluksde.la \
 	@LIBCERROR_LIBADD@ \
 	@LIBINTL@
 
 luksdemount_SOURCES = \
 	luksdemount.c \
-	luksdeoutput.c luksdeoutput.h \
+	luksdetools_getopt.c luksdetools_getopt.h \
+	luksdetools_i18n.h \
 	luksdetools_libbfio.h \
 	luksdetools_libluksde.h \
 	luksdetools_libcerror.h \
 	luksdetools_libclocale.h \
 	luksdetools_libcnotify.h \
 	luksdetools_libcsplit.h \
-	luksdetools_libcsystem.h \
+	luksdetools_output.c luksdetools_output.h \
+	luksdetools_signal.c luksdetools_signal.h \
+	luksdetools_unused.h \
 	mount_handle.c mount_handle.h
 
 luksdemount_LDADD = \
 	@LIBFUSE_LIBADD@ \
-	@LIBCSYSTEM_LIBADD@ \
 	@LIBBFIO_LIBADD@ \
 	@LIBCPATH_LIBADD@ \
 	@LIBCFILE_LIBADD@ \
 	@LIBUNA_LIBADD@ \
 	@LIBCSPLIT_LIBADD@ \
 	@LIBCDATA_LIBADD@ \
-	../libluksde/libluksde.la \
 	@LIBCNOTIFY_LIBADD@ \
 	@LIBCLOCALE_LIBADD@ \
+	../libluksde/libluksde.la \
 	@LIBCERROR_LIBADD@ \
 	@LIBINTL@
 

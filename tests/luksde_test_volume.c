@@ -1,5 +1,5 @@
 /*
- * Library volume type testing program
+ * Library volume type test program
  *
  * Copyright (C) 2013-2017, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -30,9 +30,9 @@
 #include <stdlib.h>
 #endif
 
+#include "luksde_test_getopt.h"
 #include "luksde_test_libcerror.h"
 #include "luksde_test_libclocale.h"
-#include "luksde_test_libcsystem.h"
 #include "luksde_test_libluksde.h"
 #include "luksde_test_libuna.h"
 #include "luksde_test_macros.h"
@@ -1285,6 +1285,334 @@ on_error:
 	return( 0 );
 }
 
+/* Tests the libluksde_volume_read_buffer function
+ * Returns 1 if successful or 0 if not
+ */
+int luksde_test_volume_read_buffer(
+     libluksde_volume_t *volume )
+{
+	uint8_t buffer[ 16 ];
+
+	libcerror_error_t *error = NULL;
+	size64_t size            = 0;
+	ssize_t read_count       = 0;
+	off64_t offset           = 0;
+
+	/* Determine size
+	 */
+	offset = libluksde_volume_seek_offset(
+	          volume,
+	          0,
+	          SEEK_END,
+	          &error );
+
+	LUKSDE_TEST_ASSERT_NOT_EQUAL_INT64(
+	 "offset",
+	 offset,
+	 (int64_t) -1 );
+
+	LUKSDE_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	size = (size64_t) offset;
+
+	/* Reset offset to 0
+	 */
+	offset = libluksde_volume_seek_offset(
+	          volume,
+	          0,
+	          SEEK_SET,
+	          &error );
+
+	LUKSDE_TEST_ASSERT_EQUAL_INT64(
+	 "offset",
+	 offset,
+	 (int64_t) 0 );
+
+	LUKSDE_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Test regular cases
+	 */
+	if( size > 16 )
+	{
+		read_count = libluksde_volume_read_buffer(
+		              volume,
+		              buffer,
+		              16,
+		              &error );
+
+		LUKSDE_TEST_ASSERT_EQUAL_SSIZE(
+		 "read_count",
+		 read_count,
+		 (ssize_t) 16 );
+
+		LUKSDE_TEST_ASSERT_IS_NULL(
+		 "error",
+		 error );
+	}
+/* TODO read on size boundary */
+/* TODO read beyond size boundary */
+
+	/* Reset offset to 0
+	 */
+	offset = libluksde_volume_seek_offset(
+	          volume,
+	          0,
+	          SEEK_SET,
+	          &error );
+
+	LUKSDE_TEST_ASSERT_EQUAL_INT64(
+	 "offset",
+	 offset,
+	 (int64_t) 0 );
+
+	LUKSDE_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Test error cases
+	 */
+	read_count = libluksde_volume_read_buffer(
+	              NULL,
+	              buffer,
+	              16,
+	              &error );
+
+	LUKSDE_TEST_ASSERT_EQUAL_SSIZE(
+	 "read_count",
+	 read_count,
+	 (ssize_t) -1 );
+
+	LUKSDE_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	read_count = libluksde_volume_read_buffer(
+	              volume,
+	              NULL,
+	              16,
+	              &error );
+
+	LUKSDE_TEST_ASSERT_EQUAL_SSIZE(
+	 "read_count",
+	 read_count,
+	 (ssize_t) -1 );
+
+	LUKSDE_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	read_count = libluksde_volume_read_buffer(
+	              volume,
+	              buffer,
+	              (size_t) SSIZE_MAX + 1,
+	              &error );
+
+	LUKSDE_TEST_ASSERT_EQUAL_SSIZE(
+	 "read_count",
+	 read_count,
+	 (ssize_t) -1 );
+
+	LUKSDE_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	return( 0 );
+}
+
+/* Tests the libluksde_volume_seek_offset function
+ * Returns 1 if successful or 0 if not
+ */
+int luksde_test_volume_seek_offset(
+     libluksde_volume_t *volume )
+{
+	libcerror_error_t *error = NULL;
+	size64_t size            = 0;
+	off64_t offset           = 0;
+
+	/* Test regular cases
+	 */
+	offset = libluksde_volume_seek_offset(
+	          volume,
+	          0,
+	          SEEK_END,
+	          &error );
+
+	LUKSDE_TEST_ASSERT_NOT_EQUAL_INT64(
+	 "offset",
+	 offset,
+	 (int64_t) -1 );
+
+	LUKSDE_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	size = (size64_t) offset;
+
+	offset = libluksde_volume_seek_offset(
+	          volume,
+	          1024,
+	          SEEK_SET,
+	          &error );
+
+	LUKSDE_TEST_ASSERT_EQUAL_INT64(
+	 "offset",
+	 offset,
+	 (int64_t) 1024 );
+
+	LUKSDE_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	offset = libluksde_volume_seek_offset(
+	          volume,
+	          -512,
+	          SEEK_CUR,
+	          &error );
+
+	LUKSDE_TEST_ASSERT_EQUAL_INT64(
+	 "offset",
+	 offset,
+	 (int64_t) 512 );
+
+	LUKSDE_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	offset = libluksde_volume_seek_offset(
+	          volume,
+	          (off64_t) ( size + 512 ),
+	          SEEK_SET,
+	          &error );
+
+	LUKSDE_TEST_ASSERT_EQUAL_INT64(
+	 "offset",
+	 offset,
+	 (int64_t) ( size + 512 ) );
+
+	LUKSDE_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Reset offset to 0
+	 */
+	offset = libluksde_volume_seek_offset(
+	          volume,
+	          0,
+	          SEEK_SET,
+	          &error );
+
+	LUKSDE_TEST_ASSERT_EQUAL_INT64(
+	 "offset",
+	 offset,
+	 (int64_t) 0 );
+
+	LUKSDE_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Test error cases
+	 */
+	offset = libluksde_volume_seek_offset(
+	          NULL,
+	          0,
+	          SEEK_SET,
+	          &error );
+
+	LUKSDE_TEST_ASSERT_EQUAL_INT64(
+	 "offset",
+	 offset,
+	 (int64_t) -1 );
+
+	LUKSDE_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	offset = libluksde_volume_seek_offset(
+	          volume,
+	          -1,
+	          SEEK_SET,
+	          &error );
+
+	LUKSDE_TEST_ASSERT_EQUAL_INT64(
+	 "offset",
+	 offset,
+	 (int64_t) -1 );
+
+	LUKSDE_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	offset = libluksde_volume_seek_offset(
+	          volume,
+	          -1,
+	          SEEK_CUR,
+	          &error );
+
+	LUKSDE_TEST_ASSERT_EQUAL_INT64(
+	 "offset",
+	 offset,
+	 (int64_t) -1 );
+
+	LUKSDE_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	offset = libluksde_volume_seek_offset(
+	          volume,
+	          (off64_t) ( -1 * ( size + 1 ) ),
+	          SEEK_END,
+	          &error );
+
+	LUKSDE_TEST_ASSERT_EQUAL_INT64(
+	 "offset",
+	 offset,
+	 (int64_t) -1 );
+
+	LUKSDE_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	return( 0 );
+}
+
 /* Tests the libluksde_volume_get_offset function
  * Returns 1 if successful or 0 if not
  */
@@ -1459,7 +1787,7 @@ int main(
 	system_integer_t option    = 0;
 	int result                 = 0;
 
-	while( ( option = libcsystem_getopt(
+	while( ( option = luksde_test_getopt(
 	                   argc,
 	                   argv,
 	                   _SYSTEM_STRING( "" ) ) ) != (system_integer_t) -1 )
@@ -1559,7 +1887,10 @@ int main(
 
 #endif /* defined( __GNUC__ ) */
 
-		/* TODO: add tests for libluksde_volume_read_buffer */
+		LUKSDE_TEST_RUN_WITH_ARGS(
+		 "libluksde_volume_read_buffer",
+		 luksde_test_volume_read_buffer,
+		 volume );
 
 		/* TODO: add tests for libluksde_volume_read_buffer_at_offset */
 
@@ -1567,7 +1898,10 @@ int main(
 
 		/* TODO: add tests for libluksde_volume_write_buffer_at_offset */
 
-		/* TODO: add tests for libluksde_volume_seek_offset */
+		LUKSDE_TEST_RUN_WITH_ARGS(
+		 "libluksde_volume_seek_offset",
+		 luksde_test_volume_seek_offset,
+		 volume );
 
 		LUKSDE_TEST_RUN_WITH_ARGS(
 		 "libluksde_volume_get_offset",

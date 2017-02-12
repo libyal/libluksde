@@ -1,5 +1,5 @@
 /*
- * Common output functions for the luksdetools
+ * Signal handling functions
  *
  * Copyright (C) 2013-2017, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -19,31 +19,54 @@
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#if !defined( _LUKSDEOUTPUT_H )
-#define _LUKSDEOUTPUT_H
+#if !defined( _LUKSDETOOLS_SIGNAL_H )
+#define _LUKSDETOOLS_SIGNAL_H
 
 #include <common.h>
-#include <file_stream.h>
 #include <types.h>
+
+#include "luksdetools_libcerror.h"
 
 #if defined( __cplusplus )
 extern "C" {
 #endif
 
-void luksdeoutput_copyright_fprint(
-      FILE *stream );
+#if !defined( HAVE_SIGNAL_H ) && !defined( WINAPI )
+#error missing signal functions
+#endif
 
-void luksdeoutput_version_fprint(
-      FILE *stream,
-      const char *program );
+#if defined( WINAPI )
+typedef unsigned long luksdetools_signal_t;
 
-void luksdeoutput_version_detailed_fprint(
-      FILE *stream,
-      const char *program );
+#else
+typedef int luksdetools_signal_t;
+
+#endif /* defined( WINAPI ) */
+
+#if defined( WINAPI )
+
+BOOL WINAPI luksdetools_signal_handler(
+             luksdetools_signal_t signal );
+
+#if defined( _MSC_VER )
+
+void luksdetools_signal_initialize_memory_debug(
+      void );
+
+#endif /* defined( _MSC_VER ) */
+
+#endif /* defined( WINAPI ) */
+
+int luksdetools_signal_attach(
+     void (*signal_handler)( luksdetools_signal_t ),
+     libcerror_error_t **error );
+
+int luksdetools_signal_detach(
+     libcerror_error_t **error );
 
 #if defined( __cplusplus )
 }
 #endif
 
-#endif /* !defined( _LUKSDEOUTPUT_H ) */
+#endif /* !defined( _LUKSDETOOLS_SIGNAL_H ) */
 

@@ -1,5 +1,5 @@
 /*
- * The internal libluksde header
+ * The unused definition
  *
  * Copyright (C) 2013-2017, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -19,19 +19,32 @@
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#if !defined( _LUKSDETOOLS_LIBLUKSDE_H )
-#define _LUKSDETOOLS_LIBLUKSDE_H
+#if !defined( _LUKSDETOOLS_UNUSED_H )
+#define _LUKSDETOOLS_UNUSED_H
 
 #include <common.h>
 
-/* If Cygwin libtool DLL support is enabled set LIBLUKSDE_DLL_IMPORT
- * before including libluksde.h
- */
-#if defined( _WIN32 ) && defined( DLL_IMPORT ) && !defined( HAVE_STATIC_EXECUTABLES )
-#define LIBLUKSDE_DLL_IMPORT
-#endif
+#if !defined( LUKSDETOOLS_ATTRIBUTE_UNUSED )
 
-#include <libluksde.h>
+#if defined( __GNUC__ ) && __GNUC__ >= 3
+#define LUKSDETOOLS_ATTRIBUTE_UNUSED	__attribute__ ((__unused__))
 
-#endif /* !defined( _LUKSDETOOLS_LIBLUKSDE_H ) */
+#else
+#define LUKSDETOOLS_ATTRIBUTE_UNUSED
+
+#endif /* defined( __GNUC__ ) && __GNUC__ >= 3 */
+
+#endif /* !defined( LUKSDETOOLS_ATTRIBUTE_UNUSED ) */
+
+#if defined( _MSC_VER )
+#define LUKSDETOOLS_UNREFERENCED_PARAMETER( parameter ) \
+	UNREFERENCED_PARAMETER( parameter );
+
+#else
+#define LUKSDETOOLS_UNREFERENCED_PARAMETER( parameter ) \
+	/* parameter */
+
+#endif /* defined( _MSC_VER ) */
+
+#endif /* !defined( _LUKSDETOOLS_UNUSED_H ) */
 

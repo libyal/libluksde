@@ -30,10 +30,10 @@
 #include <stdlib.h>
 #endif
 
+#include "luksde_test_getopt.h"
 #include "luksde_test_libbfio.h"
 #include "luksde_test_libcerror.h"
 #include "luksde_test_libclocale.h"
-#include "luksde_test_libcsystem.h"
 #include "luksde_test_libluksde.h"
 #include "luksde_test_libuna.h"
 #include "luksde_test_macros.h"
@@ -984,7 +984,7 @@ int luksde_test_check_volume_signature_file_io_handle(
          "error",
          error );
 
-	/* TODO test file too small */
+	/* TODO test volume too small */
 
 	return( 1 );
 
@@ -1018,7 +1018,7 @@ int main(
 	system_character_t *source = NULL;
 	system_integer_t option    = 0;
 
-	while( ( option = libcsystem_getopt(
+	while( ( option = luksde_test_getopt(
 	                   argc,
 	                   argv,
 	                   _SYSTEM_STRING( "" ) ) ) != (system_integer_t) -1 )

@@ -2,7 +2,7 @@ AC_PREREQ( 2.59 )
 
 AC_INIT(
  [libluksde],
- [20161122],
+ [20170212],
  [joachim.metz@gmail.com])
 
 AC_CONFIG_SRCDIR(
@@ -102,8 +102,8 @@ AX_LIBCAES_CHECK_ENABLE
 dnl Check for library function support
 AX_LIBLUKSDE_CHECK_LOCAL
 
-dnl Check for enabling libcsystem for cross-platform C generic system functions
-AX_LIBCSYSTEM_CHECK_ENABLE
+dnl Check for luksdetools function support
+AX_LUKSDETOOLS_CHECK_LOCAL
 
 dnl Check for libfuse Filesystem in Userspace (FUSE) support
 AX_LIBFUSE_CHECK_ENABLE
@@ -114,15 +114,6 @@ AS_IF(
  [AC_HEADER_TIME
  AC_CHECK_FUNCS([getegid geteuid time])
  ])
-
-dnl Check if luksdetools should be build as static executables
-AX_COMMON_CHECK_ENABLE_STATIC_EXECUTABLES
-
-dnl Check if libluksde should be build with verbose output
-AX_COMMON_CHECK_ENABLE_VERBOSE_OUTPUT
-
-dnl Check if libluksde should be build with debug output
-AX_COMMON_CHECK_ENABLE_DEBUG_OUTPUT
 
 dnl Check if libluksde python bindings (pyluksde) should be build
 AX_PYTHON_CHECK_PYPREFIX
@@ -147,29 +138,6 @@ AS_IF(
 dnl Check for test function support
 AX_TESTS_CHECK_LOCAL
 
-dnl Check if DLL support is needed
-AS_IF(
- [test "x$enable_shared" = xyes],
- [AS_CASE(
-  [$host],
-  [*cygwin* | *mingw*],
-  [AC_DEFINE(
-   [HAVE_DLLMAIN],
-   [1],
-   [Define to 1 to enable the DllMain function.])
-  AC_SUBST(
-   [HAVE_DLLMAIN],
-   [1])
-
-  AS_IF(
-   [test "x$ac_cv_enable_static_executables" = xno],
-   [AC_SUBST(
-    [LIBLUKSDE_DLL_IMPORT],
-    ["-DLIBLUKSDE_DLL_IMPORT"])
-   ])
-  ])
- ])
-
 dnl Set additional compiler flags
 CFLAGS="$CFLAGS -Wall";
 
@@ -185,7 +153,7 @@ AS_IF(
  ])
 
 AS_IF(
- [test "x$ac_cv_libcsystem" = xyes || test "x$ac_cv_libfuse" != xno],
+ [test "x$ac_cv_libfuse" != xno],
  [AC_SUBST(
   [libluksde_spec_tools_build_requires],
   [BuildRequires:])
@@ -226,7 +194,6 @@ AC_CONFIG_FILES([libfguid/Makefile])
 AC_CONFIG_FILES([libhmac/Makefile])
 AC_CONFIG_FILES([libcaes/Makefile])
 AC_CONFIG_FILES([libluksde/Makefile])
-AC_CONFIG_FILES([libcsystem/Makefile])
 AC_CONFIG_FILES([luksdetools/Makefile])
 AC_CONFIG_FILES([pyluksde/Makefile])
 AC_CONFIG_FILES([pyluksde-python2/Makefile])
@@ -277,7 +244,6 @@ Building:
    SHA512 support:                              $ac_cv_libhmac_sha512
    libcaes support:                             $ac_cv_libcaes
    AES support:                                 $ac_cv_libcaes_aes
-   libcsystem support:                          $ac_cv_libcsystem
    FUSE support:                                $ac_cv_libfuse
 
 Features:

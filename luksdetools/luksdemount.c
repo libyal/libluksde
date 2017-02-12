@@ -65,12 +65,14 @@
 #include <dokan.h>
 #endif
 
-#include "luksdeoutput.h"
+#include "luksdetools_getopt.h"
 #include "luksdetools_libluksde.h"
 #include "luksdetools_libcerror.h"
 #include "luksdetools_libclocale.h"
 #include "luksdetools_libcnotify.h"
-#include "luksdetools_libcsystem.h"
+#include "luksdetools_output.h"
+#include "luksdetools_signal.h"
+#include "luksdetools_unused.h"
 #include "mount_handle.h"
 
 mount_handle_t *luksdemount_mount_handle = NULL;
@@ -107,12 +109,12 @@ void usage_fprint(
 /* Signal handler for luksdemount
  */
 void luksdemount_signal_handler(
-      libcsystem_signal_t signal LIBCSYSTEM_ATTRIBUTE_UNUSED )
+      luksdetools_signal_t signal LUKSDETOOLS_ATTRIBUTE_UNUSED )
 {
 	libcerror_error_t *error = NULL;
 	static char *function    = "luksdemount_signal_handler";
 
-	LIBCSYSTEM_UNREFERENCED_PARAMETER( signal )
+	LUKSDETOOLS_UNREFERENCED_PARAMETER( signal )
 
 	luksdemount_abort = 1;
 
@@ -134,8 +136,13 @@ void luksdemount_signal_handler(
 	}
 	/* Force stdin to close otherwise any function reading it will remain blocked
 	 */
-	if( libcsystem_file_io_close(
+#if defined( WINAPI ) && !defined( __CYGWIN__ )
+	if( _close(
 	     0 ) != 0 )
+#else
+	if( close(
+	     0 ) != 0 )
+#endif
 	{
 		libcnotify_printf(
 		 "%s: unable to close stdin.\n",
@@ -367,16 +374,16 @@ int luksdemount_fuse_readdir(
      const char *path,
      void *buffer,
      fuse_fill_dir_t filler,
-     off_t offset LIBCSYSTEM_ATTRIBUTE_UNUSED,
-     struct fuse_file_info *file_info LIBCSYSTEM_ATTRIBUTE_UNUSED )
+     off_t offset LUKSDETOOLS_ATTRIBUTE_UNUSED,
+     struct fuse_file_info *file_info LUKSDETOOLS_ATTRIBUTE_UNUSED )
 {
 	libcerror_error_t *error = NULL;
 	static char *function    = "luksdemount_fuse_readdir";
 	size_t path_length       = 0;
 	int result               = 0;
 
-	LIBCSYSTEM_UNREFERENCED_PARAMETER( offset )
-	LIBCSYSTEM_UNREFERENCED_PARAMETER( file_info )
+	LUKSDETOOLS_UNREFERENCED_PARAMETER( offset )
+	LUKSDETOOLS_UNREFERENCED_PARAMETER( file_info )
 
 	if( path == NULL )
 	{
@@ -629,12 +636,12 @@ on_error:
 /* Cleans up when fuse is done
  */
 void luksdemount_fuse_destroy(
-      void *private_data LIBCSYSTEM_ATTRIBUTE_UNUSED )
+      void *private_data LUKSDETOOLS_ATTRIBUTE_UNUSED )
 {
 	libcerror_error_t *error = NULL;
 	static char *function    = "luksdemount_fuse_destroy";
 
-	LIBCSYSTEM_UNREFERENCED_PARAMETER( private_data )
+	LUKSDETOOLS_UNREFERENCED_PARAMETER( private_data )
 
 	if( luksdemount_mount_handle != NULL )
 	{
@@ -676,9 +683,9 @@ static size_t luksdemount_dokan_path_length = 8;
 int __stdcall luksdemount_dokan_CreateFile(
                const wchar_t *path,
                DWORD desired_access,
-               DWORD share_mode LIBCSYSTEM_ATTRIBUTE_UNUSED,
+               DWORD share_mode LUKSDETOOLS_ATTRIBUTE_UNUSED,
                DWORD creation_disposition,
-               DWORD attribute_flags LIBCSYSTEM_ATTRIBUTE_UNUSED,
+               DWORD attribute_flags LUKSDETOOLS_ATTRIBUTE_UNUSED,
                DOKAN_FILE_INFO *file_info )
 {
 	libcerror_error_t *error = NULL;
@@ -686,8 +693,8 @@ int __stdcall luksdemount_dokan_CreateFile(
 	size_t path_length       = 0;
 	int result               = 0;
 
-	LIBCSYSTEM_UNREFERENCED_PARAMETER( share_mode )
-	LIBCSYSTEM_UNREFERENCED_PARAMETER( attribute_flags )
+	LUKSDETOOLS_UNREFERENCED_PARAMETER( share_mode )
+	LUKSDETOOLS_UNREFERENCED_PARAMETER( attribute_flags )
 
 	if( path == NULL )
 	{
@@ -809,14 +816,14 @@ on_error:
  */
 int __stdcall luksdemount_dokan_OpenDirectory(
                const wchar_t *path,
-               DOKAN_FILE_INFO *file_info LIBCSYSTEM_ATTRIBUTE_UNUSED )
+               DOKAN_FILE_INFO *file_info LUKSDETOOLS_ATTRIBUTE_UNUSED )
 {
 	libcerror_error_t *error = NULL;
 	static char *function    = "luksdemount_dokan_OpenDirectory";
 	size_t path_length       = 0;
 	int result               = 0;
 
-	LIBCSYSTEM_UNREFERENCED_PARAMETER( file_info )
+	LUKSDETOOLS_UNREFERENCED_PARAMETER( file_info )
 
 	if( path == NULL )
 	{
@@ -867,13 +874,13 @@ on_error:
  */
 int __stdcall luksdemount_dokan_CloseFile(
                const wchar_t *path,
-               DOKAN_FILE_INFO *file_info LIBCSYSTEM_ATTRIBUTE_UNUSED )
+               DOKAN_FILE_INFO *file_info LUKSDETOOLS_ATTRIBUTE_UNUSED )
 {
 	libcerror_error_t *error = NULL;
 	static char *function    = "luksdemount_dokan_CloseFile";
 	int result               = 0;
 
-	LIBCSYSTEM_UNREFERENCED_PARAMETER( file_info )
+	LUKSDETOOLS_UNREFERENCED_PARAMETER( file_info )
 
 	if( path == NULL )
 	{
@@ -910,7 +917,7 @@ int __stdcall luksdemount_dokan_ReadFile(
                DWORD number_of_bytes_to_read,
                DWORD *number_of_bytes_read,
                LONGLONG offset,
-               DOKAN_FILE_INFO *file_info LIBCSYSTEM_ATTRIBUTE_UNUSED )
+               DOKAN_FILE_INFO *file_info LUKSDETOOLS_ATTRIBUTE_UNUSED )
 {
 	libcerror_error_t *error = NULL;
 	static char *function    = "luksdemount_dokan_ReadFile";
@@ -918,7 +925,7 @@ int __stdcall luksdemount_dokan_ReadFile(
 	ssize_t read_count       = 0;
 	int result               = 0;
 
-	LIBCSYSTEM_UNREFERENCED_PARAMETER( file_info )
+	LUKSDETOOLS_UNREFERENCED_PARAMETER( file_info )
 
 	if( path == NULL )
 	{
@@ -1466,13 +1473,13 @@ int __stdcall luksdemount_dokan_GetVolumeInformation(
                DWORD *file_system_flags,
                wchar_t *file_system_name,
                DWORD file_system_name_size,
-               DOKAN_FILE_INFO *file_info LIBCSYSTEM_ATTRIBUTE_UNUSED )
+               DOKAN_FILE_INFO *file_info LUKSDETOOLS_ATTRIBUTE_UNUSED )
 {
 	libcerror_error_t *error = NULL;
 	static char *function    = "luksdemount_dokan_GetVolumeInformation";
 	int result               = 0;
 
-	LIBCSYSTEM_UNREFERENCED_PARAMETER( file_info )
+	LUKSDETOOLS_UNREFERENCED_PARAMETER( file_info )
 
 	if( ( volume_name != NULL )
 	 && ( volume_name_size > (DWORD) ( sizeof( wchar_t ) * 7 ) ) )
@@ -1552,11 +1559,11 @@ on_error:
  * Returns 0 if successful or a negative error code otherwise
  */
 int __stdcall luksdemount_dokan_Unmount(
-               DOKAN_FILE_INFO *file_info LIBCSYSTEM_ATTRIBUTE_UNUSED )
+               DOKAN_FILE_INFO *file_info LUKSDETOOLS_ATTRIBUTE_UNUSED )
 {
 	static char *function = "luksdemount_dokan_Unmount";
 
-	LIBCSYSTEM_UNREFERENCED_PARAMETER( file_info )
+	LUKSDETOOLS_UNREFERENCED_PARAMETER( file_info )
 
 	return( 0 );
 }
@@ -1611,13 +1618,13 @@ int main( int argc, char * const argv[] )
 
 		goto on_error;
 	}
-	if( libcsystem_initialize(
+	if( luksdetools_output_initialize(
              _IONBF,
              &error ) != 1 )
 	{
 		fprintf(
 		 stderr,
-		 "Unable to initialize system values.\n" );
+		 "Unable to initialize output settings.\n" );
 
 		goto on_error;
 	}
@@ -1625,7 +1632,7 @@ int main( int argc, char * const argv[] )
 	 stdout,
 	 program );
 
-	while( ( option = libcsystem_getopt(
+	while( ( option = luksdetools_getopt(
 	                   argc,
 	                   argv,
 	                   _SYSTEM_STRING( "hk:o:p:vVX:" ) ) ) != (system_integer_t) -1 )

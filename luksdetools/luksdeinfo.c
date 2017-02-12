@@ -35,12 +35,14 @@
 #endif
 
 #include "info_handle.h"
-#include "luksdeoutput.h"
+#include "luksdetools_getopt.h"
 #include "luksdetools_libluksde.h"
 #include "luksdetools_libcerror.h"
 #include "luksdetools_libclocale.h"
 #include "luksdetools_libcnotify.h"
-#include "luksdetools_libcsystem.h"
+#include "luksdetools_output.h"
+#include "luksdetools_signal.h"
+#include "luksdetools_unused.h"
 
 info_handle_t *luksdeinfo_info_handle = NULL;
 int luksdeinfo_abort                  = 0;
@@ -73,12 +75,12 @@ void usage_fprint(
 /* Signal handler for luksdeinfo
  */
 void luksdeinfo_signal_handler(
-      libcsystem_signal_t signal LIBCSYSTEM_ATTRIBUTE_UNUSED )
+      luksdetools_signal_t signal LUKSDETOOLS_ATTRIBUTE_UNUSED )
 {
 	libcerror_error_t *error = NULL;
-	static char *function   = "luksdeinfo_signal_handler";
+	static char *function    = "luksdeinfo_signal_handler";
 
-	LIBCSYSTEM_UNREFERENCED_PARAMETER( signal )
+	LUKSDETOOLS_UNREFERENCED_PARAMETER( signal )
 
 	luksdeinfo_abort = 1;
 
@@ -100,8 +102,13 @@ void luksdeinfo_signal_handler(
 	}
 	/* Force stdin to close otherwise any function reading it will remain blocked
 	 */
-	if( libcsystem_file_io_close(
+#if defined( WINAPI ) && !defined( __CYGWIN__ )
+	if( _close(
 	     0 ) != 0 )
+#else
+	if( close(
+	     0 ) != 0 )
+#endif
 	{
 		libcnotify_printf(
 		 "%s: unable to close stdin.\n",
@@ -143,13 +150,13 @@ int main( int argc, char * const argv[] )
 
 		goto on_error;
 	}
-	if( libcsystem_initialize(
+	if( luksdetools_output_initialize(
              _IONBF,
              &error ) != 1 )
 	{
 		fprintf(
 		 stderr,
-		 "Unable to initialize system values.\n" );
+		 "Unable to initialize output settings.\n" );
 
 		goto on_error;
 	}
@@ -157,7 +164,7 @@ int main( int argc, char * const argv[] )
 	 stdout,
 	 program );
 
-	while( ( option = libcsystem_getopt(
+	while( ( option = luksdetools_getopt(
 	                   argc,
 	                   argv,
 	                   _SYSTEM_STRING( "hk:o:p:vV" ) ) ) != (system_integer_t) -1 )
