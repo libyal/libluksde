@@ -637,13 +637,13 @@ int luksde_test_volume_initialize(
 	 result,
 	 1 );
 
-        LUKSDE_TEST_ASSERT_IS_NOT_NULL(
-         "volume",
-         volume );
+	LUKSDE_TEST_ASSERT_IS_NOT_NULL(
+	 "volume",
+	 volume );
 
-        LUKSDE_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	LUKSDE_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	result = libluksde_volume_free(
 	          &volume,
@@ -654,13 +654,13 @@ int luksde_test_volume_initialize(
 	 result,
 	 1 );
 
-        LUKSDE_TEST_ASSERT_IS_NULL(
-         "volume",
-         volume );
+	LUKSDE_TEST_ASSERT_IS_NULL(
+	 "volume",
+	 volume );
 
-        LUKSDE_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	LUKSDE_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	/* Test error cases
 	 */
@@ -673,9 +673,9 @@ int luksde_test_volume_initialize(
 	 result,
 	 -1 );
 
-        LUKSDE_TEST_ASSERT_IS_NOT_NULL(
-         "error",
-         error );
+	LUKSDE_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
 
 	libcerror_error_free(
 	 &error );
@@ -691,9 +691,9 @@ int luksde_test_volume_initialize(
 	 result,
 	 -1 );
 
-        LUKSDE_TEST_ASSERT_IS_NOT_NULL(
-         "error",
-         error );
+	LUKSDE_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
 
 	libcerror_error_free(
 	 &error );
@@ -825,9 +825,9 @@ int luksde_test_volume_free(
 	 result,
 	 -1 );
 
-        LUKSDE_TEST_ASSERT_IS_NOT_NULL(
-         "error",
-         error );
+	LUKSDE_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
 
 	libcerror_error_free(
 	 &error );
@@ -870,9 +870,9 @@ int luksde_test_volume_open(
 	 result,
 	 1 );
 
-        LUKSDE_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	LUKSDE_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	result = libluksde_volume_initialize(
 	          &volume,
@@ -883,13 +883,13 @@ int luksde_test_volume_open(
 	 result,
 	 1 );
 
-        LUKSDE_TEST_ASSERT_IS_NOT_NULL(
-         "volume",
-         volume );
+	LUKSDE_TEST_ASSERT_IS_NOT_NULL(
+	 "volume",
+	 volume );
 
-        LUKSDE_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	LUKSDE_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	if( password != NULL )
 	{
@@ -916,7 +916,7 @@ int luksde_test_volume_open(
 
 	        LUKSDE_TEST_ASSERT_IS_NULL(
 	         "error",
-        	 error );
+		 error );
 	}
 	/* Test open
 	 */
@@ -931,9 +931,9 @@ int luksde_test_volume_open(
 	 result,
 	 1 );
 
-        LUKSDE_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	LUKSDE_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	/* Test error cases
 	 */
@@ -948,9 +948,9 @@ int luksde_test_volume_open(
 	 result,
 	 -1 );
 
-        LUKSDE_TEST_ASSERT_IS_NOT_NULL(
-         "error",
-         error );
+	LUKSDE_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
 
 	libcerror_error_free(
 	 &error );
@@ -966,13 +966,13 @@ int luksde_test_volume_open(
 	 result,
 	 1 );
 
-        LUKSDE_TEST_ASSERT_IS_NULL(
-         "volume",
-         volume );
+	LUKSDE_TEST_ASSERT_IS_NULL(
+	 "volume",
+	 volume );
 
-        LUKSDE_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	LUKSDE_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	return( 1 );
 
@@ -1020,9 +1020,9 @@ int luksde_test_volume_open_wide(
 	 result,
 	 1 );
 
-        LUKSDE_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	LUKSDE_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	result = libluksde_volume_initialize(
 	          &volume,
@@ -1033,13 +1033,13 @@ int luksde_test_volume_open_wide(
 	 result,
 	 1 );
 
-        LUKSDE_TEST_ASSERT_IS_NOT_NULL(
-         "volume",
-         volume );
+	LUKSDE_TEST_ASSERT_IS_NOT_NULL(
+	 "volume",
+	 volume );
 
-        LUKSDE_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	LUKSDE_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	if( password != NULL )
 	{
@@ -1066,7 +1066,7 @@ int luksde_test_volume_open_wide(
 
 	        LUKSDE_TEST_ASSERT_IS_NULL(
 	         "error",
-        	 error );
+		 error );
 	}
 	/* Test open
 	 */
@@ -1081,9 +1081,9 @@ int luksde_test_volume_open_wide(
 	 result,
 	 1 );
 
-        LUKSDE_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	LUKSDE_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	/* Test error cases
 	 */
@@ -1098,9 +1098,9 @@ int luksde_test_volume_open_wide(
 	 result,
 	 -1 );
 
-        LUKSDE_TEST_ASSERT_IS_NOT_NULL(
-         "error",
-         error );
+	LUKSDE_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
 
 	libcerror_error_free(
 	 &error );
@@ -1116,13 +1116,13 @@ int luksde_test_volume_open_wide(
 	 result,
 	 1 );
 
-        LUKSDE_TEST_ASSERT_IS_NULL(
-         "volume",
-         volume );
+	LUKSDE_TEST_ASSERT_IS_NULL(
+	 "volume",
+	 volume );
 
-        LUKSDE_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	LUKSDE_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	return( 1 );
 
@@ -1163,9 +1163,9 @@ int luksde_test_volume_close(
 	 result,
 	 -1 );
 
-        LUKSDE_TEST_ASSERT_IS_NOT_NULL(
-         "error",
-         error );
+	LUKSDE_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
 
 	libcerror_error_free(
 	 &error );
@@ -1185,10 +1185,12 @@ on_error:
  * Returns 1 if successful or 0 if not
  */
 int luksde_test_volume_open_close(
-     const system_character_t *source )
+     const system_character_t *source,
+     const system_character_t *password )
 {
 	libcerror_error_t *error   = NULL;
 	libluksde_volume_t *volume = NULL;
+	size_t string_length       = 0;
 	int result                 = 0;
 
 	/* Initialize test
@@ -1202,14 +1204,41 @@ int luksde_test_volume_open_close(
 	 result,
 	 1 );
 
-        LUKSDE_TEST_ASSERT_IS_NOT_NULL(
-         "volume",
-         volume );
+	LUKSDE_TEST_ASSERT_IS_NOT_NULL(
+	 "volume",
+	 volume );
 
-        LUKSDE_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	LUKSDE_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
+	if( password != NULL )
+	{
+		string_length = system_string_length(
+		                 password );
+
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
+		result = libluksde_volume_set_utf16_password(
+		          volume,
+		          (uint16_t *) password,
+		          string_length,
+		          &error );
+#else
+		result = libluksde_volume_set_utf8_password(
+		          volume,
+		          (uint8_t *) password,
+		          string_length,
+		          &error );
+#endif
+		LUKSDE_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 1 );
+
+	        LUKSDE_TEST_ASSERT_IS_NULL(
+	         "error",
+		 error );
+	}
 	/* Test open and close
 	 */
 #if defined( HAVE_WIDE_SYSTEM_CHARACTER )
@@ -1231,9 +1260,9 @@ int luksde_test_volume_open_close(
 	 result,
 	 1 );
 
-        LUKSDE_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	LUKSDE_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	result = libluksde_volume_close(
 	          volume,
@@ -1244,9 +1273,9 @@ int luksde_test_volume_open_close(
 	 result,
 	 0 );
 
-        LUKSDE_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	LUKSDE_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	/* Test open and close a second time to validate clean up on close
 	 */
@@ -1269,9 +1298,9 @@ int luksde_test_volume_open_close(
 	 result,
 	 1 );
 
-        LUKSDE_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	LUKSDE_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	result = libluksde_volume_close(
 	          volume,
@@ -1282,9 +1311,9 @@ int luksde_test_volume_open_close(
 	 result,
 	 0 );
 
-        LUKSDE_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	LUKSDE_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	/* Clean up
 	 */
@@ -1297,13 +1326,13 @@ int luksde_test_volume_open_close(
 	 result,
 	 1 );
 
-        LUKSDE_TEST_ASSERT_IS_NULL(
-         "volume",
-         volume );
+	LUKSDE_TEST_ASSERT_IS_NULL(
+	 "volume",
+	 volume );
 
-        LUKSDE_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	LUKSDE_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	return( 1 );
 
@@ -1342,9 +1371,9 @@ int luksde_test_volume_signal_abort(
 	 result,
 	 1 );
 
-        LUKSDE_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	LUKSDE_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	/* Test error cases
 	 */
@@ -1357,9 +1386,9 @@ int luksde_test_volume_signal_abort(
 	 result,
 	 -1 );
 
-        LUKSDE_TEST_ASSERT_IS_NOT_NULL(
-         "error",
-         error );
+	LUKSDE_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
 
 	libcerror_error_free(
 	 &error );
@@ -1926,16 +1955,16 @@ int main(
 		LUKSDE_TEST_RUN_WITH_ARGS(
 		 "libluksde_volume_open",
 		 luksde_test_volume_open,
-		 option_password,
-		 source );
+		 source,
+		 option_password );
 
 #if defined( HAVE_WIDE_CHARACTER_TYPE )
 
 		LUKSDE_TEST_RUN_WITH_ARGS(
 		 "libluksde_volume_open_wide",
 		 luksde_test_volume_open_wide,
-		 option_password,
-		 source );
+		 source,
+		 option_password );
 
 #endif /* defined( HAVE_WIDE_CHARACTER_TYPE ) */
 
@@ -1952,7 +1981,8 @@ int main(
 		LUKSDE_TEST_RUN_WITH_ARGS(
 		 "libluksde_volume_open_close",
 		 luksde_test_volume_open_close,
-		 source );
+		 source,
+		 option_password );
 
 		/* Initialize test
 		 */
