@@ -113,12 +113,11 @@ PyObject *pyluksde_volume_get_size(
            pyluksde_volume_t *pyluksde_volume,
            PyObject *arguments );
 
-PyObject *pyluksde_volume_set_password(
+PyObject *pyluksde_volume_get_encryption_method(
            pyluksde_volume_t *pyluksde_volume,
-           PyObject *arguments,
-           PyObject *keywords );
+           PyObject *arguments );
 
-PyObject *pyluksde_volume_set_recovery_password(
+PyObject *pyluksde_volume_set_password(
            pyluksde_volume_t *pyluksde_volume,
            PyObject *arguments,
            PyObject *keywords );
@@ -127,5 +126,5 @@ PyObject *pyluksde_volume_set_recovery_password(
 }
 #endif
 
-#endif
+#endif /* !defined( _PYLUKSDE_VOLUME_H ) */
 

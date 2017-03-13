@@ -32,20 +32,21 @@
 #include "pyluksde_integer.h"
 #include "pyluksde_libbfio.h"
 #include "pyluksde_libcerror.h"
-#include "pyluksde_libclocale.h"
 #include "pyluksde_libluksde.h"
 #include "pyluksde_python.h"
 #include "pyluksde_unused.h"
 #include "pyluksde_volume.h"
 
 #if !defined( LIBLUKSDE_HAVE_BFIO )
+
 LIBLUKSDE_EXTERN \
 int libluksde_volume_open_file_io_handle(
      libluksde_volume_t *volume,
      libbfio_handle_t *file_io_handle,
      int access_flags,
      libluksde_error_t **error );
-#endif
+
+#endif /* !defined( LIBLUKSDE_HAVE_BFIO ) */
 
 PyMethodDef pyluksde_volume_object_methods[] = {
 
@@ -55,8 +56,6 @@ PyMethodDef pyluksde_volume_object_methods[] = {
 	  "signal_abort() -> None\n"
 	  "\n"
 	  "Signals the volume to abort the current activity." },
-
-	/* Functions to access the volume */
 
 	{ "open",
 	  (PyCFunction) pyluksde_volume_open,
@@ -82,62 +81,65 @@ PyMethodDef pyluksde_volume_object_methods[] = {
 	{ "read_buffer",
 	  (PyCFunction) pyluksde_volume_read_buffer,
 	  METH_VARARGS | METH_KEYWORDS,
-	  "read_buffer(size) -> String\n"
+	  "read_buffer(size) -> Binary string or None\n"
 	  "\n"
-	  "Reads a buffer of volume data." },
+	  "Reads a buffer of data." },
 
 	{ "read_buffer_at_offset",
 	  (PyCFunction) pyluksde_volume_read_buffer_at_offset,
 	  METH_VARARGS | METH_KEYWORDS,
-	  "read_buffer_at_offset(size, offset) -> String\n"
+	  "read_buffer_at_offset(size, offset) -> Binary string or None\n"
 	  "\n"
-	  "Reads a buffer of volume data at a specific offset." },
+	  "Reads a buffer of data at a specific offset." },
 
 	{ "seek_offset",
 	  (PyCFunction) pyluksde_volume_seek_offset,
 	  METH_VARARGS | METH_KEYWORDS,
 	  "seek_offset(offset, whence) -> None\n"
 	  "\n"
-	  "Seeks an offset within the volume data." },
+	  "Seeks an offset within the data." },
 
 	{ "get_offset",
 	  (PyCFunction) pyluksde_volume_get_offset,
 	  METH_NOARGS,
-	  "get_offset() -> Integer\n"
+	  "get_offset() -> Integer or None\n"
 	  "\n"
-	  "Retrieved the current offset within the volume data." },
-
-	/* Some Pythonesque aliases */
+	  "Retrieves the current offset within the data." },
 
 	{ "read",
 	  (PyCFunction) pyluksde_volume_read_buffer,
 	  METH_VARARGS | METH_KEYWORDS,
 	  "read(size) -> String\n"
 	  "\n"
-	  "Reads a buffer of volume data." },
+	  "Reads a buffer of data." },
 
 	{ "seek",
 	  (PyCFunction) pyluksde_volume_seek_offset,
 	  METH_VARARGS | METH_KEYWORDS,
 	  "seek(offset, whence) -> None\n"
 	  "\n"
-	  "Seeks an offset within the volume data." },
+	  "Seeks an offset within the data." },
 
 	{ "tell",
 	  (PyCFunction) pyluksde_volume_get_offset,
 	  METH_NOARGS,
 	  "tell() -> Integer\n"
 	  "\n"
-	  "Retrieves the current offset within the volume data." },
-
-	/* Functions to access the volume values */
+	  "Retrieves the current offset within the data." },
 
 	{ "get_size",
 	  (PyCFunction) pyluksde_volume_get_size,
 	  METH_NOARGS,
-	  "get_size() -> Integer\n"
+	  "get_size() -> Integer or None\n"
 	  "\n"
-	  "Retrieves the size of the volume data." },
+	  "Retrieves the size." },
+
+	{ "get_encryption_method",
+	  (PyCFunction) pyluksde_volume_get_encryption_method,
+	  METH_NOARGS,
+	  "get_encryption_method() -> Integer or None\n"
+	  "\n"
+	  "Retrieves the encryption method." },
 
 	{ "set_password",
 	  (PyCFunction) pyluksde_volume_set_password,
@@ -156,6 +158,12 @@ PyGetSetDef pyluksde_volume_object_get_set_definitions[] = {
 	  (getter) pyluksde_volume_get_size,
 	  (setter) 0,
 	  "The size.",
+	  NULL },
+
+	{ "encryption_method",
+	  (getter) pyluksde_volume_get_encryption_method,
+	  (setter) 0,
+	  "The encryption method.",
 	  NULL },
 
 	/* Sentinel */
@@ -322,7 +330,7 @@ PyObject *pyluksde_volume_new_open(
 	return( pyluksde_volume );
 }
 
-/* Creates a new volume object and opens it
+/* Creates a new volume object and opens it using a file-like object
  * Returns a Python object if successful or NULL on error
  */
 PyObject *pyluksde_volume_new_open_file_object(
@@ -350,8 +358,8 @@ PyObject *pyluksde_volume_new_open_file_object(
 int pyluksde_volume_init(
      pyluksde_volume_t *pyluksde_volume )
 {
-	static char *function    = "pyluksde_volume_init";
 	libcerror_error_t *error = NULL;
+	static char *function    = "pyluksde_volume_init";
 
 	if( pyluksde_volume == NULL )
 	{
@@ -388,8 +396,8 @@ int pyluksde_volume_init(
 void pyluksde_volume_free(
       pyluksde_volume_t *pyluksde_volume )
 {
-	libcerror_error_t *error    = NULL;
 	struct _typeobject *ob_type = NULL;
+	libcerror_error_t *error    = NULL;
 	static char *function       = "pyluksde_volume_free";
 	int result                  = 0;
 
@@ -514,9 +522,9 @@ PyObject *pyluksde_volume_open(
 {
 	PyObject *string_object      = NULL;
 	libcerror_error_t *error     = NULL;
+	const char *filename_narrow  = NULL;
 	static char *function        = "pyluksde_volume_open";
 	static char *keyword_list[]  = { "filename", "mode", NULL };
-	const char *filename_narrow  = NULL;
 	char *mode                   = NULL;
 	int result                   = 0;
 
@@ -570,7 +578,7 @@ PyObject *pyluksde_volume_open(
 	if( result == -1 )
 	{
 		pyluksde_error_fetch_and_raise(
-	         PyExc_RuntimeError,
+		 PyExc_RuntimeError,
 		 "%s: unable to determine if string object is of type unicode.",
 		 function );
 
@@ -587,7 +595,7 @@ PyObject *pyluksde_volume_open(
 
 		result = libluksde_volume_open_wide(
 		          pyluksde_volume->volume,
-	                  filename_wide,
+		          filename_wide,
 		          LIBLUKSDE_OPEN_READ,
 		          &error );
 
@@ -607,16 +615,16 @@ PyObject *pyluksde_volume_open(
 		}
 #if PY_MAJOR_VERSION >= 3
 		filename_narrow = PyBytes_AsString(
-				   utf8_string_object );
+		                   utf8_string_object );
 #else
 		filename_narrow = PyString_AsString(
-				   utf8_string_object );
+		                   utf8_string_object );
 #endif
 		Py_BEGIN_ALLOW_THREADS
 
 		result = libluksde_volume_open(
 		          pyluksde_volume->volume,
-	                  filename_narrow,
+		          filename_narrow,
 		          LIBLUKSDE_OPEN_READ,
 		          &error );
 
@@ -647,17 +655,17 @@ PyObject *pyluksde_volume_open(
 
 #if PY_MAJOR_VERSION >= 3
 	result = PyObject_IsInstance(
-		  string_object,
-		  (PyObject *) &PyBytes_Type );
+	          string_object,
+	          (PyObject *) &PyBytes_Type );
 #else
 	result = PyObject_IsInstance(
-		  string_object,
-		  (PyObject *) &PyString_Type );
+	          string_object,
+	          (PyObject *) &PyString_Type );
 #endif
 	if( result == -1 )
 	{
 		pyluksde_error_fetch_and_raise(
-	         PyExc_RuntimeError,
+		 PyExc_RuntimeError,
 		 "%s: unable to determine if string object is of type string.",
 		 function );
 
@@ -669,16 +677,16 @@ PyObject *pyluksde_volume_open(
 
 #if PY_MAJOR_VERSION >= 3
 		filename_narrow = PyBytes_AsString(
-				   string_object );
+		                   string_object );
 #else
 		filename_narrow = PyString_AsString(
-				   string_object );
+		                   string_object );
 #endif
 		Py_BEGIN_ALLOW_THREADS
 
 		result = libluksde_volume_open(
 		          pyluksde_volume->volume,
-	                  filename_narrow,
+		          filename_narrow,
 		          LIBLUKSDE_OPEN_READ,
 		          &error );
 
@@ -720,9 +728,9 @@ PyObject *pyluksde_volume_open_file_object(
 {
 	PyObject *file_object       = NULL;
 	libcerror_error_t *error    = NULL;
-	char *mode                  = NULL;
-	static char *keyword_list[] = { "file_object", "mode", NULL };
 	static char *function       = "pyluksde_volume_open_file_object";
+	static char *keyword_list[] = { "file_object", "mode", NULL };
+	char *mode                  = NULL;
 	int result                  = 0;
 
 	if( pyluksde_volume == NULL )
@@ -754,6 +762,16 @@ PyObject *pyluksde_volume_open_file_object(
 		 mode );
 
 		return( NULL );
+	}
+	if( pyluksde_volume->file_io_handle != NULL )
+	{
+		pyluksde_error_raise(
+		 error,
+		 PyExc_IOError,
+		 "%s: invalid volume - file IO handle already set.",
+		 function );
+
+		goto on_error;
 	}
 	if( pyluksde_file_object_initialize(
 	     &( pyluksde_volume->file_io_handle ),
@@ -882,7 +900,7 @@ PyObject *pyluksde_volume_close(
 	return( Py_None );
 }
 
-/* Reads (volume) data at the current offset into a buffer
+/* Reads data at the current offset into a buffer
  * Returns a Python object if successful or NULL on error
  */
 PyObject *pyluksde_volume_read_buffer(
@@ -890,19 +908,21 @@ PyObject *pyluksde_volume_read_buffer(
            PyObject *arguments,
            PyObject *keywords )
 {
-	libcerror_error_t *error    = NULL;
+	PyObject *integer_object    = NULL;
 	PyObject *string_object     = NULL;
+	libcerror_error_t *error    = NULL;
+	char *buffer                = NULL;
 	static char *function       = "pyluksde_volume_read_buffer";
 	static char *keyword_list[] = { "size", NULL };
-	char *buffer                = NULL;
 	ssize_t read_count          = 0;
-	int read_size               = -1;
+	int64_t read_size           = 0;
+	int result                  = 0;
 
 	if( pyluksde_volume == NULL )
 	{
 		PyErr_Format(
-		 PyExc_TypeError,
-		 "%s: invalid pyluksde volume.",
+		 PyExc_ValueError,
+		 "%s: invalid volume.",
 		 function );
 
 		return( NULL );
@@ -910,24 +930,130 @@ PyObject *pyluksde_volume_read_buffer(
 	if( PyArg_ParseTupleAndKeywords(
 	     arguments,
 	     keywords,
-	     "|i",
+	     "|O",
 	     keyword_list,
-	     &read_size ) == 0 )
+	     &integer_object ) == 0 )
 	{
 		return( NULL );
+	}
+	if( integer_object == NULL )
+	{
+		result = 0;
+	}
+	else
+	{
+		result = PyObject_IsInstance(
+		          integer_object,
+		          (PyObject *) &PyLong_Type );
+
+		if( result == -1 )
+		{
+			pyluksde_error_fetch_and_raise(
+			 PyExc_RuntimeError,
+			 "%s: unable to determine if integer object is of type long.",
+			 function );
+
+			return( NULL );
+		}
+#if PY_MAJOR_VERSION < 3
+		else if( result == 0 )
+		{
+			PyErr_Clear();
+
+			result = PyObject_IsInstance(
+			          integer_object,
+			          (PyObject *) &PyInt_Type );
+
+			if( result == -1 )
+			{
+				pyluksde_error_fetch_and_raise(
+				 PyExc_RuntimeError,
+				 "%s: unable to determine if integer object is of type int.",
+				 function );
+
+				return( NULL );
+			}
+		}
+#endif
+	}
+	if( result != 0 )
+	{
+		if( pyluksde_integer_signed_copy_to_64bit(
+		     integer_object,
+		     &read_size,
+		     &error ) != 1 )
+		{
+			pyluksde_error_raise(
+			 error,
+			 PyExc_IOError,
+			 "%s: unable to convert integer object into read size.",
+			 function );
+
+			libcerror_error_free(
+			 &error );
+
+			return( NULL );
+		}
+	}
+	else if( ( integer_object == NULL )
+	      || ( integer_object == Py_None ) )
+	{
+		Py_BEGIN_ALLOW_THREADS
+
+		result = libluksde_volume_get_size(
+		          pyluksde_volume->volume,
+		          (size64_t *) &read_size,
+		          &error );
+
+		Py_END_ALLOW_THREADS
+
+		if( result != 1 )
+		{
+			pyluksde_error_raise(
+			 error,
+			 PyExc_IOError,
+			 "%s: unable to retrieve size.",
+			 function );
+
+			libcerror_error_free(
+			 &error );
+
+			return( NULL );
+		}
+	}
+	else
+	{
+		PyErr_Format(
+		 PyExc_TypeError,
+		 "%s: unsupported integer object type.",
+		 function );
+
+		return( NULL );
+	}
+	if( read_size == 0 )
+	{
+#if PY_MAJOR_VERSION >= 3
+		string_object = PyBytes_FromString(
+		                 "" );
+#else
+		string_object = PyString_FromString(
+		                 "" );
+#endif
+		return( string_object );
 	}
 	if( read_size < 0 )
 	{
 		PyErr_Format(
 		 PyExc_ValueError,
-		 "%s: invalid argument read size value less than zero.",
+		 "%s: invalid read size value less than zero.",
 		 function );
 
 		return( NULL );
 	}
-	/* Make sure the data fits into the memory buffer
+	/* Make sure the data fits into a memory buffer
 	 */
-	if( read_size > INT_MAX )
+	if( ( read_size > (int64_t) INT_MAX )
+	 || ( read_size > (int64_t) SSIZE_MAX ) )
 	{
 		PyErr_Format(
 		 PyExc_ValueError,
@@ -939,14 +1065,16 @@ PyObject *pyluksde_volume_read_buffer(
 #if PY_MAJOR_VERSION >= 3
 	string_object = PyBytes_FromStringAndSize(
 	                 NULL,
-	                 read_size );
+	                 (Py_ssize_t) read_size );
 
 	buffer = PyBytes_AsString(
 	          string_object );
 #else
+	/* Note that a size of 0 is not supported
+	 */
 	string_object = PyString_FromStringAndSize(
 	                 NULL,
-	                 read_size );
+	                 (Py_ssize_t) read_size );
 
 	buffer = PyString_AsString(
 	          string_object );
@@ -961,7 +1089,7 @@ PyObject *pyluksde_volume_read_buffer(
 
 	Py_END_ALLOW_THREADS
 
-	if( read_count <= -1 )
+	if( read_count == -1 )
 	{
 		pyluksde_error_raise(
 		 error,
@@ -997,7 +1125,7 @@ PyObject *pyluksde_volume_read_buffer(
 	return( string_object );
 }
 
-/* Reads (volume) data at a specific offset
+/* Reads data at a specific offset into a buffer
  * Returns a Python object if successful or NULL on error
  */
 PyObject *pyluksde_volume_read_buffer_at_offset(
@@ -1005,20 +1133,22 @@ PyObject *pyluksde_volume_read_buffer_at_offset(
            PyObject *arguments,
            PyObject *keywords )
 {
-	libcerror_error_t *error    = NULL;
+	PyObject *integer_object    = NULL;
 	PyObject *string_object     = NULL;
+	libcerror_error_t *error    = NULL;
+	char *buffer                = NULL;
 	static char *function       = "pyluksde_volume_read_buffer_at_offset";
 	static char *keyword_list[] = { "size", "offset", NULL };
-	char *buffer                = NULL;
-	off64_t read_offset         = 0;
 	ssize_t read_count          = 0;
-	int read_size               = 0;
+	off64_t read_offset         = 0;
+	int64_t read_size           = 0;
+	int result                  = 0;
 
 	if( pyluksde_volume == NULL )
 	{
 		PyErr_Format(
-		 PyExc_TypeError,
-		 "%s: invalid pyluksde volume.",
+		 PyExc_ValueError,
+		 "%s: invalid volume.",
 		 function );
 
 		return( NULL );
@@ -1026,25 +1156,98 @@ PyObject *pyluksde_volume_read_buffer_at_offset(
 	if( PyArg_ParseTupleAndKeywords(
 	     arguments,
 	     keywords,
-	     "i|L",
+	     "OL",
 	     keyword_list,
-	     &read_size,
+	     &integer_object,
 	     &read_offset ) == 0 )
 	{
 		return( NULL );
+	}
+	result = PyObject_IsInstance(
+	          integer_object,
+	          (PyObject *) &PyLong_Type );
+
+	if( result == -1 )
+	{
+		pyluksde_error_fetch_and_raise(
+		 PyExc_RuntimeError,
+		 "%s: unable to determine if integer object is of type long.",
+		 function );
+
+		return( NULL );
+	}
+#if PY_MAJOR_VERSION < 3
+	else if( result == 0 )
+	{
+		PyErr_Clear();
+
+		result = PyObject_IsInstance(
+		          integer_object,
+		          (PyObject *) &PyInt_Type );
+
+		if( result == -1 )
+		{
+			pyluksde_error_fetch_and_raise(
+			 PyExc_RuntimeError,
+			 "%s: unable to determine if integer object is of type int.",
+			 function );
+
+			return( NULL );
+		}
+	}
+#endif
+	if( result != 0 )
+	{
+		if( pyluksde_integer_signed_copy_to_64bit(
+		     integer_object,
+		     &read_size,
+		     &error ) != 1 )
+		{
+			pyluksde_error_raise(
+			 error,
+			 PyExc_IOError,
+			 "%s: unable to convert integer object into read size.",
+			 function );
+
+			libcerror_error_free(
+			 &error );
+
+			return( NULL );
+		}
+	}
+	else
+	{
+		PyErr_Format(
+		 PyExc_TypeError,
+		 "%s: unsupported integer object type.",
+		 function );
+
+		return( NULL );
+	}
+	if( read_size == 0 )
+	{
+#if PY_MAJOR_VERSION >= 3
+		string_object = PyBytes_FromString(
+		                 "" );
+#else
+		string_object = PyString_FromString(
+		                 "" );
+#endif
+		return( string_object );
 	}
 	if( read_size < 0 )
 	{
 		PyErr_Format(
 		 PyExc_ValueError,
-		 "%s: invalid argument read size value less than zero.",
+		 "%s: invalid read size value less than zero.",
 		 function );
 
 		return( NULL );
 	}
-	/* Make sure the data fits into the memory buffer
+	/* Make sure the data fits into a memory buffer
 	 */
-	if( read_size > INT_MAX )
+	if( ( read_size > (int64_t) INT_MAX )
+	 || ( read_size > (int64_t) SSIZE_MAX ) )
 	{
 		PyErr_Format(
 		 PyExc_ValueError,
@@ -1057,24 +1260,24 @@ PyObject *pyluksde_volume_read_buffer_at_offset(
 	{
 		PyErr_Format(
 		 PyExc_ValueError,
-		 "%s: invalid argument read offset value less than zero.",
+		 "%s: invalid read offset value less than zero.",
 		 function );
 
 		return( NULL );
 	}
-	/* Make sure the data fits into the memory buffer
-	 */
 #if PY_MAJOR_VERSION >= 3
 	string_object = PyBytes_FromStringAndSize(
 	                 NULL,
-	                 read_size );
+	                 (Py_ssize_t) read_size );
 
 	buffer = PyBytes_AsString(
 	          string_object );
 #else
+	/* Note that a size of 0 is not supported
+	 */
 	string_object = PyString_FromStringAndSize(
 	                 NULL,
-	                 read_size );
+	                 (Py_ssize_t) read_size );
 
 	buffer = PyString_AsString(
 	          string_object );
@@ -1090,7 +1293,7 @@ PyObject *pyluksde_volume_read_buffer_at_offset(
 
 	Py_END_ALLOW_THREADS
 
-	if( read_count <= -1 )
+	if( read_count == -1 )
 	{
 		pyluksde_error_raise(
 		 error,
@@ -1126,7 +1329,7 @@ PyObject *pyluksde_volume_read_buffer_at_offset(
 	return( string_object );
 }
 
-/* Seeks a certain offset in the (volume) data
+/* Seeks a certain offset
  * Returns a Python object if successful or NULL on error
  */
 PyObject *pyluksde_volume_seek_offset(
@@ -1143,8 +1346,8 @@ PyObject *pyluksde_volume_seek_offset(
 	if( pyluksde_volume == NULL )
 	{
 		PyErr_Format(
-		 PyExc_TypeError,
-		 "%s: invalid pyluksde volume.",
+		 PyExc_ValueError,
+		 "%s: invalid volume.",
 		 function );
 
 		return( NULL );
@@ -1188,17 +1391,17 @@ PyObject *pyluksde_volume_seek_offset(
 	return( Py_None );
 }
 
-/* Retrieves the current offset in the (volume) data
+/* Retrieves the offset
  * Returns a Python object if successful or NULL on error
  */
 PyObject *pyluksde_volume_get_offset(
            pyluksde_volume_t *pyluksde_volume,
            PyObject *arguments PYLUKSDE_ATTRIBUTE_UNUSED )
 {
-	libcerror_error_t *error = NULL;
 	PyObject *integer_object = NULL;
+	libcerror_error_t *error = NULL;
 	static char *function    = "pyluksde_volume_get_offset";
-	off64_t current_offset   = 0;
+	off64_t offset           = 0;
 	int result               = 0;
 
 	PYLUKSDE_UNREFERENCED_PARAMETER( arguments )
@@ -1206,7 +1409,7 @@ PyObject *pyluksde_volume_get_offset(
 	if( pyluksde_volume == NULL )
 	{
 		PyErr_Format(
-		 PyExc_TypeError,
+		 PyExc_ValueError,
 		 "%s: invalid volume.",
 		 function );
 
@@ -1216,12 +1419,12 @@ PyObject *pyluksde_volume_get_offset(
 
 	result = libluksde_volume_get_offset(
 	          pyluksde_volume->volume,
-	          &current_offset,
+	          &offset,
 	          &error );
 
 	Py_END_ALLOW_THREADS
 
-	if( result != 1 )
+	if( result == -1 )
 	{
 		pyluksde_error_raise(
 		 error,
@@ -1234,8 +1437,15 @@ PyObject *pyluksde_volume_get_offset(
 
 		return( NULL );
 	}
+	else if( result == 0 )
+	{
+		Py_IncRef(
+		 Py_None );
+
+		return( Py_None );
+	}
 	integer_object = pyluksde_integer_signed_new_from_64bit(
-	                  (int64_t) current_offset );
+	                  (int64_t) offset );
 
 	return( integer_object );
 }
@@ -1247,8 +1457,8 @@ PyObject *pyluksde_volume_get_size(
            pyluksde_volume_t *pyluksde_volume,
            PyObject *arguments PYLUKSDE_ATTRIBUTE_UNUSED )
 {
-	libcerror_error_t *error = NULL;
 	PyObject *integer_object = NULL;
+	libcerror_error_t *error = NULL;
 	static char *function    = "pyluksde_volume_get_size";
 	size64_t size            = 0;
 	int result               = 0;
@@ -1258,7 +1468,7 @@ PyObject *pyluksde_volume_get_size(
 	if( pyluksde_volume == NULL )
 	{
 		PyErr_Format(
-		 PyExc_TypeError,
+		 PyExc_ValueError,
 		 "%s: invalid volume.",
 		 function );
 
@@ -1292,6 +1502,64 @@ PyObject *pyluksde_volume_get_size(
 	return( integer_object );
 }
 
+/* Retrieves the encryption method
+ * Returns a Python object if successful or NULL on error
+ */
+PyObject *pyluksde_volume_get_encryption_method(
+           pyluksde_volume_t *pyluksde_volume,
+           PyObject *arguments PYLUKSDE_ATTRIBUTE_UNUSED )
+{
+	PyObject *integer_object     = NULL;
+	libcerror_error_t *error     = NULL;
+	static char *function        = "pyluksde_volume_get_encryption_method";
+	int encryption_method        = 0;
+	int encryption_chaining_mode = 0;
+	int result                   = 0;
+
+	PYLUKSDE_UNREFERENCED_PARAMETER( arguments )
+
+	if( pyluksde_volume == NULL )
+	{
+		PyErr_Format(
+		 PyExc_ValueError,
+		 "%s: invalid volume.",
+		 function );
+
+		return( NULL );
+	}
+	Py_BEGIN_ALLOW_THREADS
+
+	result = libluksde_volume_get_encryption_method(
+	          pyluksde_volume->volume,
+	          &encryption_method,
+	          &encryption_chaining_mode,
+	          &error );
+
+	Py_END_ALLOW_THREADS
+
+	if( result != 1 )
+	{
+		pyluksde_error_raise(
+		 error,
+		 PyExc_IOError,
+		 "%s: unable to retrieve encryption method.",
+		 function );
+
+		libcerror_error_free(
+		 &error );
+
+		return( NULL );
+	}
+#if PY_MAJOR_VERSION >= 3
+	integer_object = PyLong_FromLong(
+	                  (long) encryption_method );
+#else
+	integer_object = PyInt_FromLong(
+	                  (long) encryption_method );
+#endif
+	return( integer_object );
+}
+
 /* Sets the password
  * Returns a Python object if successful or NULL on error
  */
@@ -1300,12 +1568,12 @@ PyObject *pyluksde_volume_set_password(
            PyObject *arguments,
            PyObject *keywords )
 {
-	libcerror_error_t *error      = NULL;
-	char *password_string         = NULL;
-	static char *keyword_list[]   = { "password", NULL };
-	static char *function         = "pyluksde_volume_set_password";
-	size_t password_string_length = 0;
-	int result                    = 0;
+	libcerror_error_t *error    = NULL;
+	static char *function       = "pyluksde_volume_set_password";
+	static char *keyword_list[] = { "password", NULL };
+	char *utf8_string           = NULL;
+	size_t utf8_string_length   = 0;
+	int result                  = 0;
 
 	if( pyluksde_volume == NULL )
 	{
@@ -1321,28 +1589,28 @@ PyObject *pyluksde_volume_set_password(
 	     keywords,
 	     "s",
 	     keyword_list,
-	     &password_string ) == 0 )
+	     &utf8_string ) == 0 )
 	{
 		return( NULL );
 	}
-	if( password_string == NULL )
+	if( utf8_string == NULL )
 	{
 		PyErr_Format(
 		 PyExc_ValueError,
-		 "%s: invalid password string.",
+		 "%s: invalid password.",
 		 function );
 
 		return( NULL );
 	}
-	password_string_length = narrow_string_length(
-	                          password_string );
+	utf8_string_length = narrow_string_length(
+	                      utf8_string );
 
 	Py_BEGIN_ALLOW_THREADS
 
 	result = libluksde_volume_set_utf8_password(
 	          pyluksde_volume->volume,
-	          (uint8_t *) password_string,
-	          password_string_length,
+	          (uint8_t *) utf8_string,
+	          utf8_string_length,
 	          &error );
 
 	Py_END_ALLOW_THREADS
