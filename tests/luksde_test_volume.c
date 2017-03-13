@@ -452,9 +452,11 @@ int luksde_test_volume_get_wide_source(
 int luksde_test_volume_open_source(
      libluksde_volume_t **volume,
      const system_character_t *source,
+     const system_character_t *password,
      libcerror_error_t **error )
 {
 	static char *function = "luksde_test_volume_open_source";
+	size_t string_length  = 0;
 	int result            = 0;
 
 	if( volume == NULL )
@@ -491,6 +493,36 @@ int luksde_test_volume_open_source(
 		 function );
 
 		goto on_error;
+	}
+	if( password != NULL )
+	{
+		string_length = system_string_length(
+		                 password );
+
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
+		result = libluksde_volume_set_utf16_password(
+		          *volume,
+		          (uint16_t *) password,
+		          string_length,
+		          error );
+#else
+		result = libluksde_volume_set_utf8_password(
+		          *volume,
+		          (uint8_t *) password,
+		          string_length,
+		          error );
+#endif
+		if( result != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+			 "%s: unable to set password.",
+			 function );
+
+			goto on_error;
+		}
 	}
 #if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 	result = libluksde_volume_open_wide(
@@ -815,12 +847,14 @@ on_error:
  * Returns 1 if successful or 0 if not
  */
 int luksde_test_volume_open(
-     const system_character_t *source )
+     const system_character_t *source,
+     const system_character_t *password )
 {
 	char narrow_source[ 256 ];
 
 	libcerror_error_t *error   = NULL;
 	libluksde_volume_t *volume = NULL;
+	size_t string_length       = 0;
 	int result                 = 0;
 
 	/* Initialize test
@@ -857,6 +891,33 @@ int luksde_test_volume_open(
          "error",
          error );
 
+	if( password != NULL )
+	{
+		string_length = system_string_length(
+		                 password );
+
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
+		result = libluksde_volume_set_utf16_password(
+		          volume,
+		          (uint16_t *) password,
+		          string_length,
+		          &error );
+#else
+		result = libluksde_volume_set_utf8_password(
+		          volume,
+		          (uint8_t *) password,
+		          string_length,
+		          &error );
+#endif
+		LUKSDE_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 1 );
+
+	        LUKSDE_TEST_ASSERT_IS_NULL(
+	         "error",
+        	 error );
+	}
 	/* Test open
 	 */
 	result = libluksde_volume_open(
@@ -936,12 +997,14 @@ on_error:
  * Returns 1 if successful or 0 if not
  */
 int luksde_test_volume_open_wide(
-     const system_character_t *source )
+     const system_character_t *source,
+     const system_character_t *password )
 {
 	wchar_t wide_source[ 256 ];
 
 	libcerror_error_t *error   = NULL;
 	libluksde_volume_t *volume = NULL;
+	size_t string_length       = 0;
 	int result                 = 0;
 
 	/* Initialize test
@@ -978,6 +1041,33 @@ int luksde_test_volume_open_wide(
          "error",
          error );
 
+	if( password != NULL )
+	{
+		string_length = system_string_length(
+		                 password );
+
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
+		result = libluksde_volume_set_utf16_password(
+		          volume,
+		          (uint16_t *) password,
+		          string_length,
+		          &error );
+#else
+		result = libluksde_volume_set_utf8_password(
+		          volume,
+		          (uint8_t *) password,
+		          string_length,
+		          &error );
+#endif
+		LUKSDE_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 1 );
+
+	        LUKSDE_TEST_ASSERT_IS_NULL(
+	         "error",
+        	 error );
+	}
 	/* Test open
 	 */
 	result = libluksde_volume_open_wide(
@@ -1781,16 +1871,17 @@ int main(
      char * const argv[] )
 #endif
 {
-	libcerror_error_t *error   = NULL;
-	libluksde_volume_t *volume = NULL;
-	system_character_t *source = NULL;
-	system_integer_t option    = 0;
-	int result                 = 0;
+	libcerror_error_t *error            = NULL;
+	libluksde_volume_t *volume          = NULL;
+	system_character_t *option_password = NULL;
+	system_character_t *source          = NULL;
+	system_integer_t option             = 0;
+	int result                          = 0;
 
 	while( ( option = luksde_test_getopt(
 	                   argc,
 	                   argv,
-	                   _SYSTEM_STRING( "" ) ) ) != (system_integer_t) -1 )
+	                   _SYSTEM_STRING( "p:" ) ) ) != (system_integer_t) -1 )
 	{
 		switch( option )
 		{
@@ -1802,6 +1893,11 @@ int main(
 				 argv[ optind - 1 ] );
 
 				return( EXIT_FAILURE );
+
+			case (system_integer_t) 'p':
+				option_password = optarg;
+
+				break;
 		}
 	}
 	if( optind < argc )
@@ -1830,6 +1926,7 @@ int main(
 		LUKSDE_TEST_RUN_WITH_ARGS(
 		 "libluksde_volume_open",
 		 luksde_test_volume_open,
+		 option_password,
 		 source );
 
 #if defined( HAVE_WIDE_CHARACTER_TYPE )
@@ -1837,6 +1934,7 @@ int main(
 		LUKSDE_TEST_RUN_WITH_ARGS(
 		 "libluksde_volume_open_wide",
 		 luksde_test_volume_open_wide,
+		 option_password,
 		 source );
 
 #endif /* defined( HAVE_WIDE_CHARACTER_TYPE ) */
@@ -1861,6 +1959,7 @@ int main(
 		result = luksde_test_volume_open_source(
 		          &volume,
 		          source,
+		          option_password,
 		          &error );
 
 		LUKSDE_TEST_ASSERT_EQUAL_INT(

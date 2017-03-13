@@ -224,12 +224,12 @@ int libluksde_key_slot_read_data(
 	if( libcnotify_verbose != 0 )
 	{
 		libcnotify_printf(
-		 "%s: state\t\t\t\t\t\t: 0x%08" PRIx32 "\n",
+		 "%s: state\t\t\t\t\t: 0x%08" PRIx32 "\n",
 		 function,
 		 key_slot->state );
 
 		libcnotify_printf(
-		 "%s: number of iterations\t\t\t\t: %" PRIu32 "\n",
+		 "%s: number of iterations\t\t\t: %" PRIu32 "\n",
 		 function,
 		 key_slot->number_of_iterations );
 
@@ -242,7 +242,7 @@ int libluksde_key_slot_read_data(
 		 0 );
 
 		libcnotify_printf(
-		 "%s: start sector\t\t\t\t\t: 0x%08" PRIx32 "\n",
+		 "%s: start sector\t\t\t\t: 0x%08" PRIx32 "\n",
 		 function,
 		 key_slot->key_material_offset );
 

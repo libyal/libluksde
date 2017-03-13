@@ -1021,7 +1021,7 @@ int main(
 	while( ( option = luksde_test_getopt(
 	                   argc,
 	                   argv,
-	                   _SYSTEM_STRING( "" ) ) ) != (system_integer_t) -1 )
+	                   _SYSTEM_STRING( "p:" ) ) ) != (system_integer_t) -1 )
 	{
 		switch( option )
 		{
@@ -1033,6 +1033,9 @@ int main(
 				 argv[ optind - 1 ] );
 
 				return( EXIT_FAILURE );
+
+			case (system_integer_t) 'p':
+				break;
 		}
 	}
 	if( optind < argc )
