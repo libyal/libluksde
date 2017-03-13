@@ -890,6 +890,45 @@ int info_handle_close_input(
 	return( 0 );
 }
 
+/* Determine if the input is locked
+ * Returns 1 if locked, 0 if not or -1 on error
+ */
+int info_handle_input_is_locked(
+     info_handle_t *info_handle,
+     libcerror_error_t **error )
+{
+	static char *function = "info_handle_input_is_locked";
+	int result            = 0;
+
+	if( info_handle == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid info handle.",
+		 function );
+
+		return( -1 );
+	}
+	result = libluksde_volume_is_locked(
+	          info_handle->input_volume,
+	          error );
+
+	if( result == -1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to determine if volume is locked.",
+		 function );
+
+		return( -1 );
+	}
+	return( result );
+}
+
 /* Prints the volume information to a stream
  * Returns 1 if successful or -1 on error
  */

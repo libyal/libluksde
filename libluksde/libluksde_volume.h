@@ -70,6 +70,10 @@ struct libluksde_internal_volume
 	 */
 	uint8_t file_io_handle_opened_in_library;
 
+	/* Value to indicate if the volume is locked
+	 */
+	uint8_t is_locked;
+
 #if defined( HAVE_LIBLUKSDE_MULTI_THREAD_SUPPORT )
 	/* The read/write lock
 	 */
@@ -125,6 +129,11 @@ int libluksde_volume_close(
 int libluksde_volume_open_read(
      libluksde_internal_volume_t *internal_volume,
      libbfio_handle_t *file_io_handle,
+     libcerror_error_t **error );
+
+LIBLUKSDE_EXTERN \
+int libluksde_volume_is_locked(
+     libluksde_volume_t *volume,
      libcerror_error_t **error );
 
 ssize_t libluksde_internal_volume_read_buffer_from_file_io_handle(

@@ -313,6 +313,18 @@ int main( int argc, char * const argv[] )
 
 		goto on_error;
 	}
+	result = info_handle_input_is_locked(
+	          luksdeinfo_info_handle,
+	          &error );
+
+	if( result != 0 )
+	{
+		fprintf(
+		 stderr,
+		 "Unable to unlock volume.\n" );
+
+		goto on_error;
+	}
 	if( info_handle_close_input(
 	     luksdeinfo_info_handle,
 	     &error ) != 0 )
@@ -332,14 +344,6 @@ int main( int argc, char * const argv[] )
 		 "Unable to free info handle.\n" );
 
 		goto on_error;
-	}
-	if( result == 0 )
-	{
-		fprintf(
-		 stderr,
-		 "Unable to unlock keys.\n" );
-
-		return( EXIT_FAILURE );
 	}
 	return( EXIT_SUCCESS );
 

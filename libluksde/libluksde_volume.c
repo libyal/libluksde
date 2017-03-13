@@ -134,6 +134,8 @@ int libluksde_volume_initialize(
 		goto on_error;
 	}
 #endif
+	internal_volume->is_locked = 1;
+
 	*volume = (libluksde_volume_t *) internal_volume;
 
 	return( 1 );
@@ -977,6 +979,7 @@ int libluksde_volume_close(
 	}
 	internal_volume->file_io_handle = NULL;
 	internal_volume->current_offset = 0;
+	internal_volume->is_locked      = 1;
 
 	if( libluksde_io_handle_clear(
 	     internal_volume->io_handle,
@@ -1651,6 +1654,7 @@ int libluksde_volume_open_read(
 
 			goto on_error;
 		}
+		internal_volume->is_locked = 0;
 	}
 #if defined( HAVE_LIBLUKSDE_MULTI_THREAD_SUPPORT )
 	if( libcthreads_read_write_lock_release_for_write(
@@ -1708,6 +1712,65 @@ on_error:
 	 NULL );
 #endif
 	return( -1 );
+}
+
+/* Determines if the volume is locked
+ * Returns 1 if locked, 0 if not or -1 on error
+ */
+int libluksde_volume_is_locked(
+     libluksde_volume_t *volume,
+     libcerror_error_t **error )
+{
+	libluksde_internal_volume_t *internal_volume = NULL;
+	static char *function                        = "libluksde_volume_is_locked";
+	uint8_t is_locked                            = 0;
+
+	if( volume == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid volume.",
+		 function );
+
+		return( -1 );
+	}
+	internal_volume = (libluksde_internal_volume_t *) volume;
+
+#if defined( HAVE_LIBBDE_MULTI_THREAD_SUPPORT )
+	if( libcthreads_read_write_lock_grab_for_read(
+	     internal_volume->read_write_lock,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to grab read/write lock for reading.",
+		 function );
+
+		return( -1 );
+	}
+#endif
+	is_locked = internal_volume->is_locked;
+
+#if defined( HAVE_LIBBDE_MULTI_THREAD_SUPPORT )
+	if( libcthreads_read_write_lock_release_for_read(
+	     internal_volume->read_write_lock,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to release read/write lock for reading.",
+		 function );
+
+		return( -1 );
+	}
+#endif
+	return( is_locked );
 }
 
 /* Reads (volume) data from the last current into a buffer using a Basic File IO (bfio) handle
