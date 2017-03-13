@@ -297,7 +297,7 @@ int main(
 	 "libluksde_key_slot_free",
 	 luksde_test_key_slot_free );
 
-	/* TODO: add tests for libluksde_key_slot_read */
+	/* TODO: add tests for libluksde_key_slot_read_data */
 
 #endif /* defined( __GNUC__ ) */
 

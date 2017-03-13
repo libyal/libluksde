@@ -64,10 +64,10 @@ int libluksde_key_slot_free(
      libluksde_key_slot_t **key_slot,
      libcerror_error_t **error );
 
-int libluksde_key_slot_read(
+int libluksde_key_slot_read_data(
      libluksde_key_slot_t *key_slot,
-     const uint8_t *key_slot_data,
-     size_t key_slot_data_size,
+     const uint8_t *data,
+     size_t data_size,
      libcerror_error_t **error );
 
 #if defined( __cplusplus )

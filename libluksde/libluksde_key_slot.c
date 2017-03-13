@@ -137,13 +137,13 @@ int libluksde_key_slot_free(
 /* Reads a key slot
  * Returns 1 if successful or -1 on error
  */
-int libluksde_key_slot_read(
+int libluksde_key_slot_read_data(
      libluksde_key_slot_t *key_slot,
-     const uint8_t *key_slot_data,
-     size_t key_slot_data_size,
+     const uint8_t *data,
+     size_t data_size,
      libcerror_error_t **error )
 {
-	static char *function = "libluksde_key_slot_read";
+	static char *function = "libluksde_key_slot_read_data";
 
 	if( key_slot == NULL )
 	{
@@ -156,24 +156,24 @@ int libluksde_key_slot_read(
 
 		return( -1 );
 	}
-	if( key_slot_data == NULL )
+	if( data == NULL )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid key slot data.",
+		 "%s: invalid data.",
 		 function );
 
 		return( -1 );
 	}
-	if( key_slot_data_size < sizeof( luksde_volume_key_slot_t ) )
+	if( data_size < sizeof( luksde_volume_key_slot_t ) )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBCERROR_ARGUMENT_ERROR_VALUE_TOO_SMALL,
-		 "%s: key slot data size value too small.",
+		 "%s: data size value too small.",
 		 function );
 
 		return( -1 );
@@ -185,22 +185,22 @@ int libluksde_key_slot_read(
 		 "%s: key slot data:\n",
 		 function );
 		libcnotify_print_data(
-		 key_slot_data,
+		 data,
 		 sizeof( luksde_volume_key_slot_t ),
 		 0 );
 	}
 #endif
 	byte_stream_copy_to_uint32_big_endian(
-	 ( (luksde_volume_key_slot_t *) key_slot_data )->state,
+	 ( (luksde_volume_key_slot_t *) data )->state,
 	 key_slot->state );
 
 	byte_stream_copy_to_uint32_big_endian(
-	 ( (luksde_volume_key_slot_t *) key_slot_data )->number_of_iterations,
+	 ( (luksde_volume_key_slot_t *) data )->number_of_iterations,
 	 key_slot->number_of_iterations );
 
 	if( memory_copy(
 	     key_slot->salt,
-	     ( (luksde_volume_key_slot_t *) key_slot_data )->salt,
+	     ( (luksde_volume_key_slot_t *) data )->salt,
 	     32 ) == NULL )
 	{
 		libcerror_error_set(
@@ -213,11 +213,11 @@ int libluksde_key_slot_read(
 		return( -1 );
 	}
 	byte_stream_copy_to_uint32_big_endian(
-	 ( (luksde_volume_key_slot_t *) key_slot_data )->start_sector,
+	 ( (luksde_volume_key_slot_t *) data )->start_sector,
 	 key_slot->key_material_offset );
 
 	byte_stream_copy_to_uint32_big_endian(
-	 ( (luksde_volume_key_slot_t *) key_slot_data )->number_of_stripes,
+	 ( (luksde_volume_key_slot_t *) data )->number_of_stripes,
 	 key_slot->number_of_stripes );
 
 #if defined( HAVE_DEBUG_OUTPUT )
@@ -237,7 +237,7 @@ int libluksde_key_slot_read(
 		 "%s: salt:\n",
 		 function );
 		libcnotify_print_data(
-		 ( (luksde_volume_key_slot_t *) key_slot_data )->salt,
+		 ( (luksde_volume_key_slot_t *) data )->salt,
 		 32,
 		 0 );
 

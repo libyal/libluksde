@@ -1057,7 +1057,7 @@ int libluksde_io_handle_read_volume_header(
 
 			goto on_error;
 		}
-		if( libluksde_key_slot_read(
+		if( libluksde_key_slot_read_data(
 		     key_slot,
 		     volume_key_slot_data,
 		     sizeof( luksde_volume_key_slot_t ),
@@ -1067,7 +1067,7 @@ int libluksde_io_handle_read_volume_header(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_IO,
 			 LIBCERROR_IO_ERROR_READ_FAILED,
-			 "%s: unable to read key slot.",
+			 "%s: unable to read key slot data.",
 			 function );
 
 			goto on_error;
