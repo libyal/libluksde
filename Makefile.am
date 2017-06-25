@@ -34,13 +34,12 @@ DPKG_FILES = \
 	dpkg/compat \
 	dpkg/control \
 	dpkg/copyright \
-	dpkg/copyright.in \
 	dpkg/rules \
-	dpkg/libluksde.docs \
-	dpkg/libluksde-dev.docs \
-	dpkg/libluksde-python.docs \
-	dpkg/libluksde-python3.docs \
-	dpkg/libluksde-tools.docs \
+	dpkg/libluksde.install \
+	dpkg/libluksde-dev.install \
+	dpkg/libluksde-python.install \
+	dpkg/libluksde-python3.install \
+	dpkg/libluksde-tools.install \
 	dpkg/source/format
 
 GETTEXT_FILES = \
