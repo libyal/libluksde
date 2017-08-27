@@ -35,7 +35,7 @@
 
 #include "../libluksde/libluksde_key_slot.h"
 
-#if defined( __GNUC__ )
+#if defined( __GNUC__ ) && !defined( LIBLUKSDE_DLL_IMPORT )
 
 /* Tests the libluksde_key_slot_initialize function
  * Returns 1 if successful or 0 if not
@@ -270,7 +270,7 @@ on_error:
 	return( 0 );
 }
 
-#endif /* defined( __GNUC__ ) */
+#endif /* defined( __GNUC__ ) && !defined( LIBLUKSDE_DLL_IMPORT ) */
 
 /* The main program
  */
@@ -287,7 +287,7 @@ int main(
 	LUKSDE_TEST_UNREFERENCED_PARAMETER( argc )
 	LUKSDE_TEST_UNREFERENCED_PARAMETER( argv )
 
-#if defined( __GNUC__ )
+#if defined( __GNUC__ ) && !defined( LIBLUKSDE_DLL_IMPORT )
 
 	LUKSDE_TEST_RUN(
 	 "libluksde_key_slot_initialize",
@@ -299,7 +299,7 @@ int main(
 
 	/* TODO: add tests for libluksde_key_slot_read_data */
 
-#endif /* defined( __GNUC__ ) */
+#endif /* defined( __GNUC__ ) && !defined( LIBLUKSDE_DLL_IMPORT ) */
 
 	return( EXIT_SUCCESS );
 

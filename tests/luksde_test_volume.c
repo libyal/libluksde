@@ -2010,11 +2010,11 @@ int main(
 		 luksde_test_volume_signal_abort,
 		 volume );
 
-#if defined( __GNUC__ )
+#if defined( __GNUC__ ) && !defined( LIBLUKSDE_DLL_IMPORT )
 
 		/* TODO: add tests for libluksde_volume_open_read */
 
-#endif /* defined( __GNUC__ ) */
+#endif /* defined( __GNUC__ ) && !defined( LIBLUKSDE_DLL_IMPORT ) */
 
 		LUKSDE_TEST_RUN_WITH_ARGS(
 		 "libluksde_volume_read_buffer",
