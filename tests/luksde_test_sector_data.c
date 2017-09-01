@@ -57,9 +57,9 @@ int luksde_test_sector_data_free(
 	 result,
 	 -1 );
 
-        LUKSDE_TEST_ASSERT_IS_NOT_NULL(
-         "error",
-         error );
+	LUKSDE_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
 
 	libcerror_error_free(
 	 &error );

@@ -64,13 +64,13 @@ int luksde_test_key_slot_initialize(
 	 result,
 	 1 );
 
-        LUKSDE_TEST_ASSERT_IS_NOT_NULL(
-         "key_slot",
-         key_slot );
+	LUKSDE_TEST_ASSERT_IS_NOT_NULL(
+	 "key_slot",
+	 key_slot );
 
-        LUKSDE_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	LUKSDE_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	result = libluksde_key_slot_free(
 	          &key_slot,
@@ -81,13 +81,13 @@ int luksde_test_key_slot_initialize(
 	 result,
 	 1 );
 
-        LUKSDE_TEST_ASSERT_IS_NULL(
-         "key_slot",
-         key_slot );
+	LUKSDE_TEST_ASSERT_IS_NULL(
+	 "key_slot",
+	 key_slot );
 
-        LUKSDE_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	LUKSDE_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	/* Test error cases
 	 */
@@ -100,9 +100,9 @@ int luksde_test_key_slot_initialize(
 	 result,
 	 -1 );
 
-        LUKSDE_TEST_ASSERT_IS_NOT_NULL(
-         "error",
-         error );
+	LUKSDE_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
 
 	libcerror_error_free(
 	 &error );
@@ -118,9 +118,9 @@ int luksde_test_key_slot_initialize(
 	 result,
 	 -1 );
 
-        LUKSDE_TEST_ASSERT_IS_NOT_NULL(
-         "error",
-         error );
+	LUKSDE_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
 
 	libcerror_error_free(
 	 &error );
@@ -252,9 +252,9 @@ int luksde_test_key_slot_free(
 	 result,
 	 -1 );
 
-        LUKSDE_TEST_ASSERT_IS_NOT_NULL(
-         "error",
-         error );
+	LUKSDE_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
 
 	libcerror_error_free(
 	 &error );
