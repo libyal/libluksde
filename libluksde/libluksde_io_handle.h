@@ -27,6 +27,7 @@
 
 #include "libluksde_encryption.h"
 #include "libluksde_libbfio.h"
+#include "libluksde_libcdata.h"
 #include "libluksde_libcerror.h"
 #include "libluksde_libfcache.h"
 #include "libluksde_libfdata.h"
