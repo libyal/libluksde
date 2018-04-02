@@ -42,6 +42,7 @@ EXTRA_DIST = \
 
 check_PROGRAMS = \
 	luksde_test_error \
+	luksde_test_io_handle \
 	luksde_test_key_slot \
 	luksde_test_notify \
 	luksde_test_sector_data \
@@ -57,6 +58,18 @@ luksde_test_error_SOURCES = \
 luksde_test_error_LDADD = \
 	../libluksde/libluksde.la
 
+luksde_test_io_handle_SOURCES = \
+	luksde_test_io_handle.c \
+	luksde_test_libcerror.h \
+	luksde_test_libluksde.h \
+	luksde_test_macros.h \
+	luksde_test_memory.c luksde_test_memory.h \
+	luksde_test_unused.h
+
+luksde_test_io_handle_LDADD = \
+	../libluksde/libluksde.la \
+	@LIBCERROR_LIBADD@
+
 luksde_test_key_slot_SOURCES = \
 	luksde_test_key_slot.c \
 	luksde_test_libcerror.h \
@@ -70,13 +83,15 @@ luksde_test_key_slot_LDADD = \
 	@LIBCERROR_LIBADD@
 
 luksde_test_notify_SOURCES = \
+	luksde_test_libcerror.h \
 	luksde_test_libluksde.h \
 	luksde_test_macros.h \
 	luksde_test_notify.c \
 	luksde_test_unused.h
 
 luksde_test_notify_LDADD = \
-	../libluksde/libluksde.la
+	../libluksde/libluksde.la \
+	@LIBCERROR_LIBADD@
 
 luksde_test_sector_data_SOURCES = \
 	luksde_test_libcerror.h \
@@ -91,6 +106,7 @@ luksde_test_sector_data_LDADD = \
 	@LIBCERROR_LIBADD@
 
 luksde_test_support_SOURCES = \
+	luksde_test_functions.c luksde_test_functions.h \
 	luksde_test_getopt.c luksde_test_getopt.h \
 	luksde_test_libbfio.h \
 	luksde_test_libcerror.h \
@@ -99,7 +115,9 @@ luksde_test_support_SOURCES = \
 	luksde_test_libluksde.h \
 	luksde_test_libuna.h \
 	luksde_test_macros.h \
-	luksde_test_support.c
+	luksde_test_memory.c luksde_test_memory.h \
+	luksde_test_support.c \
+	luksde_test_unused.h
 
 luksde_test_support_LDADD = \
 	@LIBBFIO_LIBADD@ \
@@ -114,6 +132,7 @@ luksde_test_support_LDADD = \
 	@LIBCERROR_LIBADD@
 
 luksde_test_volume_SOURCES = \
+	luksde_test_functions.c luksde_test_functions.h \
 	luksde_test_getopt.c luksde_test_getopt.h \
 	luksde_test_libcerror.h \
 	luksde_test_libclocale.h \
@@ -122,10 +141,15 @@ luksde_test_volume_SOURCES = \
 	luksde_test_libuna.h \
 	luksde_test_macros.h \
 	luksde_test_memory.c luksde_test_memory.h \
+	luksde_test_unused.h \
 	luksde_test_volume.c
 
 luksde_test_volume_LDADD = \
+	@LIBBFIO_LIBADD@ \
+	@LIBCPATH_LIBADD@ \
+	@LIBCFILE_LIBADD@ \
 	@LIBUNA_LIBADD@ \
+	@LIBCSPLIT_LIBADD@ \
 	@LIBCNOTIFY_LIBADD@ \
 	@LIBCLOCALE_LIBADD@ \
 	@LIBCDATA_LIBADD@ \

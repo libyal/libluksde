@@ -17,6 +17,7 @@ MSVSCPP_FILES = \
 	libluksde/libluksde.vcproj \
 	libuna/libuna.vcproj \
 	luksde_test_error/luksde_test_error.vcproj \
+	luksde_test_io_handle/luksde_test_io_handle.vcproj \
 	luksde_test_key_slot/luksde_test_key_slot.vcproj \
 	luksde_test_notify/luksde_test_notify.vcproj \
 	luksde_test_sector_data/luksde_test_sector_data.vcproj \

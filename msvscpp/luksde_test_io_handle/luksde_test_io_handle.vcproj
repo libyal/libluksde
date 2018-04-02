@@ -2,9 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9,00"
-	Name="luksde_test_volume"
-	ProjectGUID="{135A029A-7731-402F-8E84-E9C2A693B9A5}"
-	RootNamespace="luksde_test_volume"
+	Name="luksde_test_io_handle"
+	ProjectGUID="{BF65C788-13B9-48A3-BE4E-7235902B4883}"
+	RootNamespace="luksde_test_io_handle"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="131072"
 	>
@@ -176,19 +176,11 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath="..\..\tests\luksde_test_functions.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\tests\luksde_test_getopt.c"
+				RelativePath="..\..\tests\luksde_test_io_handle.c"
 				>
 			</File>
 			<File
 				RelativePath="..\..\tests\luksde_test_memory.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\tests\luksde_test_volume.c"
 				>
 			</File>
 		</Filter>
@@ -198,31 +190,11 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath="..\..\tests\luksde_test_functions.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\tests\luksde_test_getopt.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\tests\luksde_test_libcerror.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\tests\luksde_test_libclocale.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\tests\luksde_test_libcnotify.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\tests\luksde_test_libluksde.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\tests\luksde_test_libuna.h"
 				>
 			</File>
 			<File
