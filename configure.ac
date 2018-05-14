@@ -2,7 +2,7 @@ AC_PREREQ( 2.59 )
 
 AC_INIT(
  [libluksde],
- [20180508],
+ [20180514],
  [joachim.metz@gmail.com])
 
 AC_CONFIG_SRCDIR(
