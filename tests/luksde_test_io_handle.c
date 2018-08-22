@@ -113,6 +113,8 @@ int luksde_test_io_handle_initialize(
 	          &io_handle,
 	          &error );
 
+	io_handle = NULL;
+
 	LUKSDE_TEST_ASSERT_EQUAL_INT(
 	 "result",
 	 result,
@@ -124,8 +126,6 @@ int luksde_test_io_handle_initialize(
 
 	libcerror_error_free(
 	 &error );
-
-	io_handle = NULL;
 
 #if defined( HAVE_LUKSDE_TEST_MEMORY )
 

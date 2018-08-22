@@ -246,7 +246,7 @@ typedef int system_integer_t;
 #define PRIzu	"zu"
 #define PRIzx	"zx"
 
-#elif defined( WINAPI )
+#elif defined( _MSC_VER )
 #define PRIzd	"Id"
 #define PRIzi	"Ii"
 #define PRIzu	"Iu"
@@ -281,7 +281,7 @@ typedef int system_integer_t;
 #define UINT8_MAX (0xff)
 #endif
 
-/* The maximum signed 16-bit integer is 32767 (0xr7ffff)
+/* The maximum signed 16-bit integer is 32767 (0x7ffff)
  */
 #if !defined( INT16_MAX )
 #define INT16_MAX (0x7fff)
@@ -335,6 +335,18 @@ typedef int system_integer_t;
  */
 #if !defined( UINT_MAX )
 #define UINT_MAX UINT32_MAX
+#endif
+
+/* The maximum signed long integer
+ */
+#if !defined( LONG_MAX )
+#define LONG_MAX INT32_MAX
+#endif
+
+/* The maximum unsigned long integer
+ */
+#if !defined( ULONG_MAX )
+#define ULONG_MAX UINT32_MAX
 #endif
 
 /* The maximum signed size type is platform dependent

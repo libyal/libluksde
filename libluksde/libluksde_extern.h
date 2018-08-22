@@ -28,17 +28,13 @@
  */
 #if !defined( HAVE_LOCAL_LIBLUKSDE )
 
-/* If libtool DLL support is enabled set LIBLUKSDE_DLL_EXPORT
- * before including libluksde/extern.h
- */
-#if defined( _WIN32 ) && defined( DLL_EXPORT )
-#define LIBLUKSDE_DLL_EXPORT
-#endif
-
 #include <libluksde/extern.h>
 
+#define LIBLUKSDE_EXTERN_VARIABLE	LIBLUKSDE_EXTERN
+
 #else
-#define LIBLUKSDE_EXTERN	/* extern */
+#define LIBLUKSDE_EXTERN		/* extern */
+#define LIBLUKSDE_EXTERN_VARIABLE	extern
 
 #endif /* !defined( HAVE_LOCAL_LIBLUKSDE ) */
 

@@ -2,7 +2,7 @@ AC_PREREQ( 2.59 )
 
 AC_INIT(
  [libluksde],
- [20180514],
+ [20180822],
  [joachim.metz@gmail.com])
 
 AC_CONFIG_SRCDIR(
@@ -109,10 +109,7 @@ dnl Check if libluksde required headers and functions are available
 AX_LIBLUKSDE_CHECK_LOCAL
 
 dnl Check if libluksde Python bindings (pyluksde) required headers and functions are available
-AX_PYTHON_CHECK_PYPREFIX
 AX_PYTHON_CHECK_ENABLE
-AX_PYTHON2_CHECK_ENABLE
-AX_PYTHON3_CHECK_ENABLE
 
 AS_IF(
   [test "x${ac_cv_enable_python}" != xno || test "x${ac_cv_enable_python2}" != xno || test "x${ac_cv_enable_python3}" != xno],
@@ -126,10 +123,6 @@ AS_IF(
       [1])
     ])
   ])
-
-AM_CONDITIONAL(
-  HAVE_PYTHON_TESTS,
-  [test "x${ac_cv_enable_python}" != xno || test "x${ac_cv_enable_python2}" != xno || test "x${ac_cv_enable_python3}" != xno])
 
 dnl Check if libfuse or required headers and functions are available
 AX_LIBFUSE_CHECK_ENABLE
@@ -145,7 +138,7 @@ AS_IF(
  [test "x$enable_shared" = xyes],
  [AS_CASE(
   [$host],
-  [*cygwin* | *mingw*],
+  [*cygwin* | *mingw* | *msys*],
   [AC_DEFINE(
    [HAVE_DLLMAIN],
    [1],
@@ -154,7 +147,10 @@ AS_IF(
    [HAVE_DLLMAIN],
    [1])
 
-  dnl Used in tests
+  AC_SUBST(
+   [LIBLUKSDE_DLL_EXPORT],
+   ["-DLIBLUKSDE_DLL_EXPORT"])
+
   AC_SUBST(
    [LIBLUKSDE_DLL_IMPORT],
    ["-DLIBLUKSDE_DLL_IMPORT"])
@@ -176,7 +172,7 @@ AS_IF(
  ])
 
 AS_IF(
- [test "x$ac_cv_libcrypto" != xno || test "x$ac_cv_libfuse" != xno],
+ [test "x$ac_cv_libfuse" != xno],
  [AC_SUBST(
   [libluksde_spec_tools_build_requires],
   [BuildRequires:])
@@ -268,8 +264,6 @@ Features:
    Wide character type support:                 $ac_cv_enable_wide_character_type
    luksdetools are build as static executables: $ac_cv_enable_static_executables
    Python (pyluksde) support:                   $ac_cv_enable_python
-   Python version 2 (pyluksde) support:         $ac_cv_enable_python2
-   Python version 3 (pyluksde) support:         $ac_cv_enable_python3
    Verbose output:                              $ac_cv_enable_verbose_output
    Debug output:                                $ac_cv_enable_debug_output
 ]);
