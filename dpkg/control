@@ -9,6 +9,8 @@ Homepage: https://github.com/libyal/libluksde
 Package: libluksde
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
+Conflicts: libluksde1
+Replaces: libluksde1
 Suggests: libluksde-dbg
 Description: Library to access the Linux Unified Key Setup (LUKS) Disk Encryption format
  libluksde is a library to access the Linux Unified Key Setup (LUKS) Disk Encryption format.
@@ -31,6 +33,8 @@ Package: libluksde-tools
 Section: utils
 Architecture: any
 Depends: libluksde (= ${binary:Version}), ${shlibs:Depends}, ${misc:Depends}
+Conflicts: libluksde-utils
+Replaces: libluksde-utils
 Description: Several tools for reading Linux Unified Key Setup (LUKS) Disk Encryption volumes
  Several tools for reading Linux Unified Key Setup (LUKS) Disk Encryption volumes.
 
@@ -45,6 +49,8 @@ Package: libluksde-python
 Section: python
 Architecture: any
 Depends: libluksde (= ${binary:Version}), ${shlibs:Depends}, ${misc:Depends}
+Conflicts: python-libluksde
+Replaces: python-libluksde
 Suggests: libluksde-python-dbg
 Description: Python 2 bindings for libluksde
  Python 2 bindings for libluksde.
@@ -60,6 +66,8 @@ Package: libluksde-python3
 Section: python
 Architecture: any
 Depends: libluksde (= ${binary:Version}), ${shlibs:Depends}, ${misc:Depends}
+Conflicts: python3-libluksde
+Replaces: python3-libluksde
 Suggests: libluksde-python3-dbg
 Description: Python 3 bindings for libluksde
  Python 3 bindings for libluksde.

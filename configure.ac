@@ -2,7 +2,7 @@ AC_PREREQ( 2.59 )
 
 AC_INIT(
  [libluksde],
- [20180822],
+ [20190102],
  [joachim.metz@gmail.com])
 
 AC_CONFIG_SRCDIR(
@@ -41,6 +41,9 @@ AC_C_VOLATILE
 
 dnl Check for large file support
 AC_SYS_LARGEFILE
+
+dnl Check if shared library support should be disabled
+AX_COMMON_CHECK_DISABLE_SHARED_LIBS
 
 dnl Check if WINAPI support should be enabled
 AX_COMMON_CHECK_ENABLE_WINAPI
@@ -166,9 +169,6 @@ AS_IF(
  [AC_SUBST(
   [libluksde_spec_requires],
   [Requires:])
- AC_SUBST(
-  [libluksde_spec_build_requires],
-  [BuildRequires:])
  ])
 
 AS_IF(
@@ -256,7 +256,8 @@ Building:
    SHA256 support:                              $ac_cv_libhmac_sha256
    SHA512 support:                              $ac_cv_libhmac_sha512
    libcaes support:                             $ac_cv_libcaes
-   AES support:                                 $ac_cv_libcaes_aes
+   AES-CBC support:                             $ac_cv_libcaes_aes_cbc
+   AES-ECB support:                             $ac_cv_libcaes_aes_ecb
    FUSE support:                                $ac_cv_libfuse
 
 Features:

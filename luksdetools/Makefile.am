@@ -30,6 +30,7 @@ luksdeinfo_SOURCES = \
 	luksdetools_libcerror.h \
 	luksdetools_libclocale.h \
 	luksdetools_libcnotify.h \
+	luksdetools_libcpath.h \
 	luksdetools_libcsplit.h \
 	luksdetools_libuna.h \
 	luksdetools_output.c luksdetools_output.h \
@@ -54,14 +55,19 @@ luksdemount_SOURCES = \
 	luksdetools_getopt.c luksdetools_getopt.h \
 	luksdetools_i18n.h \
 	luksdetools_libbfio.h \
-	luksdetools_libluksde.h \
+	luksdetools_libcdata.h \
 	luksdetools_libcerror.h \
 	luksdetools_libclocale.h \
 	luksdetools_libcnotify.h \
 	luksdetools_libcsplit.h \
+	luksdetools_libluksde.h \
 	luksdetools_output.c luksdetools_output.h \
 	luksdetools_signal.c luksdetools_signal.h \
 	luksdetools_unused.h \
+	mount_dokan.c mount_dokan.h \
+	mount_file_entry.c mount_file_entry.h \
+	mount_file_system.c mount_file_system.h \
+	mount_fuse.c mount_fuse.h \
 	mount_handle.c mount_handle.h
 
 luksdemount_LDADD = \

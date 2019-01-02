@@ -226,6 +226,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\luksdetools\luksdetools_libcpath.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\luksdetools\luksdetools_libcsplit.h"
 				>
 			</File>

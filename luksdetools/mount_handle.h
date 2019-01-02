@@ -1,7 +1,7 @@
 /*
  * Mount handle
  *
- * Copyright (C) 2013-2018, Joachim Metz <joachim.metz@gmail.com>
+ * Copyright (C) 2013-2019, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -26,9 +26,11 @@
 #include <file_stream.h>
 #include <types.h>
 
-#include "luksdetools_libluksde.h"
 #include "luksdetools_libbfio.h"
 #include "luksdetools_libcerror.h"
+#include "luksdetools_libluksde.h"
+#include "mount_file_entry.h"
+#include "mount_file_system.h"
 
 #if defined( __cplusplus )
 extern "C" {
@@ -38,28 +40,44 @@ typedef struct mount_handle mount_handle_t;
 
 struct mount_handle
 {
+	/* The file system
+	 */
+	mount_file_system_t *file_system;
+
+	/* The key data
+	 */
+	uint8_t key_data[ 16 ];
+
+	/* The key size
+	 */
+	uint8_t key_size;
+
 	/* The volume offset
 	 */
 	off64_t volume_offset;
 
-	/* The libbfio input file IO handle
+	/* The libbfio file IO handle
 	 */
-	libbfio_handle_t *input_file_io_handle;
+	libbfio_handle_t *file_io_handle;
 
-	/* The libluksde input volume
+	/* The password
 	 */
-	libluksde_volume_t *input_volume;
+	const system_character_t *password;
+
+	/* The password length
+	 */
+	size_t password_length;
+
+	/* Value to indicate the mount handle is locked
+	 */
+	int is_locked;
 
 	/* The notification output stream
 	 */
 	FILE *notify_stream;
-
-	/* Value to indicate if abort was signalled
-	 */
-	int abort;
 };
 
-int luksdetools_system_string_copy_from_64_bit_in_decimal(
+int mount_handle_system_string_copy_from_64_bit_in_decimal(
      const system_character_t *string,
      size_t string_size,
      uint64_t *value_64bit,
@@ -82,40 +100,39 @@ int mount_handle_set_keys(
      const system_character_t *string,
      libcerror_error_t **error );
 
+int mount_handle_set_offset(
+     mount_handle_t *mount_handle,
+     const system_character_t *string,
+     libcerror_error_t **error );
+
 int mount_handle_set_password(
      mount_handle_t *mount_handle,
      const system_character_t *string,
      libcerror_error_t **error );
 
-int mount_handle_set_volume_offset(
+int mount_handle_set_path_prefix(
      mount_handle_t *mount_handle,
-     const system_character_t *string,
+     const system_character_t *path_prefix,
+     size_t path_prefix_size,
      libcerror_error_t **error );
 
-int mount_handle_open_input(
+int mount_handle_open(
      mount_handle_t *mount_handle,
      const system_character_t *filename,
      libcerror_error_t **error );
 
-int mount_handle_close_input(
+int mount_handle_close(
      mount_handle_t *mount_handle,
      libcerror_error_t **error );
 
-ssize_t mount_handle_read_buffer(
-         mount_handle_t *mount_handle,
-         uint8_t *buffer,
-         size_t size,
-         libcerror_error_t **error );
-
-off64_t mount_handle_seek_offset(
-         mount_handle_t *mount_handle,
-         off64_t offset,
-         int whence,
-         libcerror_error_t **error );
-
-int mount_handle_get_size(
+int mount_handle_is_locked(
      mount_handle_t *mount_handle,
-     size64_t *size,
+     libcerror_error_t **error );
+
+int mount_handle_get_file_entry_by_path(
+     mount_handle_t *mount_handle,
+     const system_character_t *path,
+     mount_file_entry_t **file_entry,
      libcerror_error_t **error );
 
 #if defined( __cplusplus )
