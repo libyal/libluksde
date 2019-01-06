@@ -73,7 +73,7 @@ void usage_fprint(
 	fprintf( stream, "\tmount_point: the directory to serve as mount point\n\n" );
 
 	fprintf( stream, "\t-h:          shows this help\n" );
-	fprintf( stream, "\t-k:          the key formatted in base16\n" );
+	fprintf( stream, "\t-k:          specify the key formatted in base16\n" );
 	fprintf( stream, "\t-o:          specify the volume offset in bytes\n" );
 	fprintf( stream, "\t-p:          specify the password/passphrase\n" );
 	fprintf( stream, "\t-v:          verbose output to stderr, while luksdemount will remain running in the\n"
