@@ -27,6 +27,7 @@ endif
 TESTS = \
 	test_library.sh \
 	test_luksdeinfo.sh \
+	test_manpage.sh \
 	$(TESTS_PYLUKSDE)
 
 check_SCRIPTS = \
@@ -34,6 +35,7 @@ check_SCRIPTS = \
 	pyluksde_test_volume.py \
 	test_library.sh \
 	test_luksdeinfo.sh \
+	test_manpage.sh \
 	test_python_module.sh \
 	test_runner.sh
 
