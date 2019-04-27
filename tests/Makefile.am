@@ -27,7 +27,6 @@ endif
 TESTS = \
 	test_library.sh \
 	test_luksdeinfo.sh \
-	test_manpage.sh \
 	$(TESTS_PYLUKSDE)
 
 check_SCRIPTS = \
