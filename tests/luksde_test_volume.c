@@ -1292,7 +1292,6 @@ int luksde_test_volume_open_close(
 	          LIBLUKSDE_OPEN_READ,
 	          &error );
 #endif
-
 	LUKSDE_TEST_ASSERT_EQUAL_INT(
 	 "result",
 	 result,

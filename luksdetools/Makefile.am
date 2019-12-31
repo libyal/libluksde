@@ -12,6 +12,7 @@ AM_CPPFLAGS = \
 	@LIBBFIO_CPPFLAGS@ \
 	@LIBFCACHE_CPPFLAGS@ \
 	@LIBFDATA_CPPFLAGS@ \
+	@LIBFGUID_CPPFLAGS@ \
 	@LIBFUSE_CPPFLAGS@ \
 	@LIBLUKSDE_DLL_IMPORT@
 
@@ -32,12 +33,14 @@ luksdeinfo_SOURCES = \
 	luksdetools_libcnotify.h \
 	luksdetools_libcpath.h \
 	luksdetools_libcsplit.h \
+	luksdetools_libfguid.h \
 	luksdetools_libuna.h \
 	luksdetools_output.c luksdetools_output.h \
 	luksdetools_signal.c luksdetools_signal.h \
 	luksdetools_unused.h
 
 luksdeinfo_LDADD = \
+	@LIBFGUID_LIBADD@ \
 	@LIBBFIO_LIBADD@ \
 	@LIBCPATH_LIBADD@ \
 	@LIBCFILE_LIBADD@ \

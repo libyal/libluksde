@@ -263,7 +263,8 @@ int libluksde_password_pbkdf2(
 		libcnotify_printf(
 		 "\n" );
 	}
-#endif
+#endif /* defined( HAVE_DEBUG_OUTPUT ) */
+
 	for( block_index = 0;
 	     block_index < number_of_blocks;
 	     block_index++ )

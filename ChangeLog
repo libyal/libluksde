@@ -1,4 +1,5 @@
 TODO
+* volume header set volume identifier
 * rename set_keys to set_key or add additional keys
 * fix SHA-224 and SHA-256 haching support
 * documentation

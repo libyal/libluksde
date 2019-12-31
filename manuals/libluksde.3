@@ -1,4 +1,4 @@
-.Dd March  5, 2019
+.Dd December 31, 2019
 .Dt libluksde 3
 .Os libluksde
 .Sh NAME
@@ -76,6 +76,8 @@ Volume functions
 .Fn libluksde_volume_get_size "libluksde_volume_t *volume" "size64_t *size" "libluksde_error_t **error"
 .Ft int
 .Fn libluksde_volume_get_encryption_method "libluksde_volume_t *volume" "int *encryption_method" "int *encryption_chaining_mode" "libluksde_error_t **error"
+.Ft int
+.Fn libluksde_volume_get_volume_identifier "libluksde_volume_t *volume" "uint8_t *uuid_data" "size_t uuid_data_size" "libluksde_error_t **error"
 .Ft int
 .Fn libluksde_volume_set_keys "libluksde_volume_t *volume" "const uint8_t *master_key" "size_t master_key_size" "libluksde_error_t **error"
 .Ft int

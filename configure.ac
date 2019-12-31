@@ -2,7 +2,7 @@ AC_PREREQ( 2.59 )
 
 AC_INIT(
  [libluksde],
- [20191215],
+ [20191231],
  [joachim.metz@gmail.com])
 
 AC_CONFIG_SRCDIR(
@@ -108,6 +108,9 @@ AX_LIBHMAC_CHECK_ENABLE
 dnl Check if libcaes or required headers and functions are available
 AX_LIBCAES_CHECK_ENABLE
 
+dnl Check if libfcrypto or required headers and functions are available
+AX_LIBFCRYPTO_CHECK_ENABLE
+
 dnl Check if libluksde required headers and functions are available
 AX_LIBLUKSDE_CHECK_LOCAL
 
@@ -165,7 +168,7 @@ CFLAGS="$CFLAGS -Wall";
 
 dnl Check if requires and build requires should be set in spec file
 AS_IF(
- [test "x$ac_cv_libcerror" = xyes || test "x$ac_cv_libcthreads" = xyes || test "x$ac_cv_libcdata" = xyes || test "x$ac_cv_libclocale" = xyes || test "x$ac_cv_libcnotify" = xyes || test "x$ac_cv_libcsplit" = xyes || test "x$ac_cv_libuna" = xyes || test "x$ac_cv_libcfile" = xyes || test "x$ac_cv_libcpath" = xyes || test "x$ac_cv_libbfio" = xyes || test "x$ac_cv_libfcache" = xyes || test "x$ac_cv_libfdata" = xyes || test "x$ac_cv_libfguid" = xyes || test "x$ac_cv_libhmac" = xyes || test "x$ac_cv_libcaes" = xyes || test "x$ac_cv_libcrypto" != xno],
+ [test "x$ac_cv_libcerror" = xyes || test "x$ac_cv_libcthreads" = xyes || test "x$ac_cv_libcdata" = xyes || test "x$ac_cv_libclocale" = xyes || test "x$ac_cv_libcnotify" = xyes || test "x$ac_cv_libcsplit" = xyes || test "x$ac_cv_libuna" = xyes || test "x$ac_cv_libcfile" = xyes || test "x$ac_cv_libcpath" = xyes || test "x$ac_cv_libbfio" = xyes || test "x$ac_cv_libfcache" = xyes || test "x$ac_cv_libfdata" = xyes || test "x$ac_cv_libfguid" = xyes || test "x$ac_cv_libhmac" = xyes || test "x$ac_cv_libcaes" = xyes  || test "x$ac_cv_libfcrypto" = xyes || test "x$ac_cv_libcrypto" != xno],
  [AC_SUBST(
   [libluksde_spec_requires],
   [Requires:])
@@ -207,6 +210,7 @@ AC_CONFIG_FILES([libfdata/Makefile])
 AC_CONFIG_FILES([libfguid/Makefile])
 AC_CONFIG_FILES([libhmac/Makefile])
 AC_CONFIG_FILES([libcaes/Makefile])
+AC_CONFIG_FILES([libfcrypto/Makefile])
 AC_CONFIG_FILES([libluksde/Makefile])
 AC_CONFIG_FILES([pyluksde/Makefile])
 AC_CONFIG_FILES([pyluksde-python2/Makefile])
@@ -259,6 +263,7 @@ Building:
    AES-CBC support:                             $ac_cv_libcaes_aes_cbc
    AES-ECB support:                             $ac_cv_libcaes_aes_ecb
    FUSE support:                                $ac_cv_libfuse
+   libfcrypto support:                          $ac_cv_libfcrypto
 
 Features:
    Multi-threading support:                     $ac_cv_libcthreads_multi_threading

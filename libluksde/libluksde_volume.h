@@ -19,12 +19,13 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#if !defined( _LIBLUKSDE_INTERNAL_VOLUME_H )
-#define _LIBLUKSDE_INTERNAL_VOLUME_H
+#if !defined( _LIBLUKSDE_VOLUME_H )
+#define _LIBLUKSDE_VOLUME_H
 
 #include <common.h>
 #include <types.h>
 
+#include "libluksde_encryption.h"
 #include "libluksde_extern.h"
 #include "libluksde_io_handle.h"
 #include "libluksde_libbfio.h"
@@ -33,6 +34,7 @@
 #include "libluksde_libfcache.h"
 #include "libluksde_libfdata.h"
 #include "libluksde_types.h"
+#include "libluksde_volume_header.h"
 
 #if defined( __cplusplus )
 extern "C" {
@@ -42,6 +44,34 @@ typedef struct libluksde_internal_volume libluksde_internal_volume_t;
 
 struct libluksde_internal_volume
 {
+	/* The (volume) header
+	 */
+	libluksde_volume_header_t *header;
+
+	/* The master key
+	 */
+	uint8_t master_key[ 32 ];
+
+	/* The master key size
+	 */
+	uint32_t master_key_size;
+
+	/* The user password
+	 */
+	uint8_t *user_password;
+
+        /* User password size
+	 */
+	size_t user_password_size;
+
+	/* Value to indicate the user password is set
+	 */
+	uint8_t user_password_is_set;
+
+	/* Value to indicate the keys are set
+	 */
+	uint8_t keys_are_set;
+
 	/* The current (storage media) offset
 	 */
 	off64_t current_offset;
@@ -210,6 +240,13 @@ int libluksde_volume_get_encryption_method(
      libcerror_error_t **error );
 
 LIBLUKSDE_EXTERN \
+int libluksde_volume_get_volume_identifier(
+     libluksde_volume_t *volume,
+     uint8_t *uuid_data,
+     size_t uuid_data_size,
+     libcerror_error_t **error );
+
+LIBLUKSDE_EXTERN \
 int libluksde_volume_set_keys(
      libluksde_volume_t *volume,
      const uint8_t *master_key,
@@ -234,5 +271,5 @@ int libluksde_volume_set_utf16_password(
 }
 #endif
 
-#endif /* !defined( _LIBLUKSDE_INTERNAL_VOLUME_H ) */
+#endif /* !defined( _LIBLUKSDE_VOLUME_H ) */
 

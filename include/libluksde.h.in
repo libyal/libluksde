@@ -348,6 +348,17 @@ int libluksde_volume_get_encryption_method(
      int *encryption_chaining_mode,
      libluksde_error_t **error );
 
+/* Retrieves the volume identifier
+ * The identifier is an UUID and is 16 bytes of size
+ * Returns 1 if successful, 0 if not or or -1 on error
+ */
+LIBLUKSDE_EXTERN \
+int libluksde_volume_get_volume_identifier(
+     libluksde_volume_t *volume,
+     uint8_t *uuid_data,
+     size_t uuid_data_size,
+     libluksde_error_t **error );
+
 /* Sets the keys
  * This function needs to be used before one of the open functions
  * Returns 1 if successful or -1 on error

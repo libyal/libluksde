@@ -27,6 +27,7 @@
 
 #include "libluksde_libcaes.h"
 #include "libluksde_libcerror.h"
+#include "libluksde_libfcrypto.h"
 
 #if defined( __cplusplus )
 extern "C" {
@@ -42,13 +43,9 @@ typedef struct libluksde_encryption_context libluksde_encryption_context_t;
 
 struct libluksde_encryption_context
 {
-	/* The (encryption) method
+	/* The encryption mode, which is a combination of method and chaining mode
 	 */
-	int method;
-
-	/* The (encryption) chaining mode
-	 */
-	int chaining_mode;
+	int encryption_mode;
 
 	/* The initialization vector mode
 	 */
@@ -58,13 +55,29 @@ struct libluksde_encryption_context
 	 */
 	int essiv_hashing_method;
 
-	/* The decryption context
+	/* The AES decryption context
 	 */
-	libcaes_context_t *decryption_context;
+	libcaes_context_t *aes_decryption_context;
 
-	/* The encryption context
+	/* The AES encryption context
 	 */
-	libcaes_context_t *encryption_context;
+	libcaes_context_t *aes_encryption_context;
+
+	/* The AES-XTS decryption context
+	 */
+	libcaes_tweaked_context_t *aes_xts_decryption_context;
+
+	/* The AES-XTS encryption context
+	 */
+	libcaes_tweaked_context_t *aes_xts_encryption_context;
+
+	/* The Serpent decryption context
+	 */
+	libfcrypto_serpent_context_t *serpent_decryption_context;
+
+	/* The Serpent encryption context
+	 */
+	libfcrypto_serpent_context_t *serpent_encryption_context;
 
 	/* The ESSIV encryption context
 	 */

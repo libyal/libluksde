@@ -16,6 +16,7 @@ AM_CPPFLAGS = \
 	@LIBFGUID_CPPFLAGS@ \
 	@LIBHMAC_CPPFLAGS@ \
 	@LIBCAES_CPPFLAGS@ \
+	@LIBFCRYPTO_CPPFLAGS@ \
 	@PTHREAD_CPPFLAGS@ \
 	@LIBLUKSDE_DLL_IMPORT@
 
@@ -48,7 +49,8 @@ check_PROGRAMS = \
 	luksde_test_notify \
 	luksde_test_sector_data \
 	luksde_test_support \
-	luksde_test_volume
+	luksde_test_volume \
+	luksde_test_volume_header
 
 luksde_test_error_SOURCES = \
 	luksde_test_error.c \
@@ -158,6 +160,28 @@ luksde_test_volume_LDADD = \
 	@LIBCTHREADS_LIBADD@ \
 	@LIBCERROR_LIBADD@ \
 	@PTHREAD_LIBADD@
+
+luksde_test_volume_header_SOURCES = \
+	luksde_test_functions.c luksde_test_functions.h \
+	luksde_test_libbfio.h \
+	luksde_test_libcerror.h \
+	luksde_test_libluksde.h \
+	luksde_test_macros.h \
+	luksde_test_memory.c luksde_test_memory.h \
+	luksde_test_unused.h \
+	luksde_test_volume_header.c
+
+luksde_test_volume_header_LDADD = \
+	@LIBBFIO_LIBADD@ \
+	@LIBCPATH_LIBADD@ \
+	@LIBCFILE_LIBADD@ \
+	@LIBUNA_LIBADD@ \
+	@LIBCSPLIT_LIBADD@ \
+	@LIBCNOTIFY_LIBADD@ \
+	@LIBCLOCALE_LIBADD@ \
+	@LIBCDATA_LIBADD@ \
+	../libluksde/libluksde.la \
+	@LIBCERROR_LIBADD@
 
 MAINTAINERCLEANFILES = \
 	Makefile.in

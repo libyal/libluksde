@@ -10,6 +10,7 @@ MSVSCPP_FILES = \
 	libcsplit/libcsplit.vcproj \
 	libcthreads/libcthreads.vcproj \
 	libfcache/libfcache.vcproj \
+	libfcrypto/libfcrypto.vcproj \
 	libfdata/libfdata.vcproj \
 	libfguid/libfguid.vcproj \
 	libhmac/libhmac.vcproj \
@@ -22,6 +23,7 @@ MSVSCPP_FILES = \
 	luksde_test_sector_data/luksde_test_sector_data.vcproj \
 	luksde_test_support/luksde_test_support.vcproj \
 	luksde_test_volume/luksde_test_volume.vcproj \
+	luksde_test_volume_header/luksde_test_volume_header.vcproj \
 	luksdeinfo/luksdeinfo.vcproj \
 	luksdemount/luksdemount.vcproj \
 	pyluksde/pyluksde.vcproj \

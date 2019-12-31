@@ -16,6 +16,7 @@ AM_CPPFLAGS = \
 	@LIBFGUID_CPPFLAGS@ \
 	@LIBHMAC_CPPFLAGS@ \
 	@LIBCAES_CPPFLAGS@ \
+	@LIBFCRYPTO_CPPFLAGS@ \
 	@PTHREAD_CPPFLAGS@ \
 	@LIBLUKSDE_DLL_EXPORT@
 
@@ -40,6 +41,7 @@ libluksde_la_SOURCES = \
 	libluksde_libcnotify.h \
 	libluksde_libcthreads.h \
 	libluksde_libfcache.h \
+	libluksde_libfcrypto.h \
 	libluksde_libfdata.h \
 	libluksde_libfguid.h \
 	libluksde_libhmac.h \
@@ -51,6 +53,7 @@ libluksde_la_SOURCES = \
 	libluksde_types.h \
 	libluksde_unused.h \
 	libluksde_volume.c libluksde_volume.h \
+	libluksde_volume_header.c libluksde_volume_header.h \
 	luksde_volume.h
 
 libluksde_la_LIBADD = \
@@ -69,6 +72,7 @@ libluksde_la_LIBADD = \
 	@LIBFGUID_LIBADD@ \
 	@LIBHMAC_LIBADD@ \
 	@LIBCAES_LIBADD@ \
+	@LIBFCRYPTO_LIBADD@ \
 	@LIBCRYPTO_LIBADD@ \
 	@LIBDL_LIBADD@ \
 	@PTHREAD_LIBADD@

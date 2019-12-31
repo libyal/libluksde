@@ -18,6 +18,7 @@ SUBDIRS = \
 	libfguid \
 	libhmac \
 	libcaes \
+	libfcrypto \
 	libluksde \
 	luksdetools \
 	pyluksde \
@@ -94,6 +95,7 @@ library:
 	(cd $(srcdir)/libfvalue && $(MAKE) $(AM_MAKEFLAGS))
 	(cd $(srcdir)/libhmac && $(MAKE) $(AM_MAKEFLAGS))
 	(cd $(srcdir)/libcaes && $(MAKE) $(AM_MAKEFLAGS))
+	(cd $(srcdir)/libfcrypto && $(MAKE) $(AM_MAKEFLAGS))
 	(cd $(srcdir)/libluksde && $(MAKE) $(AM_MAKEFLAGS))
 	(cd $(srcdir)/po && $(MAKE) $(AM_MAKEFLAGS))
 
@@ -126,6 +128,7 @@ splint:
 	(cd $(srcdir)/libfvalue && $(MAKE) splint $(AM_MAKEFLAGS))
 	(cd $(srcdir)/libhmac && $(MAKE) splint $(AM_MAKEFLAGS))
 	(cd $(srcdir)/libcaes && $(MAKE) splint $(AM_MAKEFLAGS))
+	(cd $(srcdir)/libfcrypto && $(MAKE) splint $(AM_MAKEFLAGS))
 	(cd $(srcdir)/libluksde && $(MAKE) splint $(AM_MAKEFLAGS))
 	(cd $(srcdir)/luksdetools && $(MAKE) splint $(AM_MAKEFLAGS))
 	(cd $(srcdir)/pyluksde && $(MAKE) splint $(AM_MAKEFLAGS))

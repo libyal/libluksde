@@ -1,5 +1,5 @@
 /*
- * The libfdata header wrapper
+ * The libfguid header wrapper
  *
  * Copyright (C) 2013-2019, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -19,38 +19,31 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#if !defined( _LIBLUKSDE_LIBFDATA_H )
-#define _LIBLUKSDE_LIBFDATA_H
+#if !defined( _LUKSDETOOLS_LIBFGUID_H )
+#define _LUKSDETOOLS_LIBFGUID_H
 
 #include <common.h>
 
-/* Define HAVE_LOCAL_LIBFDATA for local use of libfdata
+/* Define HAVE_LOCAL_LIBFGUID for local use of libfguid
  */
-#if defined( HAVE_LOCAL_LIBFDATA )
+#if defined( HAVE_LOCAL_LIBFGUID )
 
-#include <libfdata_area.h>
-#include <libfdata_definitions.h>
-#include <libfdata_list.h>
-#include <libfdata_list_element.h>
-#include <libfdata_range_list.h>
-#include <libfdata_stream.h>
-#include <libfdata_tree.h>
-#include <libfdata_tree_node.h>
-#include <libfdata_types.h>
-#include <libfdata_vector.h>
+#include <libfguid_definitions.h>
+#include <libfguid_identifier.h>
+#include <libfguid_types.h>
 
 #else
 
-/* If libtool DLL support is enabled set LIBFDATA_DLL_IMPORT
- * before including libfdata.h
+/* If libtool DLL support is enabled set LIBFGUID_DLL_IMPORT
+ * before including libfguid.h
  */
 #if defined( _WIN32 ) && defined( DLL_IMPORT )
-#define LIBFDATA_DLL_IMPORT
+#define LIBFGUID_DLL_IMPORT
 #endif
 
-#include <libfdata.h>
+#include <libfguid.h>
 
-#endif /* defined( HAVE_LOCAL_LIBFDATA ) */
+#endif /* defined( HAVE_LOCAL_LIBFGUID ) */
 
-#endif /* !defined( _LIBLUKSDE_LIBFDATA_H ) */
+#endif /* !defined( _LUKSDETOOLS_LIBFGUID_H ) */
 

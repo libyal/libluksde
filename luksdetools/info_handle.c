@@ -28,10 +28,11 @@
 #include <types.h>
 #include <wide_string.h>
 
-#include "luksdetools_libluksde.h"
 #include "luksdetools_libbfio.h"
 #include "luksdetools_libcerror.h"
 #include "luksdetools_libcsplit.h"
+#include "luksdetools_libfguid.h"
+#include "luksdetools_libluksde.h"
 #include "luksdetools_libuna.h"
 #include "info_handle.h"
 
@@ -929,6 +930,118 @@ int info_handle_input_is_locked(
 	return( result );
 }
 
+/* Prints a GUID value
+ * Returns 1 if successful or -1 on error
+ */
+int info_handle_guid_value_fprint(
+     info_handle_t *info_handle,
+     const char *value_name,
+     const uint8_t *guid_data,
+     libcerror_error_t **error )
+{
+	system_character_t guid_string[ 48 ];
+
+	libfguid_identifier_t *guid = NULL;
+	static char *function       = "info_handle_guid_value_fprint";
+	int result                  = 0;
+
+	if( info_handle == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid info handle.",
+		 function );
+
+		return( -1 );
+	}
+	if( libfguid_identifier_initialize(
+	     &guid,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 "%s: unable to create GUID.",
+		 function );
+
+		goto on_error;
+	}
+	if( libfguid_identifier_copy_from_byte_stream(
+	     guid,
+	     guid_data,
+	     16,
+	     LIBFGUID_ENDIAN_LITTLE,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
+		 "%s: unable to copy byte stream to GUID.",
+		 function );
+
+		goto on_error;
+	}
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
+	result = libfguid_identifier_copy_to_utf16_string(
+		  guid,
+		  (uint16_t *) guid_string,
+		  48,
+		  LIBFGUID_STRING_FORMAT_FLAG_USE_LOWER_CASE,
+		  error );
+#else
+	result = libfguid_identifier_copy_to_utf8_string(
+		  guid,
+		  (uint8_t *) guid_string,
+		  48,
+		  LIBFGUID_STRING_FORMAT_FLAG_USE_LOWER_CASE,
+		  error );
+#endif
+	if( result != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
+		 "%s: unable to copy GUID to string.",
+		 function );
+
+		goto on_error;
+	}
+	fprintf(
+	 info_handle->notify_stream,
+	 "%s: %" PRIs_SYSTEM "\n",
+	 value_name,
+	 guid_string );
+
+	if( libfguid_identifier_free(
+	     &guid,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+		 "%s: unable to free GUID.",
+		 function );
+
+		goto on_error;
+	}
+	return( 1 );
+
+on_error:
+	if( guid != NULL )
+	{
+		libfguid_identifier_free(
+		 &guid,
+		 NULL );
+	}
+	return( -1 );
+}
+
 /* Prints the volume information to a stream
  * Returns 1 if successful or -1 on error
  */
@@ -936,9 +1049,12 @@ int info_handle_volume_fprint(
      info_handle_t *info_handle,
      libcerror_error_t **error )
 {
+	uint8_t guid_data[ 16 ];
+
 	static char *function        = "luksdeinfo_volume_info_fprint";
 	int encryption_chaining_mode = 0;
 	int encryption_method        = 0;
+	int result                   = 0;
 
 	if( info_handle == NULL )
 	{
@@ -972,7 +1088,7 @@ int info_handle_volume_fprint(
 	}
 	fprintf(
 	 info_handle->notify_stream,
-	 "\tEncryption method:\t\t" );
+	 "\tEncryption method\t\t: " );
 
 	switch( encryption_method )
 	{
@@ -1062,6 +1178,57 @@ int info_handle_volume_fprint(
 	 info_handle->notify_stream,
 	 "\n" );
 
+	if( libluksde_volume_get_volume_identifier(
+	     info_handle->input_volume,
+	     guid_data,
+	     16,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve volume identifier.",
+		 function );
+
+		return( -1 );
+	}
+	if( info_handle_guid_value_fprint(
+	     info_handle,
+	     "\tVolume identifier\t\t",
+	     guid_data,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_PRINT_FAILED,
+		 "%s: unable to print GUID value.",
+		 function );
+
+		return( -1 );
+	}
+	result = libluksde_volume_is_locked(
+	          info_handle->input_volume,
+	          error );
+
+	if( result == -1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to determine if volume is locked.",
+		 function );
+
+		return( -1 );
+	}
+	else if( result != 0 )
+	{
+		fprintf(
+		 info_handle->notify_stream,
+		 "\tIs locked\n" );
+	}
 /* TODO add more info */
 
 	fprintf(

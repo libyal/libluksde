@@ -1,5 +1,5 @@
 /*
- * The Linux Unified Key Setup (LUKS) volume definition
+ * The Linux Unified Key Setup (LUKS) volume definitions
  *
  * Copyright (C) 2013-2019, Joachim Metz <joachim.metz@gmail.com>
  *

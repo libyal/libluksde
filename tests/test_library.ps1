@@ -6,7 +6,7 @@ $ExitSuccess = 0
 $ExitFailure = 1
 $ExitIgnore = 77
 
-$LibraryTests = "error key_slot notify sector_data"
+$LibraryTests = "error key_slot notify sector_data volume_header"
 $LibraryTestsWithInput = "support volume"
 
 $InputGlob = "*"

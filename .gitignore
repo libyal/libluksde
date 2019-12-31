@@ -1,6 +1,6 @@
 # Files to ignore by git
 #
-# Version: 20191005
+# Version: 20191220
 
 # Generic auto-generated build files
 *~
@@ -27,6 +27,7 @@
 *.trs
 /*.egg-info/
 .deps
+.dirstamp
 .libs
 INSTALL
 Makefile
@@ -134,6 +135,7 @@ stamp-h[1-9]
 /tests/luksde_test_sector_data
 /tests/luksde_test_support
 /tests/luksde_test_volume
+/tests/luksde_test_volume_header
 /tests/tmp*
 
 # Local library dependencies specific files
@@ -148,6 +150,7 @@ stamp-h[1-9]
 /libcsplit
 /libcthreads
 /libfcache
+/libfcrypto
 /libfdata
 /libfguid
 /libhmac

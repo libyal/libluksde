@@ -18,6 +18,7 @@ coverage:
     - "libcsplit/*"
     - "libcthreads/*"
     - "libfcache/*"
+    - "libfcrypto/*"
     - "libfdata/*"
     - "libfguid/*"
     - "libhmac/*"

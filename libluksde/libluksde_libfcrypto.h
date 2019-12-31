@@ -1,5 +1,5 @@
 /*
- * The libfdata header wrapper
+ * The internal libfcrypto header
  *
  * Copyright (C) 2013-2019, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -19,38 +19,33 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#if !defined( _LIBLUKSDE_LIBFDATA_H )
-#define _LIBLUKSDE_LIBFDATA_H
+#if !defined( _LIBLUKSDE_LIBFCRYPTO_H )
+#define _LIBLUKSDE_LIBFCRYPTO_H
 
 #include <common.h>
 
-/* Define HAVE_LOCAL_LIBFDATA for local use of libfdata
+/* Define HAVE_LOCAL_LIBFCRYPTO for local use of libfcrypto
  */
-#if defined( HAVE_LOCAL_LIBFDATA )
+#if defined( HAVE_LOCAL_LIBFCRYPTO )
 
-#include <libfdata_area.h>
-#include <libfdata_definitions.h>
-#include <libfdata_list.h>
-#include <libfdata_list_element.h>
-#include <libfdata_range_list.h>
-#include <libfdata_stream.h>
-#include <libfdata_tree.h>
-#include <libfdata_tree_node.h>
-#include <libfdata_types.h>
-#include <libfdata_vector.h>
+#include <libfcrypto_definitions.h>
+#include <libfcrypto_rc4_context.h>
+#include <libfcrypto_serpent_context.h>
+#include <libfcrypto_support.h>
+#include <libfcrypto_types.h>
 
 #else
 
-/* If libtool DLL support is enabled set LIBFDATA_DLL_IMPORT
- * before including libfdata.h
+/* If libtool DLL support is enabled set LIBFCRYPTO_DLL_IMPORT
+ * before including libfcrypto.h
  */
 #if defined( _WIN32 ) && defined( DLL_IMPORT )
-#define LIBFDATA_DLL_IMPORT
+#define LIBFCRYPTO_DLL_IMPORT
 #endif
 
-#include <libfdata.h>
+#include <libfcrypto.h>
 
-#endif /* defined( HAVE_LOCAL_LIBFDATA ) */
+#endif /* defined( HAVE_LOCAL_LIBFCRYPTO ) */
 
-#endif /* !defined( _LIBLUKSDE_LIBFDATA_H ) */
+#endif /* !defined( _LIBLUKSDE_LIBFCRYPTO_H ) */
 
