@@ -31,21 +31,23 @@
 #include "pyluksde_encryption_chaining_modes.h"
 #include "pyluksde_encryption_methods.h"
 #include "pyluksde_error.h"
+#include "pyluksde_file_object_io_handle.h"
 #include "pyluksde_hashing_methods.h"
 #include "pyluksde_initialization_vector_modes.h"
 #include "pyluksde_libcerror.h"
 #include "pyluksde_libluksde.h"
-#include "pyluksde_file_object_io_handle.h"
 #include "pyluksde_python.h"
 #include "pyluksde_unused.h"
 #include "pyluksde_volume.h"
 
 #if !defined( LIBLUKSDE_HAVE_BFIO )
+
 LIBLUKSDE_EXTERN \
 int libluksde_check_volume_signature_file_io_handle(
      libbfio_handle_t *file_io_handle,
      libluksde_error_t **error );
-#endif
+
+#endif /* !defined( LIBLUKSDE_HAVE_BFIO ) */
 
 /* The pyluksde module methods
  */
@@ -67,19 +69,19 @@ PyMethodDef pyluksde_module_methods[] = {
 	{ "check_volume_signature_file_object",
 	  (PyCFunction) pyluksde_check_volume_signature_file_object,
 	  METH_VARARGS | METH_KEYWORDS,
-	  "check_volume_signature(file_object) -> Boolean\n"
+	  "check_volume_signature_file_object(file_object) -> Boolean\n"
 	  "\n"
 	  "Checks if a volume has a Linux Unified Key Setup (LUKS) Disk Encryption volume signature using a file-like object." },
 
 	{ "open",
-	  (PyCFunction) pyluksde_volume_new_open,
+	  (PyCFunction) pyluksde_open_new_volume,
 	  METH_VARARGS | METH_KEYWORDS,
 	  "open(filename, mode='r') -> Object\n"
 	  "\n"
 	  "Opens a volume." },
 
 	{ "open_file_object",
-	  (PyCFunction) pyluksde_volume_new_open_file_object,
+	  (PyCFunction) pyluksde_open_new_volume_with_file_object,
 	  METH_VARARGS | METH_KEYWORDS,
 	  "open_file_object(file_object, mode='r') -> Object\n"
 	  "\n"
@@ -122,7 +124,7 @@ PyObject *pyluksde_get_version(
 	         errors ) );
 }
 
-/* Checks if the volume has a Linux Unified Key Setup (LUKS) Disk Encryption volume signature
+/* Checks if a volume has a Linux Unified Key Setup (LUKS) Disk Encryption volume signature
  * Returns a Python object if successful or NULL on error
  */
 PyObject *pyluksde_check_volume_signature(
@@ -153,7 +155,7 @@ PyObject *pyluksde_check_volume_signature(
 	if( PyArg_ParseTupleAndKeywords(
 	     arguments,
 	     keywords,
-	     "|O",
+	     "O|",
 	     keyword_list,
 	     &string_object ) == 0 )
 	{
@@ -169,7 +171,7 @@ PyObject *pyluksde_check_volume_signature(
 	{
 		pyluksde_error_fetch_and_raise(
 	         PyExc_RuntimeError,
-		 "%s: unable to determine if string object is of type unicode.",
+		 "%s: unable to determine if string object is of type Unicode.",
 		 function );
 
 		return( NULL );
@@ -196,7 +198,7 @@ PyObject *pyluksde_check_volume_signature(
 		{
 			pyluksde_error_fetch_and_raise(
 			 PyExc_RuntimeError,
-			 "%s: unable to convert unicode string to UTF-8.",
+			 "%s: unable to convert Unicode string to UTF-8.",
 			 function );
 
 			return( NULL );
@@ -218,7 +220,9 @@ PyObject *pyluksde_check_volume_signature(
 
 		Py_DecRef(
 		 utf8_string_object );
-#endif
+
+#endif /* defined( HAVE_WIDE_SYSTEM_CHARACTER ) */
+
 		if( result == -1 )
 		{
 			pyluksde_error_raise(
@@ -316,7 +320,7 @@ PyObject *pyluksde_check_volume_signature(
 	return( NULL );
 }
 
-/* Checks if the volume has a Linux Unified Key Setup (LUKS) Disk Encryption volume signature using a file-like object
+/* Checks if a volume has a Linux Unified Key Setup (LUKS) Disk Encryption volume signature using a file-like object
  * Returns a Python object if successful or NULL on error
  */
 PyObject *pyluksde_check_volume_signature_file_object(
@@ -416,6 +420,52 @@ on_error:
 	return( NULL );
 }
 
+/* Creates a new volume object and opens it
+ * Returns a Python object if successful or NULL on error
+ */
+PyObject *pyluksde_open_new_volume(
+           PyObject *self PYLUKSDE_ATTRIBUTE_UNUSED,
+           PyObject *arguments,
+           PyObject *keywords )
+{
+	PyObject *pyluksde_volume = NULL;
+
+	PYLUKSDE_UNREFERENCED_PARAMETER( self )
+
+	pyluksde_volume_init(
+	 (pyluksde_volume_t *) pyluksde_volume );
+
+	pyluksde_volume_open(
+	 (pyluksde_volume_t *) pyluksde_volume,
+	 arguments,
+	 keywords );
+
+	return( pyluksde_volume );
+}
+
+/* Creates a new volume object and opens it using a file-like object
+ * Returns a Python object if successful or NULL on error
+ */
+PyObject *pyluksde_open_new_volume_with_file_object(
+           PyObject *self PYLUKSDE_ATTRIBUTE_UNUSED,
+           PyObject *arguments,
+           PyObject *keywords )
+{
+	PyObject *pyluksde_volume = NULL;
+
+	PYLUKSDE_UNREFERENCED_PARAMETER( self )
+
+	pyluksde_volume_init(
+	 (pyluksde_volume_t *) pyluksde_volume );
+
+	pyluksde_volume_open_file_object(
+	 (pyluksde_volume_t *) pyluksde_volume,
+	 arguments,
+	 keywords );
+
+	return( pyluksde_volume );
+}
+
 #if PY_MAJOR_VERSION >= 3
 
 /* The pyluksde module definition
@@ -453,13 +503,8 @@ PyMODINIT_FUNC initpyluksde(
                 void )
 #endif
 {
-	PyObject *module                                      = NULL;
-	PyTypeObject *encryption_chaining_modes_type_object   = NULL;
-	PyTypeObject *encryption_methods_type_object          = NULL;
-	PyTypeObject *hashing_methods_type_object             = NULL;
-	PyTypeObject *initialization_vector_modes_type_object = NULL;
-	PyTypeObject *volume_type_object                      = NULL;
-	PyGILState_STATE gil_state                            = 0;
+	PyObject *module           = NULL;
+	PyGILState_STATE gil_state = 0;
 
 #if defined( HAVE_DEBUG_OUTPUT )
 	libluksde_notify_set_stream(
@@ -494,50 +539,7 @@ PyMODINIT_FUNC initpyluksde(
 
 	gil_state = PyGILState_Ensure();
 
-	/* Setup the volume type object
-	 */
-	pyluksde_volume_type_object.tp_new = PyType_GenericNew;
-
-	if( PyType_Ready(
-	     &pyluksde_volume_type_object ) < 0 )
-	{
-		goto on_error;
-	}
-	Py_IncRef(
-	 (PyObject *) &pyluksde_volume_type_object );
-
-	volume_type_object = &pyluksde_volume_type_object;
-
-	PyModule_AddObject(
-	 module,
-	"volume",
-	(PyObject *) volume_type_object );
-
-	/* Setup the encryption methods type object
-	 */
-	pyluksde_encryption_methods_type_object.tp_new = PyType_GenericNew;
-
-	if( pyluksde_encryption_methods_init_type(
-	     &pyluksde_encryption_methods_type_object ) != 1 )
-	{
-		goto on_error;
-	}
-	if( PyType_Ready(
-	     &pyluksde_encryption_methods_type_object ) < 0 )
-	{
-		goto on_error;
-	}
-	Py_IncRef(
-	 (PyObject *) &pyluksde_encryption_methods_type_object );
-
-	encryption_methods_type_object = &pyluksde_encryption_methods_type_object;
-
-	PyModule_AddObject(
-	 module,
-	 "encryption_methods",
-	 (PyObject *) encryption_methods_type_object );
-
-	/* Setup the encryption chaining modes type object
+	/* Setup the encryption_chaining_modes type object
 	 */
 	pyluksde_encryption_chaining_modes_type_object.tp_new = PyType_GenericNew;
 
@@ -554,38 +556,34 @@ PyMODINIT_FUNC initpyluksde(
 	Py_IncRef(
 	 (PyObject *) &pyluksde_encryption_chaining_modes_type_object );
 
-	encryption_chaining_modes_type_object = &pyluksde_encryption_chaining_modes_type_object;
-
 	PyModule_AddObject(
 	 module,
 	 "encryption_chaining_modes",
-	 (PyObject *) encryption_chaining_modes_type_object );
+	 (PyObject *) &pyluksde_encryption_chaining_modes_type_object );
 
-	/* Setup the encryption chaining modes type object
+	/* Setup the encryption_methods type object
 	 */
-	pyluksde_initialization_vector_modes_type_object.tp_new = PyType_GenericNew;
+	pyluksde_encryption_methods_type_object.tp_new = PyType_GenericNew;
 
-	if( pyluksde_initialization_vector_modes_init_type(
-	     &pyluksde_initialization_vector_modes_type_object ) != 1 )
+	if( pyluksde_encryption_methods_init_type(
+	     &pyluksde_encryption_methods_type_object ) != 1 )
 	{
 		goto on_error;
 	}
 	if( PyType_Ready(
-	     &pyluksde_initialization_vector_modes_type_object ) < 0 )
+	     &pyluksde_encryption_methods_type_object ) < 0 )
 	{
 		goto on_error;
 	}
 	Py_IncRef(
-	 (PyObject *) &pyluksde_initialization_vector_modes_type_object );
-
-	initialization_vector_modes_type_object = &pyluksde_initialization_vector_modes_type_object;
+	 (PyObject *) &pyluksde_encryption_methods_type_object );
 
 	PyModule_AddObject(
 	 module,
-	 "initialization_vector_modes",
-	 (PyObject *) initialization_vector_modes_type_object );
+	 "encryption_methods",
+	 (PyObject *) &pyluksde_encryption_methods_type_object );
 
-	/* Setup the hashing methods type object
+	/* Setup the hashing_methods type object
 	 */
 	pyluksde_hashing_methods_type_object.tp_new = PyType_GenericNew;
 
@@ -602,12 +600,49 @@ PyMODINIT_FUNC initpyluksde(
 	Py_IncRef(
 	 (PyObject *) &pyluksde_hashing_methods_type_object );
 
-	hashing_methods_type_object = &pyluksde_hashing_methods_type_object;
-
 	PyModule_AddObject(
 	 module,
 	 "hashing_methods",
-	 (PyObject *) hashing_methods_type_object );
+	 (PyObject *) &pyluksde_hashing_methods_type_object );
+
+	/* Setup the initialization_vector_modes type object
+	 */
+	pyluksde_initialization_vector_modes_type_object.tp_new = PyType_GenericNew;
+
+	if( pyluksde_initialization_vector_modes_init_type(
+	     &pyluksde_initialization_vector_modes_type_object ) != 1 )
+	{
+		goto on_error;
+	}
+	if( PyType_Ready(
+	     &pyluksde_initialization_vector_modes_type_object ) < 0 )
+	{
+		goto on_error;
+	}
+	Py_IncRef(
+	 (PyObject *) &pyluksde_initialization_vector_modes_type_object );
+
+	PyModule_AddObject(
+	 module,
+	 "initialization_vector_modes",
+	 (PyObject *) &pyluksde_initialization_vector_modes_type_object );
+
+	/* Setup the volume type object
+	 */
+	pyluksde_volume_type_object.tp_new = PyType_GenericNew;
+
+	if( PyType_Ready(
+	     &pyluksde_volume_type_object ) < 0 )
+	{
+		goto on_error;
+	}
+	Py_IncRef(
+	 (PyObject *) &pyluksde_volume_type_object );
+
+	PyModule_AddObject(
+	 module,
+	 "volume",
+	 (PyObject *) &pyluksde_volume_type_object );
 
 	PyGILState_Release(
 	 gil_state );

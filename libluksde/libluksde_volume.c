@@ -431,22 +431,6 @@ int libluksde_volume_open(
 
 		goto on_error;
 	}
-	else if( result == 0 )
-	{
-		if( libbfio_handle_free(
-		     &file_io_handle,
-		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
-			 "%s: unable to free file IO handle.",
-			 function );
-
-			goto on_error;
-		}
-	}
 	else
 	{
 #if defined( HAVE_LIBLUKSDE_MULTI_THREAD_SUPPORT )
@@ -634,22 +618,6 @@ int libluksde_volume_open_wide(
 
 		goto on_error;
 	}
-	else if( result == 0 )
-	{
-		if( libbfio_handle_free(
-		     &file_io_handle,
-		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
-			 "%s: unable to free file IO handle.",
-			 function );
-
-			goto on_error;
-		}
-	}
 	else
 	{
 #if defined( HAVE_LIBLUKSDE_MULTI_THREAD_SUPPORT )
@@ -825,27 +793,6 @@ int libluksde_volume_open_file_io_handle(
 		 function );
 
 		goto on_error;
-	}
-	else if( result == 0 )
-	{
-		if( file_io_handle_opened_in_library != 0 )
-		{
-			file_io_handle_opened_in_library = 0;
-
-			if( libbfio_handle_close(
-			     file_io_handle,
-			     error ) != 0 )
-			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_IO,
-				 LIBCERROR_IO_ERROR_CLOSE_FAILED,
-				 "%s: unable to close file IO handle.",
-				 function );
-
-				goto on_error;
-			}
-		}
 	}
 	else
 	{
@@ -1966,6 +1913,17 @@ ssize_t libluksde_internal_volume_read_buffer_from_file_io_handle(
 
 		return( -1 );
 	}
+	if( internal_volume->is_locked != 0 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: invalid volume - volume is locked.",
+		 function );
+
+		return( -1 );
+	}
 	if( internal_volume->io_handle == NULL )
 	{
 		libcerror_error_set(
@@ -2145,6 +2103,17 @@ ssize_t libluksde_volume_read_buffer(
 	}
 	internal_volume = (libluksde_internal_volume_t *) volume;
 
+	if( internal_volume->file_io_handle == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: invalid volume - missing file IO handle.",
+		 function );
+
+		return( -1 );
+	}
 #if defined( HAVE_LIBLUKSDE_MULTI_THREAD_SUPPORT )
 	if( libcthreads_read_write_lock_grab_for_write(
 	     internal_volume->read_write_lock,
@@ -2223,6 +2192,17 @@ ssize_t libluksde_volume_read_buffer_at_offset(
 	}
 	internal_volume = (libluksde_internal_volume_t *) volume;
 
+	if( internal_volume->file_io_handle == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: invalid volume - missing file IO handle.",
+		 function );
+
+		return( -1 );
+	}
 #if defined( HAVE_LIBLUKSDE_MULTI_THREAD_SUPPORT )
 	if( libcthreads_read_write_lock_grab_for_write(
 	     internal_volume->read_write_lock,
@@ -2384,6 +2364,17 @@ off64_t libluksde_internal_volume_seek_offset(
 
 		return( -1 );
 	}
+	if( internal_volume->is_locked != 0 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: invalid volume - volume is locked.",
+		 function );
+
+		return( -1 );
+	}
 	if( internal_volume->io_handle == NULL )
 	{
 		libcerror_error_set(
@@ -2466,6 +2457,17 @@ off64_t libluksde_volume_seek_offset(
 	}
 	internal_volume = (libluksde_internal_volume_t *) volume;
 
+	if( internal_volume->file_io_handle == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: invalid volume - missing file IO handle.",
+		 function );
+
+		return( -1 );
+	}
 #if defined( HAVE_LIBLUKSDE_MULTI_THREAD_SUPPORT )
 	if( libcthreads_read_write_lock_grab_for_write(
 	     internal_volume->read_write_lock,

@@ -499,6 +499,15 @@ int libluksde_volume_header_read_data(
 		{
 			volume_header->encryption_method = LIBLUKSDE_ENCRYPTION_METHOD_AES;
 		}
+		else if( ( ( ( (luksde_volume_header_t *) data )->encryption_method[ 1 ] == 'r' )
+		      ||  ( ( (luksde_volume_header_t *) data )->encryption_method[ 1 ] == 'R' ) )
+		     && ( ( ( (luksde_volume_header_t *) data )->encryption_method[ 2 ] == 'c' )
+		      ||  ( ( (luksde_volume_header_t *) data )->encryption_method[ 2 ] == 'C' ) )
+		     &&   ( ( (luksde_volume_header_t *) data )->encryption_method[ 3 ] == '4' )
+		     &&   ( ( (luksde_volume_header_t *) data )->encryption_method[ 4 ] == 0 ) )
+		{
+			volume_header->encryption_method = LIBLUKSDE_ENCRYPTION_METHOD_ARC4;
+		}
 	}
 	else if( ( ( (luksde_volume_header_t *) data )->encryption_method[ 0 ] == 'b' )
 	      || ( ( (luksde_volume_header_t *) data )->encryption_method[ 0 ] == 'B' ) )

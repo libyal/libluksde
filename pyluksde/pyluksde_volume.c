@@ -29,6 +29,7 @@
 
 #include "pyluksde_error.h"
 #include "pyluksde_file_object_io_handle.h"
+#include "pyluksde_guid.h"
 #include "pyluksde_integer.h"
 #include "pyluksde_libbfio.h"
 #include "pyluksde_libcerror.h"
@@ -78,17 +79,24 @@ PyMethodDef pyluksde_volume_object_methods[] = {
 	  "\n"
 	  "Closes a volume." },
 
+	{ "is_locked",
+	  (PyCFunction) pyluksde_volume_is_locked,
+	  METH_NOARGS,
+	  "is_locked() -> Boolean or None\n"
+	  "\n"
+	  "Determines if the volume is locked." },
+
 	{ "read_buffer",
 	  (PyCFunction) pyluksde_volume_read_buffer,
 	  METH_VARARGS | METH_KEYWORDS,
-	  "read_buffer(size) -> Binary string or None\n"
+	  "read_buffer(size) -> Binary string\n"
 	  "\n"
 	  "Reads a buffer of data." },
 
 	{ "read_buffer_at_offset",
 	  (PyCFunction) pyluksde_volume_read_buffer_at_offset,
 	  METH_VARARGS | METH_KEYWORDS,
-	  "read_buffer_at_offset(size, offset) -> Binary string or None\n"
+	  "read_buffer_at_offset(size, offset) -> Binary string\n"
 	  "\n"
 	  "Reads a buffer of data at a specific offset." },
 
@@ -102,14 +110,14 @@ PyMethodDef pyluksde_volume_object_methods[] = {
 	{ "get_offset",
 	  (PyCFunction) pyluksde_volume_get_offset,
 	  METH_NOARGS,
-	  "get_offset() -> Integer or None\n"
+	  "get_offset() -> Integer\n"
 	  "\n"
 	  "Retrieves the current offset within the data." },
 
 	{ "read",
 	  (PyCFunction) pyluksde_volume_read_buffer,
 	  METH_VARARGS | METH_KEYWORDS,
-	  "read(size) -> String\n"
+	  "read(size) -> Binary string\n"
 	  "\n"
 	  "Reads a buffer of data." },
 
@@ -130,16 +138,30 @@ PyMethodDef pyluksde_volume_object_methods[] = {
 	{ "get_size",
 	  (PyCFunction) pyluksde_volume_get_size,
 	  METH_NOARGS,
-	  "get_size() -> Integer or None\n"
+	  "get_size() -> Integer\n"
 	  "\n"
 	  "Retrieves the size." },
 
 	{ "get_encryption_method",
 	  (PyCFunction) pyluksde_volume_get_encryption_method,
 	  METH_NOARGS,
-	  "get_encryption_method() -> Integer or None\n"
+	  "get_encryption_method() -> Integer\n"
 	  "\n"
 	  "Retrieves the encryption method." },
+
+	{ "get_volume_identifier",
+	  (PyCFunction) pyluksde_volume_get_volume_identifier,
+	  METH_NOARGS,
+	  "get_volume_identifier() -> Unicode string or None\n"
+	  "\n"
+	  "Retrieves the volume identifier." },
+
+	{ "set_key",
+	  (PyCFunction) pyluksde_volume_set_key,
+	  METH_VARARGS | METH_KEYWORDS,
+	  "set_key(mode, key) -> None\n"
+	  "\n"
+	  "Sets the key." },
 
 	{ "set_password",
 	  (PyCFunction) pyluksde_volume_set_password,
@@ -164,6 +186,12 @@ PyGetSetDef pyluksde_volume_object_get_set_definitions[] = {
 	  (getter) pyluksde_volume_get_encryption_method,
 	  (setter) 0,
 	  "The encryption method.",
+	  NULL },
+
+	{ "volume_identifier",
+	  (getter) pyluksde_volume_get_volume_identifier,
+	  (setter) 0,
+	  "The volume identifier.",
 	  NULL },
 
 	/* Sentinel */
@@ -265,93 +293,6 @@ PyTypeObject pyluksde_volume_type_object = {
 	0
 };
 
-/* Creates a new volume object
- * Returns a Python object if successful or NULL on error
- */
-PyObject *pyluksde_volume_new(
-           void )
-{
-	pyluksde_volume_t *pyluksde_volume = NULL;
-	static char *function              = "pyluksde_volume_new";
-
-	pyluksde_volume = PyObject_New(
-	                   struct pyluksde_volume,
-	                   &pyluksde_volume_type_object );
-
-	if( pyluksde_volume == NULL )
-	{
-		PyErr_Format(
-		 PyExc_MemoryError,
-		 "%s: unable to initialize volume.",
-		 function );
-
-		goto on_error;
-	}
-	if( pyluksde_volume_init(
-	     pyluksde_volume ) != 0 )
-	{
-		PyErr_Format(
-		 PyExc_MemoryError,
-		 "%s: unable to initialize volume.",
-		 function );
-
-		goto on_error;
-	}
-	return( (PyObject *) pyluksde_volume );
-
-on_error:
-	if( pyluksde_volume != NULL )
-	{
-		Py_DecRef(
-		 (PyObject *) pyluksde_volume );
-	}
-	return( NULL );
-}
-
-/* Creates a new volume object and opens it
- * Returns a Python object if successful or NULL on error
- */
-PyObject *pyluksde_volume_new_open(
-           PyObject *self PYLUKSDE_ATTRIBUTE_UNUSED,
-           PyObject *arguments,
-           PyObject *keywords )
-{
-	PyObject *pyluksde_volume = NULL;
-
-	PYLUKSDE_UNREFERENCED_PARAMETER( self )
-
-	pyluksde_volume = pyluksde_volume_new();
-
-	pyluksde_volume_open(
-	 (pyluksde_volume_t *) pyluksde_volume,
-	 arguments,
-	 keywords );
-
-	return( pyluksde_volume );
-}
-
-/* Creates a new volume object and opens it using a file-like object
- * Returns a Python object if successful or NULL on error
- */
-PyObject *pyluksde_volume_new_open_file_object(
-           PyObject *self PYLUKSDE_ATTRIBUTE_UNUSED,
-           PyObject *arguments,
-           PyObject *keywords )
-{
-	PyObject *pyluksde_volume = NULL;
-
-	PYLUKSDE_UNREFERENCED_PARAMETER( self )
-
-	pyluksde_volume = pyluksde_volume_new();
-
-	pyluksde_volume_open_file_object(
-	 (pyluksde_volume_t *) pyluksde_volume,
-	 arguments,
-	 keywords );
-
-	return( pyluksde_volume );
-}
-
 /* Intializes a volume object
  * Returns 0 if successful or -1 on error
  */
@@ -370,6 +311,8 @@ int pyluksde_volume_init(
 
 		return( -1 );
 	}
+	/* Make sure libluksde volume is set to NULL
+	 */
 	pyluksde_volume->volume         = NULL;
 	pyluksde_volume->file_io_handle = NULL;
 
@@ -410,15 +353,6 @@ void pyluksde_volume_free(
 
 		return;
 	}
-	if( pyluksde_volume->volume == NULL )
-	{
-		PyErr_Format(
-		 PyExc_ValueError,
-		 "%s: invalid volume - missing libluksde volume.",
-		 function );
-
-		return;
-	}
 	ob_type = Py_TYPE(
 	           pyluksde_volume );
 
@@ -440,24 +374,27 @@ void pyluksde_volume_free(
 
 		return;
 	}
-	Py_BEGIN_ALLOW_THREADS
-
-	result = libluksde_volume_free(
-	          &( pyluksde_volume->volume ),
-	          &error );
-
-	Py_END_ALLOW_THREADS
-
-	if( result != 1 )
+	if( pyluksde_volume->volume != NULL )
 	{
-		pyluksde_error_raise(
-		 error,
-		 PyExc_MemoryError,
-		 "%s: unable to free libluksde volume.",
-		 function );
+		Py_BEGIN_ALLOW_THREADS
 
-		libcerror_error_free(
-		 &error );
+		result = libluksde_volume_free(
+		          &( pyluksde_volume->volume ),
+		          &error );
+
+		Py_END_ALLOW_THREADS
+
+		if( result != 1 )
+		{
+			pyluksde_error_raise(
+			 error,
+			 PyExc_MemoryError,
+			 "%s: unable to free libluksde volume.",
+			 function );
+
+			libcerror_error_free(
+			 &error );
+		}
 	}
 	ob_type->tp_free(
 	 (PyObject*) pyluksde_volume );
@@ -579,7 +516,7 @@ PyObject *pyluksde_volume_open(
 	{
 		pyluksde_error_fetch_and_raise(
 		 PyExc_RuntimeError,
-		 "%s: unable to determine if string object is of type unicode.",
+		 "%s: unable to determine if string object is of type Unicode.",
 		 function );
 
 		return( NULL );
@@ -608,7 +545,7 @@ PyObject *pyluksde_volume_open(
 		{
 			pyluksde_error_fetch_and_raise(
 			 PyExc_RuntimeError,
-			 "%s: unable to convert unicode string to UTF-8.",
+			 "%s: unable to convert Unicode string to UTF-8.",
 			 function );
 
 			return( NULL );
@@ -633,7 +570,7 @@ PyObject *pyluksde_volume_open(
 		Py_DecRef(
 		 utf8_string_object );
 #endif
-		if( result != 1 )
+		if( result == -1 )
 		{
 			pyluksde_error_raise(
 			 error,
@@ -692,7 +629,7 @@ PyObject *pyluksde_volume_open(
 
 		Py_END_ALLOW_THREADS
 
-		if( result != 1 )
+		if( result == -1 )
 		{
 			pyluksde_error_raise(
 			 error,
@@ -799,7 +736,7 @@ PyObject *pyluksde_volume_open_file_object(
 
 	Py_END_ALLOW_THREADS
 
-	if( result != 1 )
+	if( result == -1 )
 	{
 		pyluksde_error_raise(
 		 error,
@@ -884,7 +821,7 @@ PyObject *pyluksde_volume_close(
 		{
 			pyluksde_error_raise(
 			 error,
-			 PyExc_IOError,
+			 PyExc_MemoryError,
 			 "%s: unable to free libbfio file IO handle.",
 			 function );
 
@@ -898,6 +835,62 @@ PyObject *pyluksde_volume_close(
 	 Py_None );
 
 	return( Py_None );
+}
+
+/* Determines if the volume is locked
+ * Returns a Python object if successful or NULL on error
+ */
+PyObject *pyluksde_volume_is_locked(
+           pyluksde_volume_t *pyluksde_volume,
+           PyObject *arguments PYLUKSDE_ATTRIBUTE_UNUSED )
+{
+	libcerror_error_t *error = NULL;
+	static char *function    = "pyluksde_volume_is_locked";
+	int result               = 0;
+
+	PYLUKSDE_UNREFERENCED_PARAMETER( arguments )
+
+	if( pyluksde_volume == NULL )
+	{
+		PyErr_Format(
+		 PyExc_ValueError,
+		 "%s: invalid volume.",
+		 function );
+
+		return( NULL );
+	}
+	Py_BEGIN_ALLOW_THREADS
+
+	result = libluksde_volume_is_locked(
+	          pyluksde_volume->volume,
+	          &error );
+
+	Py_END_ALLOW_THREADS
+
+	if( result == -1 )
+	{
+		pyluksde_error_raise(
+		 error,
+		 PyExc_IOError,
+		 "%s: unable to determine if volume is .",
+		 function );
+
+		libcerror_error_free(
+		 &error );
+
+		return( NULL );
+	}
+	if( result != 0 )
+	{
+		Py_IncRef(
+		 (PyObject *) Py_True );
+
+		return( Py_True );
+	}
+	Py_IncRef(
+	 (PyObject *) Py_False );
+
+	return( Py_False );
 }
 
 /* Reads data at the current offset into a buffer
@@ -1512,8 +1505,8 @@ PyObject *pyluksde_volume_get_encryption_method(
 	PyObject *integer_object     = NULL;
 	libcerror_error_t *error     = NULL;
 	static char *function        = "pyluksde_volume_get_encryption_method";
-	int encryption_method        = 0;
 	int encryption_chaining_mode = 0;
+	int encryption_method        = 0;
 	int result                   = 0;
 
 	PYLUKSDE_UNREFERENCED_PARAMETER( arguments )
@@ -1558,6 +1551,165 @@ PyObject *pyluksde_volume_get_encryption_method(
 	                  (long) encryption_method );
 #endif
 	return( integer_object );
+}
+
+/* Retrieves the volume identifier
+ * Returns a Python object if successful or NULL on error
+ */
+PyObject *pyluksde_volume_get_volume_identifier(
+           pyluksde_volume_t *pyluksde_volume,
+           PyObject *arguments PYLUKSDE_ATTRIBUTE_UNUSED )
+{
+	uint8_t uuid_data[ 16 ];
+
+	PyObject *string_object  = NULL;
+	libcerror_error_t *error = NULL;
+	static char *function    = "pyluksde_volume_get_volume_identifier";
+	int result               = 0;
+
+	PYLUKSDE_UNREFERENCED_PARAMETER( arguments )
+
+	if( pyluksde_volume == NULL )
+	{
+		PyErr_Format(
+		 PyExc_ValueError,
+		 "%s: invalid volume.",
+		 function );
+
+		return( NULL );
+	}
+	Py_BEGIN_ALLOW_THREADS
+
+	result = libluksde_volume_get_volume_identifier(
+	          pyluksde_volume->volume,
+	          uuid_data,
+	          16,
+	          &error );
+
+	Py_END_ALLOW_THREADS
+
+	if( result == -1 )
+	{
+		pyluksde_error_raise(
+		 error,
+		 PyExc_IOError,
+		 "%s: unable to retrieve volume identifier.",
+		 function );
+
+		libcerror_error_free(
+		 &error );
+
+		return( NULL );
+	}
+	else if( result == 0 )
+	{
+		Py_IncRef(
+		 Py_None );
+
+		return( Py_None );
+	}
+	string_object = pyluksde_string_new_from_guid(
+	                 uuid_data,
+	                 16 );
+
+	if( string_object == NULL )
+	{
+		PyErr_Format(
+		 PyExc_IOError,
+		 "%s: unable to convert UUID into Unicode object.",
+		 function );
+
+		return( NULL );
+	}
+	return( string_object );
+}
+
+/* Sets the key
+ * Returns a Python object if successful or NULL on error
+ */
+PyObject *pyluksde_volume_set_key(
+           pyluksde_volume_t *pyluksde_volume,
+           PyObject *arguments,
+           PyObject *keywords )
+{
+	PyObject *string_object     = NULL;
+	libcerror_error_t *error    = NULL;
+	static char *function       = "pyluksde_volume_set_key";
+	char *key_data              = NULL;
+	static char *keyword_list[] = { "mode", "key", NULL };
+        Py_ssize_t key_data_size    = 0;
+	int mode                    = 0;
+	int result                  = 0;
+
+	if( pyluksde_volume == NULL )
+	{
+		PyErr_Format(
+		 PyExc_ValueError,
+		 "%s: invalid volume.",
+		 function );
+
+		return( NULL );
+	}
+	if( PyArg_ParseTupleAndKeywords(
+	     arguments,
+	     keywords,
+	     "iO",
+	     keyword_list,
+	     &mode,
+	     &string_object ) == 0 )
+	{
+		return( NULL );
+	}
+#if PY_MAJOR_VERSION >= 3
+	key_data = PyBytes_AsString(
+	            string_object );
+
+	key_data_size = PyBytes_Size(
+	                 string_object );
+#else
+	key_data = PyString_AsString(
+	            string_object );
+
+	key_data_size = PyString_Size(
+	                 string_object );
+#endif
+	if( ( key_data_size < 0 )
+	 || ( key_data_size > (Py_ssize_t) ( SSIZE_MAX / 8 ) ) )
+	{
+		PyErr_Format(
+		 PyExc_ValueError,
+		 "%s: invalid key data size value out of bounds.",
+		 function );
+
+		return( NULL );
+	}
+	Py_BEGIN_ALLOW_THREADS
+
+	result = libluksde_volume_set_key(
+	          pyluksde_volume->volume,
+	          (uint8_t *) key_data,
+	          (size_t) ( key_data_size * 8 ),
+	          &error );
+
+	Py_END_ALLOW_THREADS
+
+	if( result != 1 )
+	{
+		pyluksde_error_raise(
+		 error,
+		 PyExc_IOError,
+		 "%s: unable to set key.",
+		 function );
+
+		libcerror_error_free(
+		 &error );
+
+		return( NULL );
+	}
+	Py_IncRef(
+	 Py_None );
+
+	return( Py_None );
 }
 
 /* Sets the password

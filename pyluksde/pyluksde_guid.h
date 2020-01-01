@@ -1,5 +1,5 @@
 /*
- * Python bindings module for libluksde (pyluksde)
+ * GUID functions
  *
  * Copyright (C) 2013-2020, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -19,8 +19,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#if !defined( _PYLUKSDE_H )
-#define _PYLUKSDE_H
+#if !defined( _PYLUKSDE_GUID_H )
+#define _PYLUKSDE_GUID_H
 
 #include <common.h>
 #include <types.h>
@@ -31,41 +31,13 @@
 extern "C" {
 #endif
 
-PyObject *pyluksde_get_version(
-           PyObject *self,
-           PyObject *arguments );
-
-PyObject *pyluksde_check_volume_signature(
-           PyObject *self,
-           PyObject *arguments,
-           PyObject *keywords );
-
-PyObject *pyluksde_check_volume_signature_file_object(
-           PyObject *self,
-           PyObject *arguments,
-           PyObject *keywords );
-
-PyObject *pyluksde_open_new_volume(
-           PyObject *self,
-           PyObject *arguments,
-           PyObject *keywords );
-
-PyObject *pyluksde_open_new_volume_with_file_object(
-           PyObject *self,
-           PyObject *arguments,
-           PyObject *keywords );
-
-#if PY_MAJOR_VERSION >= 3
-PyMODINIT_FUNC PyInit_pyluksde(
-                void );
-#else
-PyMODINIT_FUNC initpyluksde(
-                void );
-#endif
+PyObject *pyluksde_string_new_from_guid(
+           const uint8_t *guid_buffer,
+           size_t guid_buffer_size );
 
 #if defined( __cplusplus )
 }
 #endif
 
-#endif /* !defined( _PYLUKSDE_H ) */
+#endif /* !defined( _PYLUKSDE_GUID_H ) */
 

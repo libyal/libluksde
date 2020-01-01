@@ -71,6 +71,14 @@ struct libluksde_encryption_context
 	 */
 	libcaes_tweaked_context_t *aes_xts_encryption_context;
 
+	/* The RC4 decryption context
+	 */
+	libfcrypto_rc4_context_t *rc4_decryption_context;
+
+	/* The RC4 encryption context
+	 */
+	libfcrypto_rc4_context_t *rc4_encryption_context;
+
 	/* The Serpent decryption context
 	 */
 	libfcrypto_serpent_context_t *serpent_decryption_context;

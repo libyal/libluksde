@@ -188,6 +188,20 @@ int pyluksde_initialization_vector_modes_init_type(
 	}
 #if PY_MAJOR_VERSION >= 3
 	value_object = PyLong_FromLong(
+	                LIBLUKSDE_INITIALIZATION_VECTOR_MODE_NONE );
+#else
+	value_object = PyInt_FromLong(
+	                LIBLUKSDE_INITIALIZATION_VECTOR_MODE_NONE );
+#endif
+	if( PyDict_SetItemString(
+	     type_object->tp_dict,
+	     "NONE",
+	     value_object ) != 0 )
+	{
+		goto on_error;
+	}
+#if PY_MAJOR_VERSION >= 3
+	value_object = PyLong_FromLong(
 	                LIBLUKSDE_INITIALIZATION_VECTOR_MODE_NULL );
 #else
 	value_object = PyInt_FromLong(

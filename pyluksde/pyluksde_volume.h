@@ -53,19 +53,6 @@ struct pyluksde_volume
 extern PyMethodDef pyluksde_volume_object_methods[];
 extern PyTypeObject pyluksde_volume_type_object;
 
-PyObject *pyluksde_volume_new(
-           void );
-
-PyObject *pyluksde_volume_new_open(
-           PyObject *self,
-           PyObject *arguments,
-           PyObject *keywords );
-
-PyObject *pyluksde_volume_new_open_file_object(
-           PyObject *self,
-           PyObject *arguments,
-           PyObject *keywords );
-
 int pyluksde_volume_init(
      pyluksde_volume_t *pyluksde_volume );
 
@@ -87,6 +74,10 @@ PyObject *pyluksde_volume_open_file_object(
            PyObject *keywords );
 
 PyObject *pyluksde_volume_close(
+           pyluksde_volume_t *pyluksde_volume,
+           PyObject *arguments );
+
+PyObject *pyluksde_volume_is_locked(
            pyluksde_volume_t *pyluksde_volume,
            PyObject *arguments );
 
@@ -116,6 +107,20 @@ PyObject *pyluksde_volume_get_size(
 PyObject *pyluksde_volume_get_encryption_method(
            pyluksde_volume_t *pyluksde_volume,
            PyObject *arguments );
+
+PyObject *pyluksde_volume_get_volume_identifier(
+           pyluksde_volume_t *pyluksde_volume,
+           PyObject *arguments );
+
+PyObject *pyluksde_volume_set_key(
+           pyluksde_volume_t *pyluksde_volume,
+           PyObject *arguments,
+           PyObject *keywords );
+
+PyObject *pyluksde_volume_set_keys(
+           pyluksde_volume_t *pyluksde_volume,
+           PyObject *arguments,
+           PyObject *keywords );
 
 PyObject *pyluksde_volume_set_password(
            pyluksde_volume_t *pyluksde_volume,

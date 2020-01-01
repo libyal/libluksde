@@ -85,9 +85,27 @@ int libluksde_encryption_initialize(
 			encryption_mode = LIBLUKSDE_ENCRYPTION_MODE_AES_XTS;
 		}
 	}
+	else if( method == LIBLUKSDE_ENCRYPTION_METHOD_ARC4 )
+	{
+		if( chaining_mode == LIBLUKSDE_ENCRYPTION_CHAINING_MODE_CBC )
+		{
+			encryption_mode = LIBLUKSDE_ENCRYPTION_MODE_RC4_CBC;
+		}
+		else if( chaining_mode == LIBLUKSDE_ENCRYPTION_CHAINING_MODE_ECB )
+		{
+			encryption_mode = LIBLUKSDE_ENCRYPTION_MODE_RC4_ECB;
+		}
+	}
 	else if( method == LIBLUKSDE_ENCRYPTION_METHOD_SERPENT )
 	{
-		encryption_mode = LIBLUKSDE_ENCRYPTION_MODE_SERPENT;
+		if( chaining_mode == LIBLUKSDE_ENCRYPTION_CHAINING_MODE_CBC )
+		{
+			encryption_mode = LIBLUKSDE_ENCRYPTION_MODE_SERPENT_CBC;
+		}
+		else if( chaining_mode == LIBLUKSDE_ENCRYPTION_CHAINING_MODE_ECB )
+		{
+			encryption_mode = LIBLUKSDE_ENCRYPTION_MODE_SERPENT_ECB;
+		}
 	}
 	if( encryption_mode == 0 )
 	{
@@ -148,7 +166,15 @@ int libluksde_encryption_initialize(
 			          error );
 			break;
 
-		case LIBLUKSDE_ENCRYPTION_MODE_SERPENT:
+		case LIBLUKSDE_ENCRYPTION_MODE_RC4_CBC:
+		case LIBLUKSDE_ENCRYPTION_MODE_RC4_ECB:
+			result = libfcrypto_rc4_context_initialize(
+			          &( ( *context )->rc4_decryption_context ),
+			          error );
+			break;
+
+		case LIBLUKSDE_ENCRYPTION_MODE_SERPENT_CBC:
+		case LIBLUKSDE_ENCRYPTION_MODE_SERPENT_ECB:
 			result = libfcrypto_serpent_context_initialize(
 			          &( ( *context )->serpent_decryption_context ),
 			          error );
@@ -184,7 +210,15 @@ int libluksde_encryption_initialize(
 			          error );
 			break;
 
-		case LIBLUKSDE_ENCRYPTION_MODE_SERPENT:
+		case LIBLUKSDE_ENCRYPTION_MODE_RC4_CBC:
+		case LIBLUKSDE_ENCRYPTION_MODE_RC4_ECB:
+			result = libfcrypto_rc4_context_initialize(
+			          &( ( *context )->rc4_encryption_context ),
+			          error );
+			break;
+
+		case LIBLUKSDE_ENCRYPTION_MODE_SERPENT_CBC:
+		case LIBLUKSDE_ENCRYPTION_MODE_SERPENT_ECB:
 			result = libfcrypto_serpent_context_initialize(
 			          &( ( *context )->serpent_encryption_context ),
 			          error );
@@ -251,6 +285,18 @@ on_error:
 		{
 			libfcrypto_serpent_context_free(
 			 &( ( *context )->serpent_decryption_context ),
+			 NULL );
+		}
+		if( ( *context )->rc4_encryption_context != NULL )
+		{
+			libfcrypto_rc4_context_free(
+			 &( ( *context )->rc4_encryption_context ),
+			 NULL );
+		}
+		if( ( *context )->rc4_decryption_context != NULL )
+		{
+			libfcrypto_rc4_context_free(
+			 &( ( *context )->rc4_decryption_context ),
 			 NULL );
 		}
 		if( ( *context )->aes_xts_encryption_context != NULL )
@@ -367,6 +413,38 @@ int libluksde_encryption_free(
 				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 				 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
 				 "%s: unable to free AES-XTS encryption context.",
+				 function );
+
+				result = -1;
+			}
+		}
+		if( ( *context )->rc4_decryption_context != NULL )
+		{
+			if( libfcrypto_rc4_context_free(
+			     &( ( *context )->rc4_decryption_context ),
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+				 "%s: unable to free RC4 decryption context.",
+				 function );
+
+				result = -1;
+			}
+		}
+		if( ( *context )->rc4_encryption_context != NULL )
+		{
+			if( libfcrypto_rc4_context_free(
+			     &( ( *context )->rc4_encryption_context ),
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+				 "%s: unable to free RC4 encryption context.",
 				 function );
 
 				result = -1;
@@ -504,7 +582,17 @@ int libluksde_encryption_set_key(
 			          error );
 			break;
 
-		case LIBLUKSDE_ENCRYPTION_MODE_SERPENT:
+		case LIBLUKSDE_ENCRYPTION_MODE_RC4_CBC:
+		case LIBLUKSDE_ENCRYPTION_MODE_RC4_ECB:
+			result = libfcrypto_rc4_context_set_key(
+			          context->rc4_decryption_context,
+			          key,
+			          key_bit_size,
+			          error );
+			break;
+
+		case LIBLUKSDE_ENCRYPTION_MODE_SERPENT_CBC:
+		case LIBLUKSDE_ENCRYPTION_MODE_SERPENT_ECB:
 			result = libfcrypto_serpent_context_set_key(
 			          context->serpent_decryption_context,
 			          key,
@@ -549,7 +637,17 @@ int libluksde_encryption_set_key(
 			          error );
 			break;
 
-		case LIBLUKSDE_ENCRYPTION_MODE_SERPENT:
+		case LIBLUKSDE_ENCRYPTION_MODE_RC4_CBC:
+		case LIBLUKSDE_ENCRYPTION_MODE_RC4_ECB:
+			result = libfcrypto_rc4_context_set_key(
+			          context->rc4_encryption_context,
+			          key,
+			          key_bit_size,
+			          error );
+			break;
+
+		case LIBLUKSDE_ENCRYPTION_MODE_SERPENT_CBC:
+		case LIBLUKSDE_ENCRYPTION_MODE_SERPENT_ECB:
 			result = libfcrypto_serpent_context_set_key(
 			          context->serpent_encryption_context,
 			          key,
@@ -889,7 +987,24 @@ int libluksde_encryption_crypt(
 					  error );
 				break;
 
-			case LIBLUKSDE_ENCRYPTION_MODE_SERPENT:
+			case LIBLUKSDE_ENCRYPTION_MODE_RC4_CBC:
+			case LIBLUKSDE_ENCRYPTION_MODE_RC4_ECB:
+				result = libfcrypto_rc4_crypt(
+					  context->rc4_encryption_context,
+					  &( input_data[ data_offset ] ),
+					  input_data_size - data_offset,
+					  &( output_data[ data_offset ] ),
+					  output_data_size - data_offset,
+					  error );
+
+				if( result != 1 )
+				{
+					break;
+				}
+				break;
+
+			case LIBLUKSDE_ENCRYPTION_MODE_SERPENT_CBC:
+			case LIBLUKSDE_ENCRYPTION_MODE_SERPENT_ECB:
 				while( data_offset < input_data_size )
 				{
 					/* The libfcrypto_serpent_crypt_ecb function encrypts 16 bytes at a time
@@ -979,7 +1094,24 @@ int libluksde_encryption_crypt(
 					  error );
 				break;
 
-			case LIBLUKSDE_ENCRYPTION_MODE_SERPENT:
+			case LIBLUKSDE_ENCRYPTION_MODE_RC4_CBC:
+			case LIBLUKSDE_ENCRYPTION_MODE_RC4_ECB:
+				result = libfcrypto_rc4_crypt(
+					  context->rc4_decryption_context,
+					  &( input_data[ data_offset ] ),
+					  input_data_size - data_offset,
+					  &( output_data[ data_offset ] ),
+					  output_data_size - data_offset,
+					  error );
+
+				if( result != 1 )
+				{
+					break;
+				}
+				break;
+
+			case LIBLUKSDE_ENCRYPTION_MODE_SERPENT_CBC:
+			case LIBLUKSDE_ENCRYPTION_MODE_SERPENT_ECB:
 				while( data_offset < input_data_size )
 				{
 					/* The libfcrypto_serpent_crypt_ecb function decrypts 16 bytes at a time

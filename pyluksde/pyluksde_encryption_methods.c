@@ -174,6 +174,20 @@ int pyluksde_encryption_methods_init_type(
 	}
 #if PY_MAJOR_VERSION >= 3
 	value_object = PyLong_FromLong(
+	                LIBLUKSDE_ENCRYPTION_METHOD_ARC4 );
+#else
+	value_object = PyInt_FromLong(
+	                LIBLUKSDE_ENCRYPTION_METHOD_ARC4 );
+#endif
+	if( PyDict_SetItemString(
+	     type_object->tp_dict,
+	     "ARC4",
+	     value_object ) != 0 )
+	{
+		goto on_error;
+	}
+#if PY_MAJOR_VERSION >= 3
+	value_object = PyLong_FromLong(
 	                LIBLUKSDE_ENCRYPTION_METHOD_BLOWFISH );
 #else
 	value_object = PyInt_FromLong(

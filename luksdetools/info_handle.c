@@ -1099,6 +1099,13 @@ int info_handle_volume_fprint(
 
 			break;
 
+		case LIBLUKSDE_ENCRYPTION_METHOD_ARC4:
+			fprintf(
+			 info_handle->notify_stream,
+			 "ARC4" );
+
+			break;
+
 		case LIBLUKSDE_ENCRYPTION_METHOD_ANUBIS:
 			fprintf(
 			 info_handle->notify_stream,
