@@ -1,7 +1,7 @@
 /*
  * The LUKS volume header functions
  *
- * Copyright (C) 2013-2019, Joachim Metz <joachim.metz@gmail.com>
+ * Copyright (C) 2013-2020, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -24,12 +24,15 @@
 #include <memory.h>
 #include <types.h>
 
+#include "libluksde_debug.h"
 #include "libluksde_definitions.h"
 #include "libluksde_io_handle.h"
 #include "libluksde_key_slot.h"
 #include "libluksde_libbfio.h"
+#include "libluksde_libcdata.h"
 #include "libluksde_libcerror.h"
 #include "libluksde_libcnotify.h"
+#include "libluksde_libfguid.h"
 #include "libluksde_libuna.h"
 #include "libluksde_volume_header.h"
 
@@ -181,17 +184,13 @@ int libluksde_volume_header_read_data(
      size_t data_size,
      libcerror_error_t **error )
 {
+	libfguid_identifier_t *guid    = NULL;
 	libluksde_key_slot_t *key_slot = NULL;
 	static char *function          = "libluksde_volume_header_read_data";
 	size_t data_offset             = 0;
 	int entry_index                = 0;
 	int key_slot_index             = 0;
 	int separator_index            = 0;
-
-#if defined( HAVE_DEBUG_OUTPUT )
-	char *value_string             = NULL;
-	size_t value_string_size       = 0;
-#endif
 
 	if( volume_header == NULL )
 	{
@@ -268,7 +267,7 @@ int libluksde_volume_header_read_data(
         if( memory_copy(
 	     volume_header->master_key_validation_hash,
 	     ( (luksde_volume_header_t *) data )->master_key_validation_hash,
-             20 ) == NULL)
+             20 ) == NULL )
         {
                 libcerror_error_set(
                  error,
@@ -282,7 +281,7 @@ int libluksde_volume_header_read_data(
         if( memory_copy(
 	     volume_header->master_key_salt,
 	     ( (luksde_volume_header_t *) data )->master_key_salt,
-             32 ) == NULL)
+             32 ) == NULL )
         {
                 libcerror_error_set(
                  error,
@@ -297,8 +296,64 @@ int libluksde_volume_header_read_data(
 	 ( (luksde_volume_header_t *) data )->master_key_number_of_iterations,
 	 volume_header->master_key_number_of_iterations );
 
-/* TODO copy value identifier string to UUID */
+	if( libfguid_identifier_initialize(
+	     &guid,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 "%s: unable to create GUID.",
+		 function );
 
+		goto on_error;
+	}
+	if( libfguid_identifier_copy_from_utf8_string(
+	     guid,
+	     ( (luksde_volume_header_t *) data )->volume_identifier,
+	     40,
+	     LIBFGUID_STRING_FORMAT_FLAG_USE_MIXED_CASE,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to copy GUID from string.",
+		 function );
+
+		goto on_error;
+	}
+	if( libfguid_identifier_copy_to_byte_stream(
+	     guid,
+	     volume_header->volume_identifier,
+	     16,
+	     LIBFGUID_ENDIAN_BIG,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to copy GUID to byte stream.",
+		 function );
+
+		goto on_error;
+	}
+	if( libfguid_identifier_free(
+	     &guid,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+		 "%s: unable to free GUID.",
+		 function );
+
+		goto on_error;
+	}
 #if defined( HAVE_DEBUG_OUTPUT )
 	if( libcnotify_verbose != 0 )
 	{
@@ -317,183 +372,57 @@ int libluksde_volume_header_read_data(
 		 function,
 		 volume_header->version );
 
-		if( libuna_byte_stream_size_from_utf8(
+		if( libluksde_debug_print_string_value(
+		     function,
+		     "encryption method\t\t\t",
 		     ( (luksde_volume_header_t *) data )->encryption_method,
 		     32,
 		     LIBUNA_CODEPAGE_US_ASCII,
-		     &value_string_size,
 		     error ) != 1 )
 		{
 			libcerror_error_set(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-			 "%s: unable to determine encryption method string size.",
+			 LIBCERROR_RUNTIME_ERROR_PRINT_FAILED,
+			 "%s: unable to print string value.",
 			 function );
 
 			goto on_error;
 		}
-		value_string = (char *) memory_allocate(
-		                         sizeof( char ) * value_string_size );
-
-		if( value_string == NULL )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
-			 "%s: unable to create encryption method string.",
-			 function );
-
-			goto on_error;
-		}
-		if( libuna_byte_stream_copy_from_utf8(
-		     (uint8_t *) value_string,
-		     value_string_size,
-		     LIBUNA_CODEPAGE_US_ASCII,
-		     ( (luksde_volume_header_t *) data )->encryption_method,
-		     32,
-		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
-			 "%s: unable to copy encryption method string.",
-			 function );
-
-			goto on_error;
-		}
-		value_string[ value_string_size - 1 ] = 0;
-
-		libcnotify_printf(
-		 "%s: encryption method\t\t\t: %s\n",
-		 function,
-		 value_string );
-
-		memory_free(
-		 value_string );
-
-		value_string = NULL;
-
-		if( libuna_byte_stream_size_from_utf8(
+		if( libluksde_debug_print_string_value(
+		     function,
+		     "encryption mode\t\t\t",
 		     ( (luksde_volume_header_t *) data )->encryption_mode,
 		     32,
 		     LIBUNA_CODEPAGE_US_ASCII,
-		     &value_string_size,
 		     error ) != 1 )
 		{
 			libcerror_error_set(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-			 "%s: unable to determine encryption mode string size.",
+			 LIBCERROR_RUNTIME_ERROR_PRINT_FAILED,
+			 "%s: unable to print string value.",
 			 function );
 
 			goto on_error;
 		}
-		value_string = (char *) memory_allocate(
-		                         sizeof( char ) * value_string_size );
-
-		if( value_string == NULL )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
-			 "%s: unable to create encryption mode string.",
-			 function );
-
-			goto on_error;
-		}
-		if( libuna_byte_stream_copy_from_utf8(
-		     (uint8_t *) value_string,
-		     value_string_size,
-		     LIBUNA_CODEPAGE_US_ASCII,
-		     ( (luksde_volume_header_t *) data )->encryption_mode,
-		     32,
-		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
-			 "%s: unable to copy encryption mode string.",
-			 function );
-
-			goto on_error;
-		}
-		value_string[ value_string_size - 1 ] = 0;
-
-		libcnotify_printf(
-		 "%s: encryption mode\t\t\t: %s\n",
-		 function,
-		 value_string );
-
-		memory_free(
-		 value_string );
-
-		value_string = NULL;
-
-		if( libuna_byte_stream_size_from_utf8(
+		if( libluksde_debug_print_string_value(
+		     function,
+		     "hashing method\t\t\t",
 		     ( (luksde_volume_header_t *) data )->hashing_method,
 		     32,
 		     LIBUNA_CODEPAGE_US_ASCII,
-		     &value_string_size,
 		     error ) != 1 )
 		{
 			libcerror_error_set(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-			 "%s: unable to determine hashing method string size.",
+			 LIBCERROR_RUNTIME_ERROR_PRINT_FAILED,
+			 "%s: unable to print string value.",
 			 function );
 
 			goto on_error;
 		}
-		value_string = (char *) memory_allocate(
-		                         sizeof( char ) * value_string_size );
-
-		if( value_string == NULL )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
-			 "%s: unable to create hashing method string.",
-			 function );
-
-			goto on_error;
-		}
-		if( libuna_byte_stream_copy_from_utf8(
-		     (uint8_t *) value_string,
-		     value_string_size,
-		     LIBUNA_CODEPAGE_US_ASCII,
-		     ( (luksde_volume_header_t *) data )->hashing_method,
-		     32,
-		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
-			 "%s: unable to copy hashing method string.",
-			 function );
-
-			goto on_error;
-		}
-		value_string[ value_string_size - 1 ] = 0;
-
-		libcnotify_printf(
-		 "%s: hashing method\t\t\t: %s\n",
-		 function,
-		 value_string );
-
-		memory_free(
-		 value_string );
-
-		value_string = NULL;
-
 		libcnotify_printf(
 		 "%s: encrypted volume start sector\t: 0x%08" PRIx64 "\n",
 		 function,
@@ -525,69 +454,28 @@ int libluksde_volume_header_read_data(
 		 function,
 		 volume_header->master_key_number_of_iterations );
 
-		if( libuna_byte_stream_size_from_utf8(
+		if( libluksde_debug_print_string_value(
+		     function,
+		     "volume identifier\t\t\t",
 		     ( (luksde_volume_header_t *) data )->volume_identifier,
-		     32,
+		     40,
 		     LIBUNA_CODEPAGE_US_ASCII,
-		     &value_string_size,
 		     error ) != 1 )
 		{
 			libcerror_error_set(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-			 "%s: unable to determine volume identifier string size.",
+			 LIBCERROR_RUNTIME_ERROR_PRINT_FAILED,
+			 "%s: unable to print string value.",
 			 function );
 
 			goto on_error;
 		}
-		value_string = (char *) memory_allocate(
-		                         sizeof( char ) * value_string_size );
-
-		if( value_string == NULL )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
-			 "%s: unable to create volume identifier string.",
-			 function );
-
-			goto on_error;
-		}
-		if( libuna_byte_stream_copy_from_utf8(
-		     (uint8_t *) value_string,
-		     value_string_size,
-		     LIBUNA_CODEPAGE_US_ASCII,
-		     ( (luksde_volume_header_t *) data )->volume_identifier,
-		     32,
-		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
-			 "%s: unable to copy volume identifier string.",
-			 function );
-
-			goto on_error;
-		}
-		value_string[ value_string_size - 1 ] = 0;
-
-		libcnotify_printf(
-		 "%s: volume identifier\t\t\t: %s\n",
-		 function,
-		 value_string );
-
-		memory_free(
-		 value_string );
-
-		value_string = NULL;
-
 		libcnotify_printf(
 		 "\n" );
 	}
-#endif
+#endif /* defined( HAVE_DEBUG_OUTPUT ) */
+
 	if( volume_header->version != 1 )
 	{
 		libcerror_error_set(
@@ -960,17 +848,16 @@ int libluksde_volume_header_read_data(
 	return( 1 );
 
 on_error:
-#if defined( HAVE_DEBUG_OUTPUT )
-	if( value_string != NULL )
-	{
-		memory_free(
-		 value_string );
-	}
-#endif
 	if( key_slot != NULL )
 	{
 		libluksde_key_slot_free(
 		 &key_slot,
+		 NULL );
+	}
+	if( guid != NULL )
+	{
+		libfguid_identifier_free(
+		 &guid,
 		 NULL );
 	}
 	libcdata_array_empty(

@@ -1,7 +1,7 @@
 /*
  * Encryption functions
  *
- * Copyright (C) 2013-2019, Joachim Metz <joachim.metz@gmail.com>
+ * Copyright (C) 2013-2020, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -428,10 +428,10 @@ int libluksde_encryption_free(
 	return( result );
 }
 
-/* Sets the de- and encryption keys
+/* Sets the de- and encryption key
  * Returns 1 if successful or -1 on error
  */
-int libluksde_encryption_set_keys(
+int libluksde_encryption_set_key(
      libluksde_encryption_context_t *context,
      const uint8_t *key,
      size_t key_size,
@@ -439,7 +439,7 @@ int libluksde_encryption_set_keys(
 {
 	uint8_t essiv_key[ 32 ];
 
-	static char *function = "libluksde_encryption_set_keys";
+	static char *function = "libluksde_encryption_set_key";
 	size_t key_bit_size   = 0;
 	int result            = 0;
 
@@ -491,6 +491,9 @@ int libluksde_encryption_set_keys(
 			break;
 
 		case LIBLUKSDE_ENCRYPTION_MODE_AES_XTS:
+			key_bit_size  /= 2;
+			key_size /= 2;
+
 			result = libcaes_tweaked_context_set_keys(
 			          context->aes_xts_decryption_context,
 			          LIBCAES_CRYPT_MODE_DECRYPT,
@@ -682,7 +685,7 @@ int libluksde_encryption_crypt(
      size_t input_data_size,
      uint8_t *output_data,
      size_t output_data_size,
-     uint64_t block_key,
+     uint64_t sector_number,
      libcerror_error_t **error )
 {
 	uint8_t block_key_data[ 16 ];
@@ -690,6 +693,7 @@ int libluksde_encryption_crypt(
 
 	static char *function = "libluksde_encryption_crypt";
 	size_t data_offset    = 0;
+	uint64_t block_key    = 0;
 	int result            = 0;
 
 	if( context == NULL )
@@ -743,6 +747,8 @@ int libluksde_encryption_crypt(
 	switch( context->initialization_vector_mode )
 	{
 		case LIBLUKSDE_INITIALIZATION_VECTOR_MODE_BENBI:
+			block_key = ( sector_number << 5 ) + 1;
+
 			byte_stream_copy_from_uint64_big_endian(
 			 &( initialization_vector[ 8 ] ),
 			 block_key );
@@ -766,7 +772,7 @@ int libluksde_encryption_crypt(
 			}
 			byte_stream_copy_from_uint64_little_endian(
 			 block_key_data,
-			 block_key );
+			 sector_number );
 
 			/* The block key for the initialization vector is encrypted
 			 * with the hash of the key
@@ -798,14 +804,14 @@ int libluksde_encryption_crypt(
 		case LIBLUKSDE_INITIALIZATION_VECTOR_MODE_PLAIN32:
 			byte_stream_copy_from_uint32_little_endian(
 			 initialization_vector,
-			 (uint32_t) block_key );
+			 (uint32_t) sector_number );
 
 			break;
 
 		case LIBLUKSDE_INITIALIZATION_VECTOR_MODE_PLAIN64:
 			byte_stream_copy_from_uint64_little_endian(
 			 initialization_vector,
-			 block_key );
+			 sector_number );
 
 			break;
 

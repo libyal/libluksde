@@ -1,7 +1,7 @@
 /*
  * Volume functions
  *
- * Copyright (C) 2013-2019, Joachim Metz <joachim.metz@gmail.com>
+ * Copyright (C) 2013-2020, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -246,6 +246,14 @@ int libluksde_volume_get_volume_identifier(
      size_t uuid_data_size,
      libcerror_error_t **error );
 
+LIBLUKSDE_EXTERN \
+int libluksde_volume_set_key(
+     libluksde_volume_t *volume,
+     const uint8_t *master_key,
+     size_t master_key_size,
+     libcerror_error_t **error );
+
+LIBLUKSDE_DEPRECATED \
 LIBLUKSDE_EXTERN \
 int libluksde_volume_set_keys(
      libluksde_volume_t *volume,

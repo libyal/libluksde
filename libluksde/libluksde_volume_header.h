@@ -1,7 +1,7 @@
 /*
  * The LUKS volume header functions
  *
- * Copyright (C) 2013-2019, Joachim Metz <joachim.metz@gmail.com>
+ * Copyright (C) 2013-2020, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -26,6 +26,7 @@
 #include <types.h>
 
 #include "libluksde_libbfio.h"
+#include "libluksde_libcdata.h"
 #include "libluksde_libcerror.h"
 
 #if defined( __cplusplus )

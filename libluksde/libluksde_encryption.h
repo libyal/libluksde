@@ -1,7 +1,7 @@
 /*
  * Encryption functions
  *
- * Copyright (C) 2013-2019, Joachim Metz <joachim.metz@gmail.com>
+ * Copyright (C) 2013-2020, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -96,7 +96,7 @@ int libluksde_encryption_free(
      libluksde_encryption_context_t **context,
      libcerror_error_t **error );
 
-int libluksde_encryption_set_keys(
+int libluksde_encryption_set_key(
      libluksde_encryption_context_t *context,
      const uint8_t *key,
      size_t key_size,
@@ -109,7 +109,7 @@ int libluksde_encryption_crypt(
      size_t input_data_size,
      uint8_t *output_data,
      size_t output_data_size,
-     uint64_t block_key,
+     uint64_t sector_number,
      libcerror_error_t **error );
 
 #if defined( __cplusplus )

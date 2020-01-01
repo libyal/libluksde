@@ -1,4 +1,4 @@
-.Dd December 31, 2019
+.Dd January  1, 2019
 .Dt libluksde 3
 .Os libluksde
 .Sh NAME
@@ -79,7 +79,7 @@ Volume functions
 .Ft int
 .Fn libluksde_volume_get_volume_identifier "libluksde_volume_t *volume" "uint8_t *uuid_data" "size_t uuid_data_size" "libluksde_error_t **error"
 .Ft int
-.Fn libluksde_volume_set_keys "libluksde_volume_t *volume" "const uint8_t *master_key" "size_t master_key_size" "libluksde_error_t **error"
+.Fn libluksde_volume_set_key "libluksde_volume_t *volume" "const uint8_t *master_key" "size_t master_key_size" "libluksde_error_t **error"
 .Ft int
 .Fn libluksde_volume_set_utf8_password "libluksde_volume_t *volume" "const uint8_t *utf8_string" "size_t utf8_string_length" "libluksde_error_t **error"
 .Ft int
@@ -121,7 +121,7 @@ Please report bugs of any kind on the project issue tracker: https://github.com/
 .Sh AUTHOR
 These man pages are generated from "libluksde.h".
 .Sh COPYRIGHT
-Copyright (C) 2013-2019, Joachim Metz <joachim.metz@gmail.com>.
+Copyright (C) 2013-2020, Joachim Metz <joachim.metz@gmail.com>.
 .sp
 This is free software; see the source for copying conditions.
 There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.

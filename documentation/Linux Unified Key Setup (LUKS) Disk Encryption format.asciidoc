@@ -26,7 +26,7 @@ encrypt storage media volumes.
 == License
 
 ....
-Copyright (C) 2013-2019, Joachim Metz <joachim.metz@gmail.com>.
+Copyright (C) 2013-2020, Joachim Metz <joachim.metz@gmail.com>.
 Permission is granted to copy, distribute and/or modify this document under the
 terms of the GNU Free Documentation License, Version 1.3 or any later version
 published by the Free Software Foundation; with no Invariant Sections, no
@@ -44,6 +44,7 @@ in the section entitled "GNU Free Documentation License".
 | 0.0.2 | J.B. Metz | December 2014 | Switched to asccidoc format.
 | 0.0.3 | J.B. Metz | April 2015 | Small changes.
 | 0.0.4 | J.B. Metz | December 2019 | Formatting changes.
+| 0.0.5 | J.B. Metz | January 2020 | Additional information for encryption types.
 |===
 
 :numbered:
@@ -114,17 +115,18 @@ algorithm with:
 The User Key (UK) is derived from the user password. The UK is used to
 de/encrypt the corresponding split master key material.
 
-This user password is used as a string. The corresponding user key is
+The user key is calculated as following:
 
-* calculated using the PBKDF2 algorithm with:
-* The (password) hashing method stored in the volume header, as the as the pseudo-random function (PRF).
-* The number of iterations as stored in the corresponding key slot.
-* A salt, as stored in the corresponding key slot.
-* The password as the input data.
+* For SHA-224, SHA-256 or SHA-512 calculate the hash of the password string.
+* Calculate the key using the PBKDF2 algorithm with:
+  * The (password) hashing method stored in the volume header, as the as the pseudo-random function (PRF).
+  * The number of iterations as stored in the corresponding key slot.
+  * A salt, as stored in the corresponding key slot.
+  * For SHA-1 the password string as the input data.
+  * For SHA-224, SHA-256 or SHA-512 the password hash as the input data.
+  * A (output) key size that is the same as that of the Master Key (MK).
 
 [yellow-background]*For now it is assumed that the user password contains ASCII characters only.*
-
-The resulting UK should have the same size as the Master Key (MK).
 
 == Encryption methods
 
@@ -159,15 +161,21 @@ initialization vector (IV) is determined by:
 
 ==== The benbi initialization vector mode
 
-[yellow-background]*TODO*
-
 In the benbi initialization vector mode the initialization vector (IV) is
-filled with a 64-bit big-endian representation of the corresponding
-[yellow-background]*cipher block (or narrow block)-count (starting at 1)*
-padded with 0-byte values.
+filled with a 64-bit big-endian representation of the corresponding cipher
+block (or narrow block)-count (starting at 1) padded with 0-byte values.
 
 The sector number is relative to the start of the data not relative to the
 start of the volume header.
+
+The cipher block-count is calculated as:
+
+....
+cipher block-count = ( sector number << ( log2( bytes per sectory ) - log2( IV size ) ) ) + 1
+....
+
+[NOTE]
+Benbi is presumably the abbreviation of big-endian numeric block index, or equivalent.
 
 ==== The lmk initialization vector mode
 
@@ -176,7 +184,7 @@ start of the volume header.
 === AES-CBC
 
 Decryption uses:
-AES-CBC with MK decryption of sector data
+AES-CBC with Master Key (MK) decryption of sector data
 
 The initialization vector of the AES-CBC is dependent on the initialization
 vector mode defined in the volume header. In recent versions of Linux, AES-CBC
@@ -187,7 +195,7 @@ The initialization vector is 16 bytes of size.
 === AES-ECB
 
 Decryption uses:
-AES-ECB with MK decryption of sector data
+AES-ECB with Master Key (MK) decryption of sector data
 
 No initialization vector is used.
 
@@ -323,7 +331,7 @@ And known values of initialization vector mode are:
 [cols="1,5",options="header"]
 |===
 | Value | Description
-| benbi | The initialization vector is the [yellow-background]*64-bit big-endian cipher block (or narrow block)-count (starting at 1).*
+| benbi | The initialization vector is the 64-bit big-endian cipher block (or narrow block)-count (starting at 1).
 | essiv | Encrypted sector-salt initialization vector (ESSIV) +
 The "essiv" initialization vector mode requires a hash algorithm to be defined as an initialization vector option. This is specified in the form "essiv:hash", e.g. "essiv:sha256".
 | lmk | [yellow-background]*Compatible implementation of the block chaining mode used by the Loop-AES block device encryption system.*

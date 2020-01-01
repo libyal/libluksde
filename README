@@ -7,39 +7,41 @@ Project information:
 
 Supported encryption methods:
 
-* AES (AES-CBC)
+* AES-CBC
+* AES-ECB
+* AES-XTS
+* Serpent-ECB
 
 Unsupported encryption methods:
 
-* AES (AES-ECB)
-* AES (AES-XTS)
 * anubis
 * cast5
 * cast6
-* serpent
+* Serpent-CBC
 * twofish
 
 Supported initialization vector modes:
 
+* benbi
 * ESSIV (SHA1, SHA256)
 * null
 * plain, plain64
 
 Unsupported initialization vector modes:
 
-* benbi
 * lmk
 * plumb
 
 Supported hashing methods:
 
 * SHA1
-* SHA224
 * SHA256
 
 Unsupported hashing methods:
 
 * RIPEMD160
+* SHA224
+* SHA512
 
 Work in progress:
 

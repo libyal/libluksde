@@ -1,7 +1,7 @@
 /*
  * Password functions
  *
- * Copyright (C) 2013-2019, Joachim Metz <joachim.metz@gmail.com>
+ * Copyright (C) 2013-2020, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -33,7 +33,7 @@ extern "C" {
 
 int libluksde_password_pbkdf2(
      const uint8_t *password,
-     size_t password_size,
+     size_t password_length,
      int password_hashing_method,
      const uint8_t *salt,
      size_t salt_size,

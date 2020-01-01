@@ -1,7 +1,7 @@
 /*
  * Debug functions
  *
- * Copyright (C) 2013-2019, Joachim Metz <joachim.metz@gmail.com>
+ * Copyright (C) 2013-2020, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -33,6 +33,14 @@ extern "C" {
 #endif
 
 #if defined( HAVE_DEBUG_OUTPUT )
+
+int libluksde_debug_print_string_value(
+     const char *function_name,
+     const char *value_name,
+     const uint8_t *byte_stream,
+     size_t byte_stream_size,
+     int ascii_codepage,
+     libcerror_error_t **error );
 
 int libluksde_debug_print_read_offsets(
      libbfio_handle_t *file_io_handle,

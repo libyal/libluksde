@@ -132,6 +132,7 @@ stamp-h[1-9]
 /tests/luksde_test_io_handle
 /tests/luksde_test_key_slot
 /tests/luksde_test_notify
+/tests/luksde_test_password
 /tests/luksde_test_sector_data
 /tests/luksde_test_support
 /tests/luksde_test_volume

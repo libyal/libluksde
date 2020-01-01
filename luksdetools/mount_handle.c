@@ -1,7 +1,7 @@
 /*
  * Mount handle
  *
- * Copyright (C) 2013-2019, Joachim Metz <joachim.metz@gmail.com>
+ * Copyright (C) 2013-2020, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -665,7 +665,7 @@ int mount_handle_open(
 	}
 	if( mount_handle->key_size > 0 )
 	{
-		if( libluksde_volume_set_keys(
+		if( libluksde_volume_set_key(
 		     luksde_volume,
 		     mount_handle->key_data,
 		     mount_handle->key_size,
@@ -675,7 +675,7 @@ int mount_handle_open(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
-			 "%s: unable to set keys.",
+			 "%s: unable to set key.",
 			 function );
 
 			goto on_error;

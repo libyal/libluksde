@@ -1,7 +1,7 @@
 /*
  * Volume functions
  *
- * Copyright (C) 2013-2019, Joachim Metz <joachim.metz@gmail.com>
+ * Copyright (C) 2013-2020, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -37,6 +37,7 @@
 #include "libluksde_libcthreads.h"
 #include "libluksde_libfcache.h"
 #include "libluksde_libfdata.h"
+#include "libluksde_libhmac.h"
 #include "libluksde_libuna.h"
 #include "libluksde_password.h"
 #include "libluksde_sector_data.h"
@@ -1118,19 +1119,21 @@ int libluksde_volume_open_read(
      libcerror_error_t **error )
 {
 	uint8_t master_key_validation_hash[ 20 ];
+	uint8_t password_hash_buffer[ 64 ];
 	uint8_t user_key[ 32 ];
 
-	libluksde_key_slot_t *key_slot  = NULL;
-	uint8_t *key_material_data      = NULL;
-	uint8_t *split_master_key_data  = NULL;
-	static char *function           = "libluksde_volume_open_read";
-	size_t key_material_data_offset = 0;
-	size_t key_material_size        = 0;
-	ssize_t read_count              = 0;
-	uint64_t key_material_block_key = 0;
-	int element_index               = 0;
-	int key_slot_index              = 0;
-	int result                      = 0;
+	libluksde_key_slot_t *key_slot   = NULL;
+	uint8_t *key_material_data       = NULL;
+	uint8_t *split_master_key_data   = NULL;
+	static char *function            = "libluksde_volume_open_read";
+	size_t key_material_data_offset  = 0;
+	size_t key_material_size         = 0;
+	size_t password_hash_buffer_size = 0;
+	ssize_t read_count               = 0;
+	uint64_t key_material_block_key  = 0;
+	int element_index                = 0;
+	int key_slot_index               = 0;
+	int result                       = 0;
 
 	if( internal_volume == NULL )
 	{
@@ -1292,14 +1295,14 @@ int libluksde_volume_open_read(
 	{
 		if( libluksde_password_pbkdf2(
 		     internal_volume->master_key,
-		     internal_volume->header->master_key_size,
+		     internal_volume->master_key_size,
 		     internal_volume->header->hashing_method,
 		     internal_volume->header->master_key_salt,
 		     32,
 		     internal_volume->header->master_key_number_of_iterations,
 		     master_key_validation_hash,
 		     20,
-		     error) == -1 )
+		     error ) == -1 )
 		{
 			libcerror_error_set(
 			 error,
@@ -1371,16 +1374,83 @@ int libluksde_volume_open_read(
 			}
 			if( internal_volume->user_password_is_set != 0 )
 			{
-				if( libluksde_password_pbkdf2(
-				     internal_volume->user_password,
-				     internal_volume->user_password_size - 1,
-				     internal_volume->header->hashing_method,
-				     key_slot->salt,
-				     32,
-				     key_slot->number_of_iterations,
-				     user_key,
-				     internal_volume->header->master_key_size,
-				     error) == -1 )
+				switch( internal_volume->header->hashing_method )
+				{
+					case LIBLUKSDE_HASHING_METHOD_SHA224:
+						password_hash_buffer_size = LIBHMAC_SHA224_HASH_SIZE;
+
+						result = libhmac_sha224_calculate(
+						          internal_volume->user_password,
+						          internal_volume->user_password_size - 1,
+						          password_hash_buffer,
+						          password_hash_buffer_size,
+						          error );
+					          break;
+
+					case LIBLUKSDE_HASHING_METHOD_SHA256:
+						password_hash_buffer_size = LIBHMAC_SHA256_HASH_SIZE;
+
+						result = libhmac_sha256_calculate(
+						          internal_volume->user_password,
+						          internal_volume->user_password_size - 1,
+						          password_hash_buffer,
+						          password_hash_buffer_size,
+						          error );
+					          break;
+
+					case LIBLUKSDE_HASHING_METHOD_SHA512:
+						password_hash_buffer_size = LIBHMAC_SHA512_HASH_SIZE;
+
+						result = libhmac_sha512_calculate(
+						          internal_volume->user_password,
+						          internal_volume->user_password_size - 1,
+						          password_hash_buffer,
+						          password_hash_buffer_size,
+						          error );
+					          break;
+
+					default:
+						result = 0;
+						break;
+				}
+				if( result == -1 )
+				{
+					libcerror_error_set(
+					 error,
+					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+					 LIBCERROR_RUNTIME_ERROR_GENERIC,
+					 "%s: unable to compute initial user password hash.",
+					 function );
+
+					goto on_error;
+				}
+				else if( result == 0 )
+				{
+					result = libluksde_password_pbkdf2(
+					          internal_volume->user_password,
+					          internal_volume->user_password_size - 1,
+					          internal_volume->header->hashing_method,
+					          key_slot->salt,
+					          32,
+					          key_slot->number_of_iterations,
+					          user_key,
+					          internal_volume->header->master_key_size,
+					          error );
+				}
+				else
+				{
+					result = libluksde_password_pbkdf2(
+					          password_hash_buffer,
+					          password_hash_buffer_size,
+					          internal_volume->header->hashing_method,
+					          key_slot->salt,
+					          32,
+					          key_slot->number_of_iterations,
+					          user_key,
+					          internal_volume->header->master_key_size,
+					          error );
+				}
+				if( result != 1 )
 				{
 					libcerror_error_set(
 					 error,
@@ -1492,7 +1562,7 @@ int libluksde_volume_open_read(
 					 0 );
 				}
 #endif
-				if( libluksde_encryption_set_keys(
+				if( libluksde_encryption_set_key(
 				     internal_volume->io_handle->encryption_context,
 				     user_key,
 				     internal_volume->header->master_key_size,
@@ -1624,7 +1694,7 @@ int libluksde_volume_open_read(
 				     internal_volume->header->master_key_number_of_iterations,
 				     master_key_validation_hash,
 				     20,
-				     error) == -1 )
+				     error ) == -1 )
 				{
 					libcerror_error_set(
 					 error,
@@ -1673,7 +1743,7 @@ int libluksde_volume_open_read(
 	}
 	if( result != 0 )
 	{
-		if( libluksde_encryption_set_keys(
+		if( libluksde_encryption_set_key(
 		     internal_volume->io_handle->encryption_context,
 		     internal_volume->master_key,
 		     internal_volume->header->master_key_size,
@@ -2758,6 +2828,147 @@ int libluksde_volume_get_volume_identifier(
 	}
 #endif
 	return( result );
+}
+
+/* Sets the key
+ * This function needs to be used before one of the open functions
+ * Returns 1 if successful or -1 on error
+ */
+int libluksde_volume_set_key(
+     libluksde_volume_t *volume,
+     const uint8_t *master_key,
+     size_t master_key_size,
+     libcerror_error_t **error )
+{
+	libluksde_internal_volume_t *internal_volume = NULL;
+	static char *function                        = "libluksde_volume_set_key";
+
+	if( volume == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid volume.",
+		 function );
+
+		return( -1 );
+	}
+	internal_volume = (libluksde_internal_volume_t *) volume;
+
+	if( internal_volume->file_io_handle != NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
+		 "%s: invalid volume - file IO handle already set.",
+		 function );
+
+		return( -1 );
+	}
+	if( master_key == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid master key.",
+		 function );
+
+		return( -1 );
+	}
+	if( ( master_key_size != 16 )
+	 && ( master_key_size != 32 ) )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_UNSUPPORTED_VALUE,
+		 "%s: unsupported master key size.",
+		 function );
+
+		return( -1 );
+	}
+#if defined( HAVE_LIBLUKSDE_MULTI_THREAD_SUPPORT )
+	if( libcthreads_read_write_lock_grab_for_write(
+	     internal_volume->read_write_lock,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to grab read/write lock for writing.",
+		 function );
+
+		return( -1 );
+	}
+#endif
+	if( master_key_size < 32 )
+	{
+		if( memory_set(
+		     internal_volume->master_key,
+		     0,
+		     32  ) == NULL )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_MEMORY,
+			 LIBCERROR_MEMORY_ERROR_SET_FAILED,
+			 "%s: unable to clear master key.",
+			 function );
+
+			goto on_error;
+		}
+	}
+	if( memory_copy(
+	     internal_volume->master_key,
+	     master_key,
+	     master_key_size ) == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_MEMORY,
+		 LIBCERROR_MEMORY_ERROR_COPY_FAILED,
+		 "%s: unable to copy master key.",
+		 function );
+
+		goto on_error;
+	}
+	internal_volume->master_key_size = (uint32_t) master_key_size;
+
+	internal_volume->keys_are_set = 1;
+
+#if defined( HAVE_LIBLUKSDE_MULTI_THREAD_SUPPORT )
+	if( libcthreads_read_write_lock_release_for_write(
+	     internal_volume->read_write_lock,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to release read/write lock for writing.",
+		 function );
+
+		return( -1 );
+	}
+#endif
+	return( 1 );
+
+on_error:
+	memory_set(
+	 internal_volume->master_key,
+	 0,
+	 32 );
+
+#if defined( HAVE_LIBLUKSDE_MULTI_THREAD_SUPPORT )
+	libcthreads_read_write_lock_release_for_write(
+	 internal_volume->read_write_lock,
+	 NULL );
+#endif
+	return( -1 );
 }
 
 /* Sets the keys

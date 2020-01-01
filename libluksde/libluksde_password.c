@@ -1,7 +1,7 @@
 /*
  * Password functions
  *
- * Copyright (C) 2013-2019, Joachim Metz <joachim.metz@gmail.com>
+ * Copyright (C) 2013-2020, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -35,7 +35,7 @@
  */
 int libluksde_password_pbkdf2(
      const uint8_t *password,
-     size_t password_size,
+     size_t password_length,
      int password_hashing_method,
      const uint8_t *salt,
      size_t salt_size,
@@ -44,14 +44,14 @@ int libluksde_password_pbkdf2(
      size_t output_data_size,
      libcerror_error_t **error )
 {
-	uint8_t hash_buffer[ 32 ];
+	uint8_t block_buffer[ 64 ];
+	uint8_t hash_buffer[ 64 ];
 
 	uint8_t *data_buffer       = NULL;
-	uint8_t *output_ptr        = NULL;
 	static char *function      = "libluksde_password_pbkdf2";
 	size_t data_buffer_size    = 0;
-	size_t block_offset        = 0;
 	size_t hash_size           = 0;
+	size_t output_data_offset  = 0;
 	size_t remaining_data_size = 0;
 	uint32_t block_index       = 0;
 	uint32_t byte_index        = 0;
@@ -70,13 +70,13 @@ int libluksde_password_pbkdf2(
 
 		return( -1 );
 	}
-	if( password_size > (size_t) SSIZE_MAX )
+	if( password_length > (size_t) ( SSIZE_MAX - 1 ) )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBCERROR_ARGUMENT_ERROR_VALUE_EXCEEDS_MAXIMUM,
-		 "%s: invalid password size value exceeds maximum.",
+		 "%s: invalid password length value exceeds maximum.",
 		 function );
 
 		return( -1 );
@@ -93,6 +93,10 @@ int libluksde_password_pbkdf2(
 
 		case LIBLUKSDE_HASHING_METHOD_SHA256:
 			hash_size = LIBHMAC_SHA256_HASH_SIZE;
+			break;
+
+		case LIBLUKSDE_HASHING_METHOD_SHA512:
+			hash_size = LIBHMAC_SHA512_HASH_SIZE;
 			break;
 
 		default:
@@ -161,9 +165,23 @@ int libluksde_password_pbkdf2(
 		return( -1 );
 	}
 	if( memory_set(
+	     block_buffer,
+	     0,
+	     64 ) == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_MEMORY,
+		 LIBCERROR_MEMORY_ERROR_COPY_FAILED,
+		 "%s: unable to clear hash buffer.",
+		 function );
+
+		goto on_error;
+	}
+	if( memory_set(
 	     hash_buffer,
 	     0,
-	     32 ) == NULL )
+	     64 ) == NULL )
 	{
 		libcerror_error_set(
 		 error,
@@ -190,8 +208,13 @@ int libluksde_password_pbkdf2(
 	}
 /* TODO add bounds check */
 	number_of_blocks    = output_data_size / hash_size;
-	remaining_data_size = output_data_size - ( number_of_blocks * hash_size );
-	data_buffer_size    = salt_size + 4;
+	remaining_data_size = output_data_size % hash_size;
+
+	if( remaining_data_size != 0 )
+	{
+		number_of_blocks += 1;
+	}
+	data_buffer_size = salt_size + 4;
 
 	data_buffer = (uint8_t *) memory_allocate(
 	                           sizeof( uint8_t ) * data_buffer_size );
@@ -210,7 +233,7 @@ int libluksde_password_pbkdf2(
 	if( memory_copy(
 	     data_buffer,
 	     salt,
-	     salt_size ) == NULL)
+	     salt_size ) == NULL )
 	{
 		libcerror_error_set(
 		 error,
@@ -229,7 +252,7 @@ int libluksde_password_pbkdf2(
 		 function );
 		libcnotify_print_data(
 		 password,
-		 password_size,
+		 password_length,
 		 0 );
 
 		libcnotify_printf(
@@ -265,22 +288,20 @@ int libluksde_password_pbkdf2(
 	}
 #endif /* defined( HAVE_DEBUG_OUTPUT ) */
 
-	for( block_index = 0;
-	     block_index < number_of_blocks;
+	for( block_index = 1;
+	     block_index <= number_of_blocks;
 	     block_index++ )
 	{
-		output_ptr = &( output_data[ block_offset ] );
-
 		byte_stream_copy_from_uint32_big_endian(
 		 &( data_buffer[ salt_size ] ),
-		 block_index + 1 );
+		 block_index );
 
 		switch( password_hashing_method )
 		{
 			case LIBLUKSDE_HASHING_METHOD_SHA1:
 	                	result = libhmac_sha1_calculate_hmac(
 				          password,
-				          password_size,
+				          password_length,
 				          data_buffer,
 				          data_buffer_size,
 				          hash_buffer,
@@ -291,7 +312,7 @@ int libluksde_password_pbkdf2(
 			case LIBLUKSDE_HASHING_METHOD_SHA224:
 	                	result = libhmac_sha224_calculate_hmac(
 				          password,
-				          password_size,
+				          password_length,
 				          data_buffer,
 				          data_buffer_size,
 				          hash_buffer,
@@ -302,7 +323,18 @@ int libluksde_password_pbkdf2(
 			case LIBLUKSDE_HASHING_METHOD_SHA256:
 	                	result = libhmac_sha256_calculate_hmac(
 				          password,
-				          password_size,
+				          password_length,
+				          data_buffer,
+				          data_buffer_size,
+				          hash_buffer,
+				          hash_size,
+				          error );
+				break;
+
+			case LIBLUKSDE_HASHING_METHOD_SHA512:
+	                	result = libhmac_sha512_calculate_hmac(
+				          password,
+				          password_length,
 				          data_buffer,
 				          data_buffer_size,
 				          hash_buffer,
@@ -327,7 +359,7 @@ int libluksde_password_pbkdf2(
 			goto on_error;
 		}
 		if( memory_copy(
-		     output_ptr,
+		     block_buffer,
 		     hash_buffer,
 		     hash_size ) == NULL )
 		{
@@ -335,13 +367,13 @@ int libluksde_password_pbkdf2(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_MEMORY,
 			 LIBCERROR_MEMORY_ERROR_COPY_FAILED,
-			 "%s: unable to copy hash buffer into output data.",
+			 "%s: unable to copy hash buffer into block buffer.",
 			 function );
 
 			goto on_error;
 		}
-		for( password_iterator = 0;
-		     password_iterator < number_of_iterations - 1;
+		for( password_iterator = 1;
+		     password_iterator < number_of_iterations;
 		     password_iterator++ )
 		{
 			switch( password_hashing_method )
@@ -349,7 +381,7 @@ int libluksde_password_pbkdf2(
 				case LIBLUKSDE_HASHING_METHOD_SHA1:
 					result = libhmac_sha1_calculate_hmac(
 					          password,
-					          password_size,
+					          password_length,
 					          hash_buffer,
 					          hash_size,
 					          hash_buffer,
@@ -360,7 +392,7 @@ int libluksde_password_pbkdf2(
 				case LIBLUKSDE_HASHING_METHOD_SHA224:
 					result = libhmac_sha224_calculate_hmac(
 					          password,
-					          password_size,
+					          password_length,
 					          hash_buffer,
 					          hash_size,
 					          hash_buffer,
@@ -371,7 +403,7 @@ int libluksde_password_pbkdf2(
 				case LIBLUKSDE_HASHING_METHOD_SHA256:
 					result = libhmac_sha256_calculate_hmac(
 					          password,
-					          password_size,
+					          password_length,
 					          hash_buffer,
 					          hash_size,
 					          hash_buffer,
@@ -379,136 +411,10 @@ int libluksde_password_pbkdf2(
 					          error );
 					break;
 
-				default:
-					result = 0;
-					break;
-			}
-			if( result != 1 )
-			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBCERROR_RUNTIME_ERROR_GENERIC,
-				 "%s: unable to compute initial hmac for block %d.",
-				 function,
-				 block_index);
-
-				goto on_error;
-			}
-			for( byte_index = 0;
-			     byte_index < hash_size;
-			     byte_index++ )
-			{
-				output_ptr[ byte_index ] ^= hash_buffer[ byte_index ];
-			}
-		}
-		block_offset += hash_size;
-	}
-	if( remaining_data_size > 0 )
-	{
-		output_ptr = &( output_data[ block_offset ] );
-
-		byte_stream_copy_from_uint32_big_endian(
-		 &( data_buffer[ salt_size ] ),
-		 block_index + 1 );
-
-		switch( password_hashing_method )
-		{
-			case LIBLUKSDE_HASHING_METHOD_SHA1:
-				result = libhmac_sha1_calculate_hmac(
-				          password,
-				          password_size,
-				          data_buffer,
-				          data_buffer_size,
-				          hash_buffer,
-				          hash_size,
-				          error );
-				break;
-
-			case LIBLUKSDE_HASHING_METHOD_SHA224:
-				result = libhmac_sha224_calculate_hmac(
-				          password,
-				          password_size,
-				          data_buffer,
-				          data_buffer_size,
-				          hash_buffer,
-				          hash_size,
-				          error );
-				break;
-
-			case LIBLUKSDE_HASHING_METHOD_SHA256:
-				result = libhmac_sha256_calculate_hmac(
-				          password,
-				          password_size,
-				          data_buffer,
-				          data_buffer_size,
-				          hash_buffer,
-				          hash_size,
-				          error );
-				break;
-
-			default:
-				result = 0;
-				break;
-		}
-		if( result != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_GENERIC,
-			 "%s: unable to compute initial hmac for block %d.",
-			 function,
-			 block_index);
-
-			goto on_error;
-		}
-		if( memory_copy(
-		     output_ptr,
-		     hash_buffer,
-		     remaining_data_size ) == NULL )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_MEMORY,
-			 LIBCERROR_MEMORY_ERROR_COPY_FAILED,
-			 "%s: unable to copy hash buffer into output data in last block.",
-			 function );
-
-			goto on_error;
-		}
-		for( password_iterator = 0;
-		     password_iterator < number_of_iterations - 1;
-		     password_iterator++ )
-		{
-			switch( password_hashing_method )
-			{
-				case LIBLUKSDE_HASHING_METHOD_SHA1:
-					result = libhmac_sha1_calculate_hmac(
+				case LIBLUKSDE_HASHING_METHOD_SHA512:
+					result = libhmac_sha512_calculate_hmac(
 					          password,
-					          password_size,
-					          hash_buffer,
-					          hash_size,
-					          hash_buffer,
-					          hash_size,
-					          error );
-					break;
-
-				case LIBLUKSDE_HASHING_METHOD_SHA224:
-					result = libhmac_sha224_calculate_hmac(
-					          password,
-					          password_size,
-					          hash_buffer,
-					          hash_size,
-					          hash_buffer,
-					          hash_size,
-					          error );
-					break;
-
-				case LIBLUKSDE_HASHING_METHOD_SHA256:
-					result = libhmac_sha256_calculate_hmac(
-					          password,
-					          password_size,
+					          password_length,
 					          hash_buffer,
 					          hash_size,
 					          hash_buffer,
@@ -533,12 +439,32 @@ int libluksde_password_pbkdf2(
 				goto on_error;
 			}
 			for( byte_index = 0;
-			     byte_index < remaining_data_size;
+			     byte_index < hash_size;
 			     byte_index++ )
 			{
-				output_ptr[ byte_index ] ^= hash_buffer[ byte_index ];
+				block_buffer[ byte_index ] ^= hash_buffer[ byte_index ];
 			}
 		}
+		if( hash_size > output_data_size )
+		{
+			hash_size = output_data_size;
+		}
+		if( memory_copy(
+		     &( output_data[ output_data_offset ] ),
+		     block_buffer,
+		     hash_size ) == NULL )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_MEMORY,
+			 LIBCERROR_MEMORY_ERROR_COPY_FAILED,
+			 "%s: unable to copy block buffer into output data.",
+			 function );
+
+			goto on_error;
+		}
+		output_data_offset += hash_size;
+		output_data_size   -= hash_size;
 	}
 	if( data_buffer != NULL )
 	{
