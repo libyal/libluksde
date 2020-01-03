@@ -219,7 +219,7 @@ int libluksde_sector_data_read(
      libluksde_sector_data_t *sector_data,
      libluksde_io_handle_t *io_handle,
      libbfio_handle_t *file_io_handle,
-     off64_t sector_data_offset,
+     off64_t file_offset,
      libluksde_encryption_context_t *encryption_context,
      libcerror_error_t **error )
 {
@@ -287,13 +287,13 @@ int libluksde_sector_data_read(
 		libcnotify_printf(
 		 "%s: reading sector data at offset: %" PRIi64 " (0x%08" PRIx64 ")\n",
 		 function,
-		 sector_data_offset,
-		 sector_data_offset );
+		 file_offset,
+		 file_offset );
 	}
 #endif
 	if( libbfio_handle_seek_offset(
 	     file_io_handle,
-	     sector_data_offset,
+	     file_offset,
 	     SEEK_SET,
 	     error ) == -1 )
 	{
@@ -301,9 +301,10 @@ int libluksde_sector_data_read(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_IO,
 		 LIBCERROR_IO_ERROR_SEEK_FAILED,
-		 "%s: unable to seek sector data offset: %" PRIi64 ".",
+		 "%s: unable to seek sector data offset: %" PRIi64 " (0x%08" PRIx64 ").",
 		 function,
-		 sector_data_offset );
+		 file_offset,
+		 file_offset );
 
 		return( -1 );
 	}
@@ -336,8 +337,8 @@ int libluksde_sector_data_read(
 		 0 );
 	}
 #endif
-	sector_data_offset -= io_handle->encrypted_volume_offset;
-	sector_data_offset /= io_handle->bytes_per_sector;
+	file_offset -= io_handle->encrypted_volume_offset;
+	file_offset /= io_handle->bytes_per_sector;
 
 	if( libluksde_encryption_crypt(
 	     encryption_context,
@@ -346,7 +347,7 @@ int libluksde_sector_data_read(
 	     sector_data->data_size,
 	     sector_data->data,
 	     sector_data->data_size,
-	     (uint64_t) sector_data_offset,
+	     (uint64_t) file_offset,
 	     error ) != 1 )
 	{
 		libcerror_error_set(

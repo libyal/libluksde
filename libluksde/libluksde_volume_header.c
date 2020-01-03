@@ -253,12 +253,12 @@ int libluksde_volume_header_read_data(
 		goto on_error;
 	}
 	byte_stream_copy_to_uint16_big_endian(
-	 ( (luksde_volume_header_t *) data )->version,
-	 volume_header->version );
+	 ( (luksde_volume_header_t *) data )->format_version,
+	 volume_header->format_version );
 
 	byte_stream_copy_to_uint32_big_endian(
 	 ( (luksde_volume_header_t *) data )->encrypted_volume_start_sector,
-	 volume_header->encrypted_volume_offset );
+	 volume_header->encrypted_volume_start_sector );
 
 	byte_stream_copy_to_uint32_big_endian(
 	 ( (luksde_volume_header_t *) data )->master_key_size,
@@ -368,9 +368,9 @@ int libluksde_volume_header_read_data(
 		 data[ 5 ] );
 
 		libcnotify_printf(
-		 "%s: version\t\t\t\t: %" PRIu16 "\n",
+		 "%s: format version\t\t\t: %" PRIu16 "\n",
 		 function,
-		 volume_header->version );
+		 volume_header->format_version );
 
 		if( libluksde_debug_print_string_value(
 		     function,
@@ -424,9 +424,9 @@ int libluksde_volume_header_read_data(
 			goto on_error;
 		}
 		libcnotify_printf(
-		 "%s: encrypted volume start sector\t: 0x%08" PRIx64 "\n",
+		 "%s: encrypted volume start sector\t: %" PRIu64 "\n",
 		 function,
-		 volume_header->encrypted_volume_offset );
+		 volume_header->encrypted_volume_start_sector );
 
 		libcnotify_printf(
 		 "%s: master key size\t\t\t: %" PRIu32 "\n",
@@ -476,13 +476,14 @@ int libluksde_volume_header_read_data(
 	}
 #endif /* defined( HAVE_DEBUG_OUTPUT ) */
 
-	if( volume_header->version != 1 )
+	if( ( volume_header->format_version != 1 )
+	 && ( volume_header->format_version != 2 ) )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
-		 "%s: unsupported version.",
+		 "%s: unsupported format version.",
 		 function );
 
 		goto on_error;
@@ -961,6 +962,43 @@ int libluksde_volume_header_read_file_io_handle(
 
 		return( -1 );
 	}
+	return( 1 );
+}
+
+/* Retrieves the format version
+ * Returns 1 if successful or -1 on error
+ */
+int libluksde_volume_header_get_format_version(
+     libluksde_volume_header_t *volume_header,
+     uint16_t *format_version,
+     libcerror_error_t **error )
+{
+	static char *function = "libluksde_volume_header_get_format_version";
+
+	if( volume_header == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid volume header.",
+		 function );
+
+		return( -1 );
+	}
+	if( format_version == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid format version.",
+		 function );
+
+		return( -1 );
+	}
+	*format_version = volume_header->format_version;
+
 	return( 1 );
 }
 

@@ -1214,8 +1214,18 @@ int libluksde_volume_open_read(
 	}
 	internal_volume->master_key_size = internal_volume->header->master_key_size;
 
-/* TODO bounds check */
-	internal_volume->io_handle->encrypted_volume_offset = internal_volume->header->encrypted_volume_offset
+	if( internal_volume->header->encrypted_volume_start_sector >= ( internal_volume->io_handle->volume_size / internal_volume->io_handle->bytes_per_sector ) )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
+		 "%s: invalid encrypted volume start sector value out of bounds.",
+		 function );
+
+		return( -1 );
+	}
+	internal_volume->io_handle->encrypted_volume_offset = internal_volume->header->encrypted_volume_start_sector
 	                                                    * internal_volume->io_handle->bytes_per_sector;
 
 	internal_volume->io_handle->encrypted_volume_size = internal_volume->io_handle->volume_size
@@ -1277,10 +1287,10 @@ int libluksde_volume_open_read(
 		     internal_volume->header->master_key_validation_hash,
 		     20 ) == 0 )
 		{
-			result = 1;
+			internal_volume->is_locked = 0;
 		}
 	}
-	if( ( result == 0 )
+	if( ( internal_volume->is_locked != 0 )
 	 && ( internal_volume->user_password_is_set != 0 ) )
 	{
 		for( key_slot_index = 0;
@@ -1681,14 +1691,16 @@ int libluksde_volume_open_read(
 				     internal_volume->header->master_key_validation_hash,
 				     20 ) == 0 )
 				{
-					result = 1;
+					internal_volume->is_locked = 0;
 
 					break;
 				}
 			}
 		}
 	}
-	if( result != 0 )
+	result = 0;
+
+	if( internal_volume->is_locked == 0 )
 	{
 		if( libluksde_encryption_set_key(
 		     internal_volume->io_handle->encryption_context,
@@ -1758,7 +1770,7 @@ int libluksde_volume_open_read(
 
 			goto on_error;
 		}
-		internal_volume->is_locked = 0;
+		result = 1;
 	}
 #if defined( HAVE_LIBLUKSDE_MULTI_THREAD_SUPPORT )
 	if( libcthreads_read_write_lock_release_for_write(

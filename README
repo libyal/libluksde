@@ -5,6 +5,14 @@ Project information:
 * Status: experimental
 * Licence: LGPLv3+
 
+Read-only supported LUKS formats:
+
+* version 1
+
+Unsupported LUKS formats:
+
+* version 2
+
 Supported encryption methods:
 
 * AES (AES-CBC, AES-ECB, AES-XTS)

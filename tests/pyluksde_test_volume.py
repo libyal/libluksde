@@ -67,10 +67,11 @@ class VolumeTypeTests(unittest.TestCase):
     if not os.path.isfile(unittest.source):
       raise unittest.SkipTest("source not a regular file")
 
+    luksde_volume = pyluksde.volume()
+    if unittest.password:
+      luksde_volume.set_password(unittest.password)
+
     with open(unittest.source, "rb") as file_object:
-      luksde_volume = pyluksde.volume()
-      if unittest.password:
-        luksde_volume.set_password(unittest.password)
 
       luksde_volume.open_file_object(file_object)
 
@@ -117,6 +118,7 @@ class VolumeTypeTests(unittest.TestCase):
 
     if os.path.isfile(unittest.source):
       with open(unittest.source, "rb") as file_object:
+
         # Test open_file_object and close.
         luksde_volume.open_file_object(file_object)
         luksde_volume.close()
@@ -243,11 +245,11 @@ class VolumeTypeTests(unittest.TestCase):
     if not os.path.isfile(unittest.source):
       raise unittest.SkipTest("source not a regular file")
 
-    with open(unittest.source, "rb") as file_object:
-      luksde_volume = pyluksde.volume()
-      if unittest.password:
-        luksde_volume.set_password(unittest.password)
+    luksde_volume = pyluksde.volume()
+    if unittest.password:
+      luksde_volume.set_password(unittest.password)
 
+    with open(unittest.source, "rb") as file_object:
       luksde_volume.open_file_object(file_object)
 
       size = luksde_volume.get_size()

@@ -39,10 +39,10 @@ struct luksde_volume_header
 	 */
 	uint8_t signature[ 6 ];
 
-	/* The (format) version
+	/* The format version
 	 * Consists of 2 bytes
 	 */
-	uint8_t version[ 2 ];
+	uint8_t format_version[ 2 ];
 
 	/* The encryption method
 	 * Consists of 32 bytes

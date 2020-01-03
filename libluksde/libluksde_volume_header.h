@@ -37,13 +37,13 @@ typedef struct libluksde_volume_header libluksde_volume_header_t;
 
 struct libluksde_volume_header
 {
-	/* The (format) version
+	/* The format version
 	 */
-	uint16_t version;
+	uint16_t format_version;
 
-	/* The encrypted volume offset
+	/* The encrypted volume start sector
 	 */
-	off64_t encrypted_volume_offset;
+	uint64_t encrypted_volume_start_sector;
 
 	/* The master key size
 	 */
@@ -108,6 +108,11 @@ int libluksde_volume_header_read_file_io_handle(
      libluksde_volume_header_t *volume_header,
      libbfio_handle_t *file_io_handle,
      off64_t file_offset,
+     libcerror_error_t **error );
+
+int libluksde_volume_header_get_format_version(
+     libluksde_volume_header_t *volume_header,
+     uint16_t *format_version,
      libcerror_error_t **error );
 
 int libluksde_volume_header_get_volume_identifier(

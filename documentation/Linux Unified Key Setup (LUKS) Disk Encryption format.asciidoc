@@ -45,6 +45,7 @@ in the section entitled "GNU Free Documentation License".
 | 0.0.3 | J.B. Metz | April 2015 | Small changes.
 | 0.0.4 | J.B. Metz | December 2019 | Formatting changes.
 | 0.0.5 | J.B. Metz | January 2020 | Additional information for encryption types.
+| 0.0.6 | J.B. Metz | January 2020 | Additional information about format version 2.
 |===
 
 :numbered:
@@ -53,17 +54,29 @@ in the section entitled "GNU Free Documentation License".
 Linux Unified Key Setup (LUKS) Disk Encryption is commonly used by Linux to
 encrypt storage media volumes.
 
-=== Layout
+=== Layout format version 1
 
-A LUKS encrypted volume consist of:
+A LUKS version 1 encrypted volume consist of:
 
-* volume (or partition) header
+* volume header
 * 8 x key slots
 * split master key material
 * encrypted (volume) data
 
 The total reserved size of the LUKS metadata (volume header and split master
 key material) seems to commonly be 2 MiB.
+
+=== Layout format version 2
+
+A LUKS version 2 encrypted volume consist of:
+
+* volume header
+* keyslots area
+* backup volume header
+* backup keyslots area
+* encrypted (volume) data
+
+=== Characteristics
 
 [cols="1,5",options="header"]
 |===
@@ -73,7 +86,7 @@ key material) seems to commonly be 2 MiB.
 | Character strings | ASCII string with an end-of-string character
 |===
 
-=== 1.2.  Test version
+=== Test version
 
 The following version of programs were used to test the information within this
 document:
@@ -250,13 +263,15 @@ Size of initialization vector?
 
 == Volume header
 
+=== Volume header - format version 1
+
 The volume header is 592 bytes in size and consists of:
 
 [cols="1,1,1,5",options="header"]
 |===
 | Offset | Size | Value | Description
 | 0 | 6 | "LUKS\xba\xbe" | Signature
-| 6 | 2 | 1 | Version
+| 6 | 2 | 1 | Format version
 | 8 | 32 | | Encryption method (Cipher name) +
 Contains an ASCII string with an end-of-string character
 | 40 | 32 | | Encryption mode (Cipher mode) +
@@ -276,6 +291,160 @@ Contains an ASCII string with an end-of-string character which consists of an UU
 |===
 
 [yellow-background]*Is the volume header padded with 0-byte values up to 4096 bytes?*
+
+=== Volume header - format version 2
+
+The volume header is 592 bytes in size and consists of:
+
+[cols="1,1,1,5",options="header"]
+|===
+| Offset | Size | Value | Description
+| 0 | 6 | "LUKS\xba\xbe" | Signature
+| 6 | 2 | 2 | Format version
+| 8 | 8 | | Metadata area size
+| 16 | 8 | | Epoch
+| 24 | 48 | | [yellow-background]*Unknown (empty values)*
+| 72 | 32 | | Hashing method +
+The hashing method used for the user key calculation and the anti-forensic (AF) diffuser +
+Contains an ASCII string with an end-of-string character
+| 104 | 64 | | [yellow-background]*Unknown*
+| 168 | 40 | | Volume identifier +
+Contains an ASCII string with an end-of-string character which consists of an UUID in lower-case
+| 208 | 240 | | [yellow-background]*Unknown (empty values)*
+| 448 | 32 | | [yellow-background]*Unknown*
+| 480 | 3616 | | [yellow-background]*Unknown (empty values)*
+|===
+
+....
+LUKS header information
+Keyslots area: 	16744448 [bytes]
+UUID:          	a3836cf7-0abe-4739-85e5-2bc728fe9cbc
+Label:         	(no label)
+Subsystem:     	(no subsystem)
+Flags:       	(no flags)
+
+Data segments:
+  0: crypt
+	offset: 16777216 [bytes]
+	length: (whole device)
+	cipher: aes-ecb
+	sector: 512 [bytes]
+
+Keyslots:
+  0: luks2
+	Key:        256 bits
+	Priority:   normal
+	Cipher:     aes-ecb
+	Cipher key: 256 bits
+	PBKDF:      argon2i
+	Time cost:  6
+	Memory:     1048576
+	Threads:    4
+	Salt:       5f 73 a0 84 1a 94 3c b3 e4 62 e6 85 95 2b b8 c3
+	            fe 15 b1 19 51 34 30 73 37 e2 16 e5 8e 49 41 25
+	AF stripes: 4000
+	AF hash:    sha1
+	Area offset:32768 [bytes]
+	Area length:131072 [bytes]
+	Digest ID:  0
+Tokens:
+Digests:
+  0: pbkdf2
+	Hash:       sha1
+	Iterations: 154931
+	Salt:       c3 14 fd ef e8 d8 1c a8 40 6a dd eb 65 be 97 5e
+	            ec 17 55 19 f7 0c ce ed bc 6c bc f9 9b a4 33 7f
+	Digest:     58 74 f5 4a 83 8b 3f 7b 6e 9a
+	            62 03 86 23 53 c4 fd fd 75 fc
+....
+
+=== Keyslots area - format version 2
+
+....
+{
+  "keyslots": {
+    "0": {
+      "type": "luks2",
+      "key_size": 32,
+      "af": {
+        "type": "luks1",
+        "stripes": 4000,
+        "hash": "sha1"
+      },
+      "area": {
+        "type": "raw",
+        "offset": "32768",
+        "size": "131072",
+        "encryption": "aes-ecb",
+        "key_size": 32
+      },
+      "kdf": {
+        "type": "argon2i",
+        "time": 6,
+        "memory": 1048576,
+        "cpus": 4,
+        "salt": "X3OghBqUPLPkYuaFlSu4w/4VsRlRNDBzN+IW5Y5JQSU="
+      }
+    }
+  },
+  "tokens": {},
+  "segments": {
+    "0": {
+      "type": "crypt",
+      "offset": "16777216",
+      "size": "dynamic",
+      "iv_tweak": "0",
+      "encryption": "aes-ecb",
+      "sector_size": 512
+    }
+  },
+  "digests": {
+    "0": {
+      "type": "pbkdf2",
+      "keyslots": [
+        "0"
+      ],
+      "segments": [
+        "0"
+      ],
+      "hash": "sha1",
+      "iterations": 154931,
+      "salt": "wxT97+jYHKhAat3rZb6XXuwXVRn3DM7tvGy8+ZukM38=",
+      "digest": "WHT1SoOLP3tummIDhiNTxP39dfw="
+    }
+  },
+  "config": {
+    "json_size": "12288",
+    "keyslots_size": "16744448"
+  }
+}
+....
+
+=== Backup volume header - format version 2
+
+....
+00004000  53 4b 55 4c ba be 00 02  00 00 00 00 00 00 40 00  |SKUL..........@.|
+00004010  00 00 00 00 00 00 00 03  00 00 00 00 00 00 00 00  |................|
+00004020  00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00  |................|
+*
+00004040  00 00 00 00 00 00 00 00  73 68 61 32 35 36 00 00  |........sha256..|
+00004050  00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00  |................|
+00004060  00 00 00 00 00 00 00 00  4e a7 34 0a 66 15 a4 2b  |........N.4.f..+|
+00004070  4c 26 49 45 d1 14 fb 60  d2 84 b9 2c 8f 97 40 20  |L&IE...`...,..@ |
+00004080  8f 8e ef 3c bb 7d dc 48  0a 35 4e cc 0f 08 9c 90  |...<.}.H.5N.....|
+00004090  87 0f db 3b a3 0a 41 6a  53 fd ee 74 72 00 f8 60  |...;..AjS..tr..`|
+000040a0  82 a4 fc ac 62 84 03 35  34 37 61 35 31 64 33 61  |....b..547a51d3a|
+000040b0  2d 39 62 34 31 2d 34 38  34 66 2d 39 31 37 37 2d  |-9b41-484f-9177-|
+000040c0  66 66 62 31 31 64 34 35  35 65 63 37 00 00 00 00  |ffb11d455ec7....|
+000040d0  00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00  |................|
+*
+00004100  00 00 00 00 00 00 40 00  00 00 00 00 00 00 00 00  |......@.........|
+00004110  00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00  |................|
+*
+000041c0  0a 24 76 5c 78 2b 78 fb  d6 db 24 60 2d 27 55 04  |.$v\x+x...$`-'U.|
+000041d0  93 d0 d1 89 11 65 38 6d  06 85 24 2e 4c ba 82 c6  |.....e8m..$.L...|
+000041e0  00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00  |................|
+....
 
 === Encryption method
 
@@ -413,12 +582,22 @@ More encryption methods can be found by running "cat /proc/crypto".
 | URL: | http://wiki.cryptsetup.googlecode.com/git/LUKS-standard/on-disk-format.pdf
 |===
 
+`[BROZ18]`
+
+[cols="1,5",options="header"]
+|===
+| Title: | LUKS2 On-Disk Format Specification - Version 1.0.0
+| Author(s): | Milan Broz <gmazyland@gmail.com>
+| Date: | August 2, 2018
+| URL: | https://gitlab.com/cryptsetup/cryptsetup/blob/master/docs/on-disk-format-luks2.pdf
+|===
+
 `[CRYPTSETUP]`
 
 [cols="1,5",options="header"]
 |===
-| Title: | dm-crypt: Linux kernel device-mapper crypto target
-| URL: | http://code.google.com/p/cryptsetup/wiki/DMCrypt
+| Title: | Cryptsetup and LUKS - open-source disk encryption
+| URL: | https://gitlab.com/cryptsetup/cryptsetup/
 |===
 
 `[WIKIPEDIA-PBKDF2]`

@@ -64,7 +64,7 @@ int libluksde_sector_data_read(
      libluksde_sector_data_t *sector_data,
      libluksde_io_handle_t *io_handle,
      libbfio_handle_t *file_io_handle,
-     off64_t sector_data_offset,
+     off64_t file_offset,
      libluksde_encryption_context_t *encryption_context,
      libcerror_error_t **error );
 
