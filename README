@@ -16,12 +16,13 @@ Unsupported LUKS formats:
 Supported encryption methods:
 
 * AES (AES-CBC, AES-ECB, AES-XTS)
-* ARC4 (ARC4-CBC, ARC4-ECB)
+* ARC4 (ARC4-ECB)
 * Serpent (Serpent-CBC, Serpent-ECB)
 
 Unsupported encryption methods:
 
 * anubis
+* ARC4-CBC
 * cast5
 * cast6
 * twofish

@@ -1026,18 +1026,21 @@ int libluksde_volume_close(
 
 		result = -1;
 	}
-	if( libluksde_encryption_free(
-	     &( internal_volume->io_handle->encryption_context ),
-	     error ) != 1 )
+	if( internal_volume->io_handle->encryption_context != NULL )
 	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
-		 "%s: unable to free encryption context.",
-		 function );
+		if( libluksde_encryption_free(
+		     &( internal_volume->io_handle->encryption_context ),
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+			 "%s: unable to free encryption context.",
+			 function );
 
-		result = -1;
+			result = -1;
+		}
 	}
 #if defined( HAVE_LIBLUKSDE_MULTI_THREAD_SUPPORT )
 	if( libcthreads_read_write_lock_release_for_write(
@@ -1066,21 +1069,20 @@ int libluksde_volume_open_read(
      libcerror_error_t **error )
 {
 	uint8_t master_key_validation_hash[ 20 ];
-	uint8_t password_hash_buffer[ 64 ];
 	uint8_t user_key[ 32 ];
 
-	libluksde_key_slot_t *key_slot   = NULL;
-	uint8_t *key_material_data       = NULL;
-	uint8_t *split_master_key_data   = NULL;
-	static char *function            = "libluksde_volume_open_read";
-	size_t key_material_data_offset  = 0;
-	size_t key_material_size         = 0;
-	size_t password_hash_buffer_size = 0;
-	ssize_t read_count               = 0;
-	uint64_t key_material_block_key  = 0;
-	int element_index                = 0;
-	int key_slot_index               = 0;
-	int result                       = 0;
+	libluksde_encryption_context_t *user_key_encryption_context = NULL;
+	libluksde_key_slot_t *key_slot                              = NULL;
+	uint8_t *key_material_data                                  = NULL;
+	uint8_t *split_master_key_data                              = NULL;
+	static char *function                                       = "libluksde_volume_open_read";
+	size_t key_material_data_offset                             = 0;
+	size_t key_material_size                                    = 0;
+	ssize_t read_count                                          = 0;
+	uint64_t key_material_block_key                             = 0;
+	int element_index                                           = 0;
+	int key_slot_index                                          = 0;
+	int result                                                  = 0;
 
 	if( internal_volume == NULL )
 	{
@@ -1231,23 +1233,6 @@ int libluksde_volume_open_read(
 	internal_volume->io_handle->encrypted_volume_size = internal_volume->io_handle->volume_size
 	                                                  - internal_volume->io_handle->encrypted_volume_offset;
 
-	if( libluksde_encryption_initialize(
-	     &( internal_volume->io_handle->encryption_context ),
-	     internal_volume->header->encryption_method,
-	     internal_volume->header->encryption_chaining_mode,
-	     internal_volume->header->initialization_vector_mode,
-	     internal_volume->header->essiv_hashing_method,
-	     error ) != 1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-		 "%s: unable to create encryption context.",
-		 function );
-
-		goto on_error;
-	}
 	if( internal_volume->keys_are_set != 0 )
 	{
 		if( libluksde_password_pbkdf2(
@@ -1331,83 +1316,16 @@ int libluksde_volume_open_read(
 			}
 			if( internal_volume->user_password_is_set != 0 )
 			{
-				switch( internal_volume->header->hashing_method )
-				{
-					case LIBLUKSDE_HASHING_METHOD_SHA224:
-						password_hash_buffer_size = LIBHMAC_SHA224_HASH_SIZE;
-
-						result = libhmac_sha224_calculate(
-						          internal_volume->user_password,
-						          internal_volume->user_password_size - 1,
-						          password_hash_buffer,
-						          password_hash_buffer_size,
-						          error );
-					          break;
-
-					case LIBLUKSDE_HASHING_METHOD_SHA256:
-						password_hash_buffer_size = LIBHMAC_SHA256_HASH_SIZE;
-
-						result = libhmac_sha256_calculate(
-						          internal_volume->user_password,
-						          internal_volume->user_password_size - 1,
-						          password_hash_buffer,
-						          password_hash_buffer_size,
-						          error );
-					          break;
-
-					case LIBLUKSDE_HASHING_METHOD_SHA512:
-						password_hash_buffer_size = LIBHMAC_SHA512_HASH_SIZE;
-
-						result = libhmac_sha512_calculate(
-						          internal_volume->user_password,
-						          internal_volume->user_password_size - 1,
-						          password_hash_buffer,
-						          password_hash_buffer_size,
-						          error );
-					          break;
-
-					default:
-						result = 0;
-						break;
-				}
-				if( result == -1 )
-				{
-					libcerror_error_set(
-					 error,
-					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-					 LIBCERROR_RUNTIME_ERROR_GENERIC,
-					 "%s: unable to compute initial user password hash.",
-					 function );
-
-					goto on_error;
-				}
-				else if( result == 0 )
-				{
-					result = libluksde_password_pbkdf2(
-					          internal_volume->user_password,
-					          internal_volume->user_password_size - 1,
-					          internal_volume->header->hashing_method,
-					          key_slot->salt,
-					          32,
-					          key_slot->number_of_iterations,
-					          user_key,
-					          internal_volume->header->master_key_size,
-					          error );
-				}
-				else
-				{
-					result = libluksde_password_pbkdf2(
-					          password_hash_buffer,
-					          password_hash_buffer_size,
-					          internal_volume->header->hashing_method,
-					          key_slot->salt,
-					          32,
-					          key_slot->number_of_iterations,
-					          user_key,
-					          internal_volume->header->master_key_size,
-					          error );
-				}
-				if( result != 1 )
+				if( libluksde_password_pbkdf2(
+				     internal_volume->user_password,
+				     internal_volume->user_password_size - 1,
+				     internal_volume->header->hashing_method,
+				     key_slot->salt,
+				     32,
+				     key_slot->number_of_iterations,
+				     user_key,
+				     internal_volume->header->master_key_size,
+				     error ) != 1 )
 				{
 					libcerror_error_set(
 					 error,
@@ -1519,8 +1437,25 @@ int libluksde_volume_open_read(
 					 0 );
 				}
 #endif
+				if( libluksde_encryption_initialize(
+				     &user_key_encryption_context,
+				     internal_volume->header->encryption_method,
+				     internal_volume->header->encryption_chaining_mode,
+				     internal_volume->header->initialization_vector_mode,
+				     internal_volume->header->essiv_hashing_method,
+				     error ) != 1 )
+				{
+					libcerror_error_set(
+					 error,
+					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+					 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+					 "%s: unable to create user key encryption context.",
+					 function );
+
+					goto on_error;
+				}
 				if( libluksde_encryption_set_key(
-				     internal_volume->io_handle->encryption_context,
+				     user_key_encryption_context,
 				     user_key,
 				     internal_volume->header->master_key_size,
 				     error ) != 1 )
@@ -1529,7 +1464,7 @@ int libluksde_volume_open_read(
 					 error,
 					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 					 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
-					 "%s: unable to set key in encryption context.",
+					 "%s: unable to set key in user key encryption context.",
 					 function );
 
 					goto on_error;
@@ -1555,7 +1490,7 @@ int libluksde_volume_open_read(
 					/* The data needs to be decrypted sector-by-sector
 					 */
 					if( libluksde_encryption_crypt(
-					     internal_volume->io_handle->encryption_context,
+					     user_key_encryption_context,
 					     LIBLUKSDE_ENCRYPTION_CRYPT_MODE_DECRYPT,
 					     &( key_material_data[ key_material_data_offset ] ),
 					     internal_volume->io_handle->bytes_per_sector,
@@ -1593,6 +1528,19 @@ int libluksde_volume_open_read(
 
 				key_material_data = NULL;
 
+				if( libluksde_encryption_free(
+				     &user_key_encryption_context,
+				     error ) != 1 )
+				{
+					libcerror_error_set(
+					 error,
+					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+					 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+					 "%s: unable to free user key encryption context.",
+					 function );
+
+					goto on_error;
+				}
 				if( libluksde_diffuser_merge(
 				     split_master_key_data,
 				     key_material_size,
@@ -1702,6 +1650,23 @@ int libluksde_volume_open_read(
 
 	if( internal_volume->is_locked == 0 )
 	{
+		if( libluksde_encryption_initialize(
+		     &( internal_volume->io_handle->encryption_context ),
+		     internal_volume->header->encryption_method,
+		     internal_volume->header->encryption_chaining_mode,
+		     internal_volume->header->initialization_vector_mode,
+		     internal_volume->header->essiv_hashing_method,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+			 "%s: unable to create encryption context.",
+			 function );
+
+			goto on_error;
+		}
 		if( libluksde_encryption_set_key(
 		     internal_volume->io_handle->encryption_context,
 		     internal_volume->master_key,
@@ -1802,6 +1767,12 @@ on_error:
 		 &( internal_volume->sectors_vector ),
 		 NULL );
 	}
+	if( internal_volume->io_handle->encryption_context != NULL )
+	{
+		libluksde_encryption_free(
+		 &( internal_volume->io_handle->encryption_context ),
+		 NULL );
+	}
 	if( split_master_key_data != NULL )
 	{
 		memory_set(
@@ -1816,6 +1787,12 @@ on_error:
 	{
 		memory_free(
 		 key_material_data );
+	}
+	if( user_key_encryption_context != NULL )
+	{
+		libluksde_encryption_free(
+		 &user_key_encryption_context,
+		 NULL );
 	}
 	if( internal_volume->header != NULL )
 	{

@@ -29,7 +29,7 @@
 #include "libluksde_libcerror.h"
 #include "libluksde_libcnotify.h"
 
-#include "luksde_volume.h"
+#include "luksde_keyslot.h"
 
 /* Creates a key slot
  * Make sure the value key_slot is referencing, is set to NULL
@@ -167,7 +167,7 @@ int libluksde_key_slot_read_data(
 
 		return( -1 );
 	}
-	if( data_size < sizeof( luksde_volume_key_slot_t ) )
+	if( data_size < sizeof( luksde_volume_keyslot_t ) )
 	{
 		libcerror_error_set(
 		 error,
@@ -182,25 +182,25 @@ int libluksde_key_slot_read_data(
 	if( libcnotify_verbose != 0 )
 	{
 		libcnotify_printf(
-		 "%s: key slot data:\n",
+		 "%s: keyslot data:\n",
 		 function );
 		libcnotify_print_data(
 		 data,
-		 sizeof( luksde_volume_key_slot_t ),
+		 sizeof( luksde_volume_keyslot_t ),
 		 0 );
 	}
 #endif
 	byte_stream_copy_to_uint32_big_endian(
-	 ( (luksde_volume_key_slot_t *) data )->state,
+	 ( (luksde_volume_keyslot_t *) data )->state,
 	 key_slot->state );
 
 	byte_stream_copy_to_uint32_big_endian(
-	 ( (luksde_volume_key_slot_t *) data )->number_of_iterations,
+	 ( (luksde_volume_keyslot_t *) data )->number_of_iterations,
 	 key_slot->number_of_iterations );
 
 	if( memory_copy(
 	     key_slot->salt,
-	     ( (luksde_volume_key_slot_t *) data )->salt,
+	     ( (luksde_volume_keyslot_t *) data )->salt,
 	     32 ) == NULL )
 	{
 		libcerror_error_set(
@@ -213,11 +213,11 @@ int libluksde_key_slot_read_data(
 		return( -1 );
 	}
 	byte_stream_copy_to_uint32_big_endian(
-	 ( (luksde_volume_key_slot_t *) data )->start_sector,
+	 ( (luksde_volume_keyslot_t *) data )->start_sector,
 	 key_slot->key_material_offset );
 
 	byte_stream_copy_to_uint32_big_endian(
-	 ( (luksde_volume_key_slot_t *) data )->number_of_stripes,
+	 ( (luksde_volume_keyslot_t *) data )->number_of_stripes,
 	 key_slot->number_of_stripes );
 
 #if defined( HAVE_DEBUG_OUTPUT )
@@ -237,7 +237,7 @@ int libluksde_key_slot_read_data(
 		 "%s: salt:\n",
 		 function );
 		libcnotify_print_data(
-		 ( (luksde_volume_key_slot_t *) data )->salt,
+		 ( (luksde_volume_keyslot_t *) data )->salt,
 		 32,
 		 0 );
 
@@ -254,7 +254,8 @@ int libluksde_key_slot_read_data(
 		libcnotify_printf(
 		 "\n" );
 	}
-#endif
+#endif /* defined( HAVE_DEBUG_OUTPUT ) */
+
 	return( 1 );
 }
 

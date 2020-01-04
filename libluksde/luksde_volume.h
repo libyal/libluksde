@@ -29,9 +29,9 @@
 extern "C" {
 #endif
 
-typedef struct luksde_volume_header luksde_volume_header_t;
+typedef struct luksde_volume_header_v1 luksde_volume_header_v1_t;
 
-struct luksde_volume_header
+struct luksde_volume_header_v1
 {
 	/* The signature
 	 * Consists of 6 bytes
@@ -41,6 +41,7 @@ struct luksde_volume_header
 
 	/* The format version
 	 * Consists of 2 bytes
+	 * Contains: 1
 	 */
 	uint8_t format_version[ 2 ];
 
@@ -94,34 +95,80 @@ struct luksde_volume_header
 	uint8_t volume_identifier[ 40 ];
 };
 
-typedef struct luksde_volume_key_slot luksde_volume_key_slot_t;
+typedef struct luksde_volume_header_v2 luksde_volume_header_v2_t;
 
-struct luksde_volume_key_slot
+struct luksde_volume_header_v2
 {
-	/* The state
-	 * Consists of 4 bytes
+	/* The signature
+	 * Consists of 6 bytes
+	 * Contains: LUKS\xba\xbe
 	 */
-	uint8_t state[ 4 ];
+	uint8_t signature[ 6 ];
 
-	/* The number of iterations
-	 * Consists of 4 bytes
+	/* The format version
+	 * Consists of 2 bytes
+	 * Contains: 2
 	 */
-	uint8_t number_of_iterations[ 4 ];
+	uint8_t format_version[ 2 ];
+
+	/* The metadata area size
+	 * Consists of 8 bytes
+	 */
+	uint8_t metadata_area_size[ 8 ];
+
+	/* The sequence identifier
+	 * Consists of 8 bytes
+	 */
+	uint8_t sequence_identifier[ 8 ];
+
+	/* The label
+	 * Consists of 48 bytes
+	 * Contains: an ASCII string with an end-of-string character
+	 */
+	uint8_t label[ 48 ];
+
+	/* The checksum method
+	 * Consists of 32 bytes
+	 * Contains: an ASCII string with an end-of-string character
+	 */
+	uint8_t checksum_method[ 32 ];
 
 	/* The salt
-	 * Consists of 32 bytes
+	 * Consists of 64 bytes
 	 */
-	uint8_t salt[ 32 ];
+	uint8_t salt[ 64 ];
 
-	/* The start sector
-	 * Consists of 4 bytes
+	/* The volume identifier
+	 * Consists of 40 bytes
+	 * Contains: an ASCII string with an end-of-string character
 	 */
-	uint8_t start_sector[ 4 ];
+	uint8_t volume_identifier[ 40 ];
 
-	/* The number of stripes
-	 * Consists of 4 bytes
+	/* The subsystem
+	 * Consists of 48 bytes
+	 * Contains: an ASCII string with an end-of-string character
 	 */
-	uint8_t number_of_stripes[ 4 ];
+	uint8_t subsystem[ 48 ];
+
+	/* The header offset
+	 * Consists of 8 bytes
+	 */
+	uint8_t header_offset[ 8 ];
+
+	/* Unknown (padding)
+	 * Consists of 184 bytes
+	 */
+	uint8_t padding1[ 184 ];
+
+	/* The checksum
+	 * Consists of 64 bytes
+	 */
+	uint8_t checksum[ 64 ];
+
+	/* Unknown (padding)
+	 * Consists of 3584 bytes
+	 */
+	uint8_t padding2[ 3584 ];
 };
 
 #if defined( __cplusplus )

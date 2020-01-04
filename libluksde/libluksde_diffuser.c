@@ -40,9 +40,10 @@ int libluksde_diffuser_diffuse(
      libcerror_error_t **error )
 {
 	uint8_t block_index_buffer[ 4 ];
-	uint8_t hash_buffer[ 32 ];
+	uint8_t hash_buffer[ 64 ];
 
 	libhmac_sha1_context_t *sha1_context     = NULL;
+	libhmac_sha224_context_t *sha224_context = NULL;
 	libhmac_sha256_context_t *sha256_context = NULL;
 	libhmac_sha512_context_t *sha512_context = NULL;
 	static char *function                    = "libluksde_diffuser_diffuse";
@@ -84,6 +85,10 @@ int libluksde_diffuser_diffuse(
 			hash_size = LIBHMAC_SHA1_HASH_SIZE;
 			break;
 
+		case LIBLUKSDE_HASHING_METHOD_SHA224:
+			hash_size = LIBHMAC_SHA224_HASH_SIZE;
+			break;
+
 		case LIBLUKSDE_HASHING_METHOD_SHA256:
 			hash_size = LIBHMAC_SHA256_HASH_SIZE;
 			break;
@@ -109,6 +114,12 @@ int libluksde_diffuser_diffuse(
 			case LIBLUKSDE_HASHING_METHOD_SHA1:
 				result = libhmac_sha1_initialize(
 					  &sha1_context,
+					  error );
+				break;
+
+			case LIBLUKSDE_HASHING_METHOD_SHA224:
+				result = libhmac_sha224_initialize(
+					  &sha224_context,
 					  error );
 				break;
 
@@ -148,6 +159,14 @@ int libluksde_diffuser_diffuse(
 			case LIBLUKSDE_HASHING_METHOD_SHA1:
 				result = libhmac_sha1_update(
 				          sha1_context,
+				          block_index_buffer,
+				          4,
+				          error );
+				break;
+
+			case LIBLUKSDE_HASHING_METHOD_SHA224:
+				result = libhmac_sha224_update(
+				          sha224_context,
 				          block_index_buffer,
 				          4,
 				          error );
@@ -202,6 +221,14 @@ int libluksde_diffuser_diffuse(
 				          error );
 				break;
 
+			case LIBLUKSDE_HASHING_METHOD_SHA224:
+				result = libhmac_sha224_update(
+				          sha224_context,
+				          &( data[ data_offset ] ),
+				          read_size,
+				          error );
+				break;
+
 			case LIBLUKSDE_HASHING_METHOD_SHA256:
 				result = libhmac_sha256_update(
 				          sha256_context,
@@ -243,6 +270,14 @@ int libluksde_diffuser_diffuse(
 				          error );
 				break;
 
+			case LIBLUKSDE_HASHING_METHOD_SHA224:
+				result = libhmac_sha224_finalize(
+				          sha224_context,
+				          hash_buffer,
+				          hash_size,
+				          error );
+				break;
+
 			case LIBLUKSDE_HASHING_METHOD_SHA256:
 				result = libhmac_sha256_finalize(
 				          sha256_context,
@@ -279,6 +314,12 @@ int libluksde_diffuser_diffuse(
 			case LIBLUKSDE_HASHING_METHOD_SHA1:
 				result = libhmac_sha1_free(
 				          &sha1_context,
+				          error );
+				break;
+
+			case LIBLUKSDE_HASHING_METHOD_SHA224:
+				result = libhmac_sha224_free(
+				          &sha224_context,
 				          error );
 				break;
 
@@ -331,10 +372,10 @@ int libluksde_diffuser_diffuse(
 	return( 1 );
 
 on_error:
-	if( sha1_context != NULL )
+	if( sha512_context != NULL )
 	{
-		libhmac_sha1_free(
-		 &sha1_context,
+		libhmac_sha512_free(
+		 &sha512_context,
 		 NULL );
 	}
 	if( sha256_context != NULL )
@@ -343,10 +384,16 @@ on_error:
 		 &sha256_context,
 		 NULL );
 	}
-	if( sha512_context != NULL )
+	if( sha224_context != NULL )
 	{
-		libhmac_sha512_free(
-		 &sha512_context,
+		libhmac_sha224_free(
+		 &sha224_context,
+		 NULL );
+	}
+	if( sha1_context != NULL )
+	{
+		libhmac_sha1_free(
+		 &sha1_context,
 		 NULL );
 	}
 	return( -1 );
@@ -453,7 +500,7 @@ int libluksde_diffuser_merge(
 		if( libluksde_diffuser_diffuse(
 		     data,
 		     data_size,
-		     LIBLUKSDE_HASHING_METHOD_SHA1,
+		     hashing_method,
 		     error ) != 1 )
 		{
 			libcerror_error_set(

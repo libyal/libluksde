@@ -348,6 +348,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\libluksde\luksde_keyslot.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\libluksde\luksde_volume.h"
 				>
 			</File>

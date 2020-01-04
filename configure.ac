@@ -2,7 +2,7 @@ AC_PREREQ( 2.59 )
 
 AC_INIT(
  [libluksde],
- [20200103],
+ [20200104],
  [joachim.metz@gmail.com])
 
 AC_CONFIG_SRCDIR(
@@ -264,6 +264,8 @@ Building:
    AES-ECB support:                             $ac_cv_libcaes_aes_ecb
    AES-XTS support:                             $ac_cv_libcaes_aes_xts
    libfcrypto support:                          $ac_cv_libfcrypto
+   ARC4-ECB support:                            $ac_cv_libfcrypto
+   Serpent-CBC support:                         $ac_cv_libfcrypto
    Serpent-ECB support:                         $ac_cv_libfcrypto
    FUSE support:                                $ac_cv_libfuse
 

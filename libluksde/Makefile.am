@@ -54,6 +54,7 @@ libluksde_la_SOURCES = \
 	libluksde_unused.h \
 	libluksde_volume.c libluksde_volume.h \
 	libluksde_volume_header.c libluksde_volume_header.h \
+	luksde_keyslot.h \
 	luksde_volume.h
 
 libluksde_la_LIBADD = \

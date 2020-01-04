@@ -98,6 +98,21 @@ int libluksde_volume_header_free(
      libluksde_volume_header_t **volume_header,
      libcerror_error_t **error );
 
+int libluksde_volume_parse_encryption_method(
+     libluksde_volume_header_t *volume_header,
+     const uint8_t *encryption_method,
+     libcerror_error_t **error );
+
+int libluksde_volume_parse_encryption_mode(
+     libluksde_volume_header_t *volume_header,
+     const uint8_t *encryption_mode,
+     libcerror_error_t **error );
+
+int libluksde_volume_parse_hashing_method(
+     libluksde_volume_header_t *volume_header,
+     const uint8_t *hashing_method,
+     libcerror_error_t **error );
+
 int libluksde_volume_header_read_data(
      libluksde_volume_header_t *volume_header,
      const uint8_t *data,

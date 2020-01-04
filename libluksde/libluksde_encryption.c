@@ -1065,7 +1065,7 @@ int libluksde_encryption_crypt(
 					/* The libcaes_crypt_ecb function decrypts 16 bytes at a time
 					 */
 					result = libcaes_crypt_ecb(
-						  context->aes_encryption_context,
+						  context->aes_decryption_context,
 						  LIBCAES_CRYPT_MODE_DECRYPT,
 						  &( input_data[ data_offset ] ),
 						  input_data_size - data_offset,
@@ -1098,10 +1098,10 @@ int libluksde_encryption_crypt(
 			case LIBLUKSDE_ENCRYPTION_MODE_RC4_ECB:
 				result = libfcrypto_rc4_crypt(
 					  context->rc4_decryption_context,
-					  &( input_data[ data_offset ] ),
-					  input_data_size - data_offset,
-					  &( output_data[ data_offset ] ),
-					  output_data_size - data_offset,
+					  input_data,
+					  input_data_size,
+					  output_data,
+					  output_data_size,
 					  error );
 
 				if( result != 1 )
@@ -1111,13 +1111,30 @@ int libluksde_encryption_crypt(
 				break;
 
 			case LIBLUKSDE_ENCRYPTION_MODE_SERPENT_CBC:
+				result = libfcrypto_serpent_crypt_cbc(
+					  context->serpent_decryption_context,
+					  LIBFCRYPTO_SERPENT_CRYPT_MODE_DECRYPT,
+					  initialization_vector,
+					  16,
+					  input_data,
+					  input_data_size,
+					  output_data,
+					  output_data_size,
+					  error );
+
+				if( result != 1 )
+				{
+					break;
+				}
+				break;
+
 			case LIBLUKSDE_ENCRYPTION_MODE_SERPENT_ECB:
 				while( data_offset < input_data_size )
 				{
 					/* The libfcrypto_serpent_crypt_ecb function decrypts 16 bytes at a time
 					 */
 					result = libfcrypto_serpent_crypt_ecb(
-						  context->serpent_encryption_context,
+						  context->serpent_decryption_context,
 						  LIBFCRYPTO_SERPENT_CRYPT_MODE_DECRYPT,
 						  &( input_data[ data_offset ] ),
 						  input_data_size - data_offset,

@@ -70,11 +70,30 @@ key material) seems to commonly be 2 MiB.
 
 A LUKS version 2 encrypted volume consist of:
 
-* volume header
+* metadata area
+  * volume header
+  * JSON area
+* backup metadata area
+  * backup volume header
+  * backup JSON area
 * keyslots area
-* backup volume header
-* backup keyslots area
 * encrypted (volume) data
+
+To make recovery easier the backup metadata area starts at a fixed offset:
+
+[cols="1,5",options="header"]
+|===
+| Offset | Maximum JSON area size
+| 16384 (0x004000) | 12 KiB
+| 32768 (0x008000) | 28 KiB
+| 65536 (0x010000) | 60 KiB
+| 131072 (0x020000) | 124 KiB
+| 262144 (0x040000) | 252 KiB
+| 524288 (0x080000) | 508 KiB
+| 1048576 (0x100000) | 1020 KiB
+| 2097152 (0x200000) | 2044 KiB
+| 4194304 (0x400000) | 4092 KiB
+|===
 
 === Characteristics
 
@@ -130,13 +149,11 @@ de/encrypt the corresponding split master key material.
 
 The user key is calculated as following:
 
-* For SHA-224, SHA-256 or SHA-512 calculate the hash of the password string.
 * Calculate the key using the PBKDF2 algorithm with:
   * The (password) hashing method stored in the volume header, as the as the pseudo-random function (PRF).
   * The number of iterations as stored in the corresponding key slot.
   * A salt, as stored in the corresponding key slot.
-  * For SHA-1 the password string as the input data.
-  * For SHA-224, SHA-256 or SHA-512 the password hash as the input data.
+  * The password string as the input data.
   * A (output) key size that is the same as that of the Master Key (MK).
 
 [yellow-background]*For now it is assumed that the user password contains ASCII characters only.*
@@ -292,27 +309,34 @@ Contains an ASCII string with an end-of-string character which consists of an UU
 
 [yellow-background]*Is the volume header padded with 0-byte values up to 4096 bytes?*
 
-=== Volume header - format version 2
+=== [[volume_header_v2]]Volume header - format version 2
 
-The volume header is 592 bytes in size and consists of:
+The volume header (or binary header) is 4096 bytes in size and consists of:
 
 [cols="1,1,1,5",options="header"]
 |===
 | Offset | Size | Value | Description
 | 0 | 6 | "LUKS\xba\xbe" | Signature
 | 6 | 2 | 2 | Format version
-| 8 | 8 | | Metadata area size
-| 16 | 8 | | Epoch
-| 24 | 48 | | [yellow-background]*Unknown (empty values)*
-| 72 | 32 | | Hashing method +
-The hashing method used for the user key calculation and the anti-forensic (AF) diffuser +
+| 8 | 8 | | Metadata area size +
+The size of the volume header and JSON area
+| 16 | 8 | | Epoch (or sequence identifier)
+| 24 | 48 | | Label +
 Contains an ASCII string with an end-of-string character
-| 104 | 64 | | [yellow-background]*Unknown*
+| 72 | 32 | | Metadata area checksum method (or algorithm) +
+Contains an ASCII string with an end-of-string character
+| 104 | 64 | | Salt
 | 168 | 40 | | Volume identifier +
 Contains an ASCII string with an end-of-string character which consists of an UUID in lower-case
-| 208 | 240 | | [yellow-background]*Unknown (empty values)*
-| 448 | 32 | | [yellow-background]*Unknown*
-| 480 | 3616 | | [yellow-background]*Unknown (empty values)*
+| 208 | 48 | | [yellow-background]*Unknown (subsystem)* +
+Contains an ASCII string with an end-of-string character
+| 256 | 8 | | Header offset +
+Offset of the volume header realtive to the start of the volume
+| 264 | 184 | | [yellow-background]*Unknown (padding)* +
+According to `[BROZ18]` this must be filled with 0-byte values
+| 448 | 64 | | Metadata area checksum
+| 512 | 7 x 512 = 3584 | | [yellow-background]*Unknown (padding)* +
+According to `[BROZ18]` this must be filled with 0-byte values
 |===
 
 ....
@@ -358,7 +382,19 @@ Digests:
 	            62 03 86 23 53 c4 fd fd 75 fc
 ....
 
-=== Keyslots area - format version 2
+=== JSON area
+
+The JSON area is stored directly after the volume header and must be 4096-byte
+aligned. The JSON area is variable of size and constists of:
+
+[cols="1,1,1,5",options="header"]
+|===
+| Offset | Size | Value | Description
+| 0 | ... | | JSON string +
+Contains an ASCII string with an end-of-string character
+| ... | ... | | [yellow-background]*Unknown (padding)* +
+According to `[BROZ18]` this must be filled with 0-byte values
+|===
 
 ....
 {
@@ -420,35 +456,20 @@ Digests:
 }
 ....
 
+==== Keyslots area
+
+[yellow-background]*TODO: add description.*
+
 === Backup volume header - format version 2
 
-....
-00004000  53 4b 55 4c ba be 00 02  00 00 00 00 00 00 40 00  |SKUL..........@.|
-00004010  00 00 00 00 00 00 00 03  00 00 00 00 00 00 00 00  |................|
-00004020  00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00  |................|
-*
-00004040  00 00 00 00 00 00 00 00  73 68 61 32 35 36 00 00  |........sha256..|
-00004050  00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00  |................|
-00004060  00 00 00 00 00 00 00 00  4e a7 34 0a 66 15 a4 2b  |........N.4.f..+|
-00004070  4c 26 49 45 d1 14 fb 60  d2 84 b9 2c 8f 97 40 20  |L&IE...`...,..@ |
-00004080  8f 8e ef 3c bb 7d dc 48  0a 35 4e cc 0f 08 9c 90  |...<.}.H.5N.....|
-00004090  87 0f db 3b a3 0a 41 6a  53 fd ee 74 72 00 f8 60  |...;..AjS..tr..`|
-000040a0  82 a4 fc ac 62 84 03 35  34 37 61 35 31 64 33 61  |....b..547a51d3a|
-000040b0  2d 39 62 34 31 2d 34 38  34 66 2d 39 31 37 37 2d  |-9b41-484f-9177-|
-000040c0  66 66 62 31 31 64 34 35  35 65 63 37 00 00 00 00  |ffb11d455ec7....|
-000040d0  00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00  |................|
-*
-00004100  00 00 00 00 00 00 40 00  00 00 00 00 00 00 00 00  |......@.........|
-00004110  00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00  |................|
-*
-000041c0  0a 24 76 5c 78 2b 78 fb  d6 db 24 60 2d 27 55 04  |.$v\x+x...$`-'U.|
-000041d0  93 d0 d1 89 11 65 38 6d  06 85 24 2e 4c ba 82 c6  |.....e8m..$.L...|
-000041e0  00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00  |................|
-....
+The backup (or secondary) volume header - format version 2 is the same as the
+<<volume_header_v2,Volume header - format version 2>> with a different
+signature: "SKUL\xba\xbe".
 
 === Encryption method
 
 The encryption mode consists of a string in the form:
+
 ....
 cipher
 ....
@@ -476,6 +497,7 @@ It is currently assumed that these identifiers are case insensitive.
 === Encryption mode
 
 The encryption mode consists of a string in the form:
+
 ....
 chaining_mode[-initialization_vector_mode[:initialization_vector_options]]
 ....
@@ -572,24 +594,24 @@ More encryption methods can be found by running "cat /proc/crypto".
 | URL: | http://clemens.endorphin.org/nmihde/nmihde-A4-ds.pdf
 |===
 
-`[FRUHWIRTH11]`
-
-[cols="1,5",options="header"]
-|===
-| Title: | LUKS On-Disk Format Specification - Version 1.2.1
-| Author(s): | Clemens Fruhwirth <clemens@endorphin.org>
-| Date: | October 16, 2011
-| URL: | http://wiki.cryptsetup.googlecode.com/git/LUKS-standard/on-disk-format.pdf
-|===
-
 `[BROZ18]`
 
 [cols="1,5",options="header"]
 |===
 | Title: | LUKS2 On-Disk Format Specification - Version 1.0.0
 | Author(s): | Milan Broz <gmazyland@gmail.com>
-| Date: | August 2, 2018
+| Date: | October 23, 2018
 | URL: | https://gitlab.com/cryptsetup/cryptsetup/blob/master/docs/on-disk-format-luks2.pdf
+|===
+
+`[FRUHWIRTH18]`
+
+[cols="1,5",options="header"]
+|===
+| Title: | LUKS On-Disk Format Specification - Version 1.2.3
+| Author(s): | Clemens Fruhwirth <clemens@endorphin.org>
+| Date: | January 20, 2018
+| URL: | https://gitlab.com/cryptsetup/cryptsetup/-/wikis/LUKS-standard/on-disk-format.pdf
 |===
 
 `[CRYPTSETUP]`
