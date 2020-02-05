@@ -50,7 +50,7 @@ struct libluksde_internal_volume
 
 	/* The master key
 	 */
-	uint8_t master_key[ 32 ];
+	uint8_t master_key[ 64 ];
 
 	/* The master key size
 	 */

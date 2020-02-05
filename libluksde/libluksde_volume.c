@@ -1214,6 +1214,18 @@ int libluksde_volume_open_read(
 
 		goto on_error;
 	}
+	if( ( internal_volume->header->master_key_size == 0 )
+	 || ( internal_volume->header->master_key_size > 64 ) )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
+		 "%s: invalid master key size value out of bounds.",
+		 function );
+
+		return( -1 );
+	}
 	internal_volume->master_key_size = internal_volume->header->master_key_size;
 
 	if( internal_volume->header->encrypted_volume_start_sector >= ( internal_volume->io_handle->volume_size / internal_volume->io_handle->bytes_per_sector ) )
@@ -1324,7 +1336,7 @@ int libluksde_volume_open_read(
 				     32,
 				     key_slot->number_of_iterations,
 				     user_key,
-				     internal_volume->header->master_key_size,
+				     internal_volume->master_key_size,
 				     error ) != 1 )
 				{
 					libcerror_error_set(
@@ -1365,7 +1377,7 @@ int libluksde_volume_open_read(
 					goto on_error;
 				}
 /* TODO add bounds check */
-				key_material_size = internal_volume->header->master_key_size
+				key_material_size = internal_volume->master_key_size
 						  * key_slot->number_of_stripes;
 
 				key_material_data = (uint8_t *) memory_allocate(
@@ -1457,7 +1469,7 @@ int libluksde_volume_open_read(
 				if( libluksde_encryption_set_key(
 				     user_key_encryption_context,
 				     user_key,
-				     internal_volume->header->master_key_size,
+				     internal_volume->master_key_size,
 				     error ) != 1 )
 				{
 					libcerror_error_set(
@@ -1545,7 +1557,7 @@ int libluksde_volume_open_read(
 				     split_master_key_data,
 				     key_material_size,
 				     internal_volume->master_key,
-				     internal_volume->header->master_key_size,
+				     internal_volume->master_key_size,
 				     key_slot->number_of_stripes,
 				     internal_volume->header->hashing_method,
 				     error ) != 1 )
@@ -1567,7 +1579,7 @@ int libluksde_volume_open_read(
 					 function );
 					libcnotify_print_data(
 					 internal_volume->master_key,
-					 internal_volume->header->master_key_size,
+					 internal_volume->master_key_size,
 					 0 );
 				}
 #endif
@@ -1592,7 +1604,7 @@ int libluksde_volume_open_read(
 
 				if( libluksde_password_pbkdf2(
 				     internal_volume->master_key,
-				     internal_volume->header->master_key_size,
+				     internal_volume->master_key_size,
 				     internal_volume->header->hashing_method,
 				     internal_volume->header->master_key_salt,
 				     32,
@@ -1670,7 +1682,7 @@ int libluksde_volume_open_read(
 		if( libluksde_encryption_set_key(
 		     internal_volume->io_handle->encryption_context,
 		     internal_volume->master_key,
-		     internal_volume->header->master_key_size,
+		     internal_volume->master_key_size,
 		     error ) != 1 )
 		{
 			libcerror_error_set(
@@ -2870,7 +2882,8 @@ int libluksde_volume_set_key(
 		return( -1 );
 	}
 	if( ( master_key_size != 16 )
-	 && ( master_key_size != 32 ) )
+	 && ( master_key_size != 32 )
+	 && ( master_key_size != 64 ) )
 	{
 		libcerror_error_set(
 		 error,
@@ -2896,22 +2909,19 @@ int libluksde_volume_set_key(
 		return( -1 );
 	}
 #endif
-	if( master_key_size < 32 )
+	if( memory_set(
+	     internal_volume->master_key,
+	     0,
+	     64  ) == NULL )
 	{
-		if( memory_set(
-		     internal_volume->master_key,
-		     0,
-		     32  ) == NULL )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_MEMORY,
-			 LIBCERROR_MEMORY_ERROR_SET_FAILED,
-			 "%s: unable to clear master key.",
-			 function );
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_MEMORY,
+		 LIBCERROR_MEMORY_ERROR_SET_FAILED,
+		 "%s: unable to clear master key.",
+		 function );
 
-			goto on_error;
-		}
+		goto on_error;
 	}
 	if( memory_copy(
 	     internal_volume->master_key,

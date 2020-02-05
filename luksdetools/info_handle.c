@@ -367,10 +367,10 @@ int info_handle_signal_abort(
 	return( 1 );
 }
 
-/* Sets the keys
+/* Sets the key
  * Returns 1 if successful or -1 on error
  */
-int info_handle_set_keys(
+int info_handle_set_key(
      info_handle_t *info_handle,
      const system_character_t *string,
      libcerror_error_t **error )
@@ -378,7 +378,7 @@ int info_handle_set_keys(
 	uint8_t key_data[ 64 ];
 
 	system_character_t *string_segment               = NULL;
-	static char *function                            = "info_handle_set_keys";
+	static char *function                            = "info_handle_set_key";
 	size_t full_volume_encryption_key_size           = 0;
 	size_t string_length                             = 0;
 	size_t string_segment_size                       = 0;
@@ -540,7 +540,7 @@ int info_handle_set_keys(
 	}
 	if( string_segment_size == 129 )
 	{
-		/* Allow the keys to be specified as a single 512-bit stream
+		/* Allow the key to be specified as a single 512-bit stream
 		 */
 		if( number_of_segments != 1 )
 		{
@@ -772,7 +772,7 @@ int info_handle_set_volume_offset(
 }
 
 /* Opens the info handle
- * Returns 1 if successful, 0 if the keys could not be read or -1 on error
+ * Returns 1 if successful, 0 if the key could not be read or -1 on error
  */
 int info_handle_open_input(
      info_handle_t *info_handle,
@@ -973,7 +973,7 @@ int info_handle_guid_value_fprint(
 	     guid,
 	     guid_data,
 	     16,
-	     LIBFGUID_ENDIAN_LITTLE,
+	     LIBFGUID_ENDIAN_BIG,
 	     error ) != 1 )
 	{
 		libcerror_error_set(

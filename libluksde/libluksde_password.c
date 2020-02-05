@@ -244,6 +244,10 @@ int libluksde_password_pbkdf2(
 
 		goto on_error;
 	}
+	byte_stream_copy_from_uint32_big_endian(
+	 &( data_buffer[ salt_size ] ),
+	 0 );
+
 #if defined( HAVE_DEBUG_OUTPUT )
 	if( libcnotify_verbose != 0 )
 	{

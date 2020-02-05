@@ -59,7 +59,7 @@ void usage_fprint(
 	fprintf( stream, "Use luksdeinfo to determine information about a Linux Unified\n"
 	                 "Key Setup (LUKS) volume\n\n" );
 
-	fprintf( stream, "Usage: luksdeinfo [ -k keys ] [ -o offset ] [ -p password ]\n"
+	fprintf( stream, "Usage: luksdeinfo [ -k key ] [ -o offset ] [ -p password ]\n"
 	                 "                  [ -hvV ] source\n\n" );
 
 	fprintf( stream, "\tsource: the source file or device\n\n" );
@@ -125,7 +125,7 @@ int main( int argc, char * const argv[] )
 #endif
 {
 	libluksde_error_t *error                 = NULL;
-	system_character_t *option_keys          = NULL;
+	system_character_t *option_key           = NULL;
 	system_character_t *option_password      = NULL;
 	system_character_t *option_volume_offset = NULL;
 	system_character_t *source               = NULL;
@@ -190,7 +190,7 @@ int main( int argc, char * const argv[] )
 				return( EXIT_SUCCESS );
 
 			case (system_integer_t) 'k':
-				option_keys = optarg;
+				option_key = optarg;
 
 				break;
 
@@ -247,16 +247,16 @@ int main( int argc, char * const argv[] )
 
 		goto on_error;
 	}
-	if( option_keys != NULL )
+	if( option_key != NULL )
 	{
-		if( info_handle_set_keys(
+		if( info_handle_set_key(
 		     luksdeinfo_info_handle,
-		     option_keys,
+		     option_key,
 		     &error ) != 1 )
 		{
 			fprintf(
 			 stderr,
-			 "Unable to set keys.\n" );
+			 "Unable to set key.\n" );
 
 			goto on_error;
 		}
