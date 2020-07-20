@@ -429,8 +429,6 @@ int main(
 	 "libluksde_io_handle_clear",
 	 luksde_test_io_handle_clear );
 
-	/* TODO: add tests for libluksde_io_handle_read_volume_header */
-
 	/* TODO: add tests for libluksde_io_handle_read_sector */
 
 #endif /* defined( __GNUC__ ) && !defined( LIBLUKSDE_DLL_IMPORT ) */

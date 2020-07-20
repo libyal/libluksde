@@ -80,8 +80,7 @@ class VolumeTypeTests(unittest.TestCase):
 
       luksde_volume.close()
 
-      # TODO: change IOError into TypeError
-      with self.assertRaises(IOError):
+      with self.assertRaises(TypeError):
         luksde_volume.open_file_object(None)
 
       with self.assertRaises(ValueError):

@@ -1900,8 +1900,6 @@ ssize_t libluksde_internal_volume_read_buffer_from_file_io_handle(
 	off64_t element_data_offset          = 0;
 	size_t buffer_offset                 = 0;
 	size_t read_size                     = 0;
-	size_t sector_data_offset            = 0;
-	ssize_t total_read_count             = 0;
 
 	if( internal_volume == NULL )
 	{
@@ -1991,6 +1989,8 @@ ssize_t libluksde_internal_volume_read_buffer_from_file_io_handle(
 
 		return( -1 );
 	}
+	internal_volume->io_handle->abort = 0;
+
 	if( (size64_t) internal_volume->current_offset >= internal_volume->io_handle->encrypted_volume_size )
 	{
 		return( 0 );
@@ -1999,8 +1999,6 @@ ssize_t libluksde_internal_volume_read_buffer_from_file_io_handle(
 	{
 		buffer_size = (size_t) ( internal_volume->io_handle->encrypted_volume_size - internal_volume->current_offset );
 	}
-	sector_data_offset = (size_t) ( internal_volume->current_offset % internal_volume->io_handle->bytes_per_sector );
-
 	while( buffer_size > 0 )
 	{
 		if( libfdata_vector_get_element_value_at_offset(
@@ -2035,7 +2033,7 @@ ssize_t libluksde_internal_volume_read_buffer_from_file_io_handle(
 
 			return( -1 );
 		}
-		read_size = sector_data->data_size - sector_data_offset;
+		read_size = sector_data->data_size - element_data_offset;
 
 		if( read_size > buffer_size )
 		{
@@ -2047,7 +2045,7 @@ ssize_t libluksde_internal_volume_read_buffer_from_file_io_handle(
 		}
 		if( memory_copy(
 		     &( ( (uint8_t *) buffer )[ buffer_offset ] ),
-		     &( ( sector_data->data )[ sector_data_offset ] ),
+		     &( ( sector_data->data )[ element_data_offset ] ),
 		     read_size ) == NULL )
 		{
 			libcerror_error_set(
@@ -2059,10 +2057,9 @@ ssize_t libluksde_internal_volume_read_buffer_from_file_io_handle(
 
 			return( -1 );
 		}
-		buffer_offset     += read_size;
-		buffer_size       -= read_size;
-		total_read_count  += (ssize_t) read_size;
-		sector_data_offset = 0;
+		buffer_offset      += read_size;
+		buffer_size        -= read_size;
+		element_data_offset = 0;
 
 		internal_volume->current_offset += (off64_t) read_size;
 
@@ -2075,7 +2072,7 @@ ssize_t libluksde_internal_volume_read_buffer_from_file_io_handle(
 			break;
 		}
 	}
-	return( total_read_count );
+	return( (ssize_t) buffer_offset );
 }
 
 /* Reads data at the current offset into a buffer

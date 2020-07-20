@@ -113,6 +113,8 @@ int luksde_test_key_slot_initialize(
 	          &key_slot,
 	          &error );
 
+	key_slot = NULL;
+
 	LUKSDE_TEST_ASSERT_EQUAL_INT(
 	 "result",
 	 result,
@@ -124,8 +126,6 @@ int luksde_test_key_slot_initialize(
 
 	libcerror_error_free(
 	 &error );
-
-	key_slot = NULL;
 
 #if defined( HAVE_LUKSDE_TEST_MEMORY )
 

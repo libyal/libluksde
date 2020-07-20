@@ -27,7 +27,6 @@
 #include <stdlib.h>
 #endif
 
-#include "luksde_test_libcerror.h"
 #include "luksde_test_libluksde.h"
 #include "luksde_test_macros.h"
 #include "luksde_test_unused.h"
