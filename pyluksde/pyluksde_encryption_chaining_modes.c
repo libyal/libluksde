@@ -242,7 +242,7 @@ on_error:
 	return( NULL );
 }
 
-/* Intializes an encryption chaining modes object
+/* Initializes an encryption chaining modes object
  * Returns 0 if successful or -1 on error
  */
 int pyluksde_encryption_chaining_modes_init(

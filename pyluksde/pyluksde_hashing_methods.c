@@ -270,7 +270,7 @@ on_error:
 	return( NULL );
 }
 
-/* Intializes a hashing methods object
+/* Initializes a hashing methods object
  * Returns 0 if successful or -1 on error
  */
 int pyluksde_hashing_methods_init(

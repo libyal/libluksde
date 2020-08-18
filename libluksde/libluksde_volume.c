@@ -778,7 +778,7 @@ int libluksde_volume_open_file_io_handle(
 		}
 		file_io_handle_opened_in_library = 1;
 	}
-	result = libluksde_volume_open_read(
+	result = libluksde_internal_volume_open_read(
 	          internal_volume,
 	          file_io_handle,
 	          error );
@@ -1063,7 +1063,7 @@ int libluksde_volume_close(
 /* Opens a volume for reading
  * Returns 1 if successful, 0 if the keys could not be read or -1 on error
  */
-int libluksde_volume_open_read(
+int libluksde_internal_volume_open_read(
      libluksde_internal_volume_t *internal_volume,
      libbfio_handle_t *file_io_handle,
      libcerror_error_t **error )
@@ -1075,7 +1075,7 @@ int libluksde_volume_open_read(
 	libluksde_key_slot_t *key_slot                              = NULL;
 	uint8_t *key_material_data                                  = NULL;
 	uint8_t *split_master_key_data                              = NULL;
-	static char *function                                       = "libluksde_volume_open_read";
+	static char *function                                       = "libluksde_internal_volume_open_read";
 	size_t key_material_data_offset                             = 0;
 	size_t key_material_size                                    = 0;
 	ssize_t read_count                                          = 0;
@@ -1150,21 +1150,6 @@ int libluksde_volume_open_read(
 
 		return( -1 );
 	}
-#if defined( HAVE_LIBLUKSDE_MULTI_THREAD_SUPPORT )
-	if( libcthreads_read_write_lock_grab_for_write(
-	     internal_volume->read_write_lock,
-	     error ) != 1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
-		 "%s: unable to grab read/write lock for writing.",
-		 function );
-
-		return( -1 );
-	}
-#endif
 	if( libbfio_handle_get_size(
 	     file_io_handle,
 	     &( internal_volume->io_handle->volume_size ),
@@ -1224,7 +1209,7 @@ int libluksde_volume_open_read(
 		 "%s: invalid master key size value out of bounds.",
 		 function );
 
-		return( -1 );
+		goto on_error;
 	}
 	internal_volume->master_key_size = internal_volume->header->master_key_size;
 
@@ -1237,7 +1222,7 @@ int libluksde_volume_open_read(
 		 "%s: invalid encrypted volume start sector value out of bounds.",
 		 function );
 
-		return( -1 );
+		goto on_error;
 	}
 	internal_volume->io_handle->encrypted_volume_offset = internal_volume->header->encrypted_volume_start_sector
 	                                                    * internal_volume->io_handle->bytes_per_sector;
@@ -1376,9 +1361,30 @@ int libluksde_volume_open_read(
 
 					goto on_error;
 				}
-/* TODO add bounds check */
-				key_material_size = internal_volume->master_key_size
-						  * key_slot->number_of_stripes;
+				if( key_slot->number_of_stripes == 0 )
+				{
+					libcerror_error_set(
+					 error,
+					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+					 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
+					 "%s: invalid key slot - number of stripes value out of bounds.",
+					 function );
+
+					goto on_error;
+				}
+				if( ( internal_volume->master_key_size == 0 )
+				 || ( internal_volume->master_key_size > ( (size_t) MEMORY_MAXIMUM_ALLOCATION_SIZE / key_slot->number_of_stripes ) ) )
+				{
+					libcerror_error_set(
+					 error,
+					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+					 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
+					 "%s: invalid volume - master key size value out of bounds.",
+					 function );
+
+					goto on_error;
+				}
+				key_material_size = (size_t) internal_volume->master_key_size * key_slot->number_of_stripes;
 
 				key_material_data = (uint8_t *) memory_allocate(
 				                                 sizeof( uint8_t ) * key_material_size );
@@ -1749,21 +1755,6 @@ int libluksde_volume_open_read(
 		}
 		result = 1;
 	}
-#if defined( HAVE_LIBLUKSDE_MULTI_THREAD_SUPPORT )
-	if( libcthreads_read_write_lock_release_for_write(
-	     internal_volume->read_write_lock,
-	     error ) != 1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
-		 "%s: unable to release read/write lock for writing.",
-		 function );
-
-		return( -1 );
-	}
-#endif
 	return( result );
 
 on_error:
@@ -1817,11 +1808,6 @@ on_error:
 	 0,
 	 32 );
 
-#if defined( HAVE_LIBLUKSDE_MULTI_THREAD_SUPPORT )
-	libcthreads_read_write_lock_release_for_write(
-	 internal_volume->read_write_lock,
-	 NULL );
-#endif
 	return( -1 );
 }
 
@@ -2274,70 +2260,6 @@ on_error:
 #endif
 	return( -1 );
 }
-
-#ifdef TODO_WRITE_SUPPORT
-
-/* Writes (volume) data at the current offset
- * Returns the number of input bytes written, 0 when no longer bytes can be written or -1 on error
- */
-ssize_t libluksde_volume_write_buffer(
-         libluksde_volume_t *volume,
-         void *buffer,
-         size_t buffer_size,
-         libcerror_error_t **error )
-{
-	return( -1 );
-}
-
-/* Writes (volume) data at a specific offset,
- * Returns the number of input bytes written, 0 when no longer bytes can be written or -1 on error
- */
-ssize_t libluksde_volume_write_buffer_at_offset(
-         libluksde_volume_t *volume,
-         const void *buffer,
-         size_t buffer_size,
-         off64_t offset,
-         libcerror_error_t **error )
-{
-	static char *function = "libluksde_volume_write_buffer_at_offset";
-	ssize_t write_count   = 0;
-
-	if( libluksde_volume_seek_offset(
-	     volume,
-	     offset,
-	     SEEK_SET,
-	     error ) == -1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_IO,
-		 LIBCERROR_IO_ERROR_SEEK_FAILED,
-		 "%s: unable to seek offset.",
-		 function );
-
-		return( -1 );
-	}
-	write_count = libluksde_volume_write_buffer(
-	               volume,
-	               buffer,
-	               buffer_size,
-	               error );
-
-	if( write_count < 0 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_IO,
-		 LIBCERROR_IO_ERROR_WRITE_FAILED,
-		 "%s: unable to write buffer.",
-		 function );
-
-		return( -1 );
-	}
-	return( write_count );
-}
-
-#endif /* TODO_WRITE_SUPPORT */
 
 /* Seeks a certain offset of the (volume) data
  * This function is not multi-thread safe acquire write lock before call
@@ -3207,6 +3129,17 @@ int libluksde_volume_set_utf8_password(
 	}
 	internal_volume->user_password_size += 1;
 
+	if( internal_volume->user_password_size > (size_t) MEMORY_MAXIMUM_ALLOCATION_SIZE )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_EXCEEDS_MAXIMUM,
+		 "%s: invalid volume - user password size value exceeds maximum allocation size.",
+		 function );
+
+		goto on_error;
+	}
 	internal_volume->user_password = (uint8_t *) memory_allocate(
 	                                              sizeof( uint8_t ) * internal_volume->user_password_size );
 
@@ -3387,6 +3320,17 @@ int libluksde_volume_set_utf16_password(
 	}
 	internal_volume->user_password_size += 1;
 
+	if( internal_volume->user_password_size > (size_t) MEMORY_MAXIMUM_ALLOCATION_SIZE )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_EXCEEDS_MAXIMUM,
+		 "%s: invalid volume - user password size value exceeds maximum allocation size.",
+		 function );
+
+		goto on_error;
+	}
 	internal_volume->user_password = (uint8_t *) memory_allocate(
 	                                              sizeof( uint8_t ) * internal_volume->user_password_size );
 

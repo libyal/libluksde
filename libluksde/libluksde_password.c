@@ -216,6 +216,17 @@ int libluksde_password_pbkdf2(
 	}
 	data_buffer_size = salt_size + 4;
 
+	if( data_buffer_size > (size_t) MEMORY_MAXIMUM_ALLOCATION_SIZE )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_EXCEEDS_MAXIMUM,
+		 "%s: invalid data buffer size value exceeds maximum allocation size.",
+		 function );
+
+		return( -1 );
+	}
 	data_buffer = (uint8_t *) memory_allocate(
 	                           sizeof( uint8_t ) * data_buffer_size );
 

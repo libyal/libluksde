@@ -298,7 +298,7 @@ on_error:
 	return( NULL );
 }
 
-/* Intializes an initialization vector modes object
+/* Initializes an initialization vector modes object
  * Returns 0 if successful or -1 on error
  */
 int pyluksde_initialization_vector_modes_init(

@@ -156,7 +156,7 @@ int libluksde_volume_close(
      libluksde_volume_t *volume,
      libcerror_error_t **error );
 
-int libluksde_volume_open_read(
+int libluksde_internal_volume_open_read(
      libluksde_internal_volume_t *internal_volume,
      libbfio_handle_t *file_io_handle,
      libcerror_error_t **error );
@@ -187,25 +187,6 @@ ssize_t libluksde_volume_read_buffer_at_offset(
          size_t buffer_size,
          off64_t offset,
          libcerror_error_t **error );
-
-#ifdef TODO_WRITE_SUPPORT
-
-LIBLUKSDE_EXTERN \
-ssize_t libluksde_volume_write_buffer(
-         libluksde_volume_t *volume,
-         void *buffer,
-         size_t buffer_size,
-         libcerror_error_t **error );
-
-LIBLUKSDE_EXTERN \
-ssize_t libluksde_volume_write_buffer_at_offset(
-         libluksde_volume_t *volume,
-         const void *buffer,
-         size_t buffer_size,
-         off64_t offset,
-         libcerror_error_t **error );
-
-#endif /* TODO_WRITE_SUPPORT */
 
 off64_t libluksde_internal_volume_seek_offset(
          libluksde_internal_volume_t *internal_volume,
