@@ -1,4 +1,4 @@
-.Dd January  1, 2019
+.Dd November 29, 2020
 .Dt libluksde 3
 .Os libluksde
 .Sh NAME
@@ -64,10 +64,6 @@ Volume functions
 .Fn libluksde_volume_read_buffer "libluksde_volume_t *volume" "void *buffer" "size_t buffer_size" "libluksde_error_t **error"
 .Ft ssize_t
 .Fn libluksde_volume_read_buffer_at_offset "libluksde_volume_t *volume" "void *buffer" "size_t buffer_size" "off64_t offset" "libluksde_error_t **error"
-.Ft ssize_t
-.Fn libluksde_volume_write_buffer "libluksde_volume_t *volume" "void *buffer" "size_t buffer_size" "libluksde_error_t **error"
-.Ft ssize_t
-.Fn libluksde_volume_write_buffer_at_offset "libluksde_volume_t *volume" "const void *buffer" "size_t buffer_size" "off64_t offset" "libluksde_error_t **error"
 .Ft off64_t
 .Fn libluksde_volume_seek_offset "libluksde_volume_t *volume" "off64_t offset" "int whence" "libluksde_error_t **error"
 .Ft int

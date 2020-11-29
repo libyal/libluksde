@@ -30,7 +30,11 @@
 
 #include <libluksde/extern.h>
 
+#if defined( __CYGWIN__ )
+#define LIBLUKSDE_EXTERN_VARIABLE	extern
+#else
 #define LIBLUKSDE_EXTERN_VARIABLE	LIBLUKSDE_EXTERN
+#endif
 
 #else
 #define LIBLUKSDE_EXTERN		/* extern */
