@@ -1335,32 +1335,6 @@ int libluksde_internal_volume_open_read(
 				}
 				key_slot->key_material_offset *= internal_volume->io_handle->bytes_per_sector;
 
-#if defined( HAVE_DEBUG_OUTPUT )
-				if( libcnotify_verbose != 0 )
-				{
-					libcnotify_printf(
-					 "%s: reading key material at offset: %" PRIi64 " (0x%08" PRIx64 ")\n",
-					 function,
-					 key_slot->key_material_offset,
-					 key_slot->key_material_offset );
-				}
-#endif
-				if( libbfio_handle_seek_offset(
-				     file_io_handle,
-				     key_slot->key_material_offset,
-				     SEEK_SET,
-				     error ) == -1 )
-				{
-					libcerror_error_set(
-					 error,
-					 LIBCERROR_ERROR_DOMAIN_IO,
-					 LIBCERROR_IO_ERROR_SEEK_FAILED,
-					 "%s: unable to seek key material offset: %" PRIi64 ".",
-					 function,
-					 key_slot->key_material_offset );
-
-					goto on_error;
-				}
 				if( key_slot->number_of_stripes == 0 )
 				{
 					libcerror_error_set(
@@ -1400,10 +1374,21 @@ int libluksde_internal_volume_open_read(
 
 					goto on_error;
 				}
-				read_count = libbfio_handle_read_buffer(
+#if defined( HAVE_DEBUG_OUTPUT )
+				if( libcnotify_verbose != 0 )
+				{
+					libcnotify_printf(
+					 "%s: reading key material at offset: %" PRIi64 " (0x%08" PRIx64 ")\n",
+					 function,
+					 key_slot->key_material_offset,
+					 key_slot->key_material_offset );
+				}
+#endif
+				read_count = libbfio_handle_read_buffer_at_offset(
 					      file_io_handle,
 					      key_material_data,
 					      key_material_size,
+					      key_slot->key_material_offset,
 					      error );
 
 				if( read_count != (ssize_t) key_material_size )
@@ -1412,8 +1397,10 @@ int libluksde_internal_volume_open_read(
 					 error,
 					 LIBCERROR_ERROR_DOMAIN_IO,
 					 LIBCERROR_IO_ERROR_READ_FAILED,
-					 "%s: unable to read key material data.",
-					 function );
+					 "%s: unable to read key material data at offset: %" PRIi64 " (0x%08" PRIx64 ").",
+					 function,
+					 key_slot->key_material_offset,
+					 key_slot->key_material_offset );
 
 					goto on_error;
 				}
