@@ -1,7 +1,7 @@
 /*
  * Library to access the Linux Unified Key Setup (LUKS) Disk Encryption format
  *
- * Copyright (C) 2013-2020, Joachim Metz <joachim.metz@gmail.com>
+ * Copyright (C) 2013-2021, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
