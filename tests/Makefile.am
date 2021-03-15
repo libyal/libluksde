@@ -1,3 +1,5 @@
+AUTOMAKE_OPTIONS = subdir-objects
+
 AM_CPPFLAGS = \
 	-I$(top_srcdir)/include \
 	-I$(top_srcdir)/common \
@@ -27,6 +29,7 @@ endif
 
 TESTS = \
 	test_library.sh \
+	test_tools.sh \
 	test_luksdeinfo.sh \
 	$(TESTS_PYLUKSDE)
 
@@ -37,7 +40,8 @@ check_SCRIPTS = \
 	test_luksdeinfo.sh \
 	test_manpage.sh \
 	test_python_module.sh \
-	test_runner.sh
+	test_runner.sh \
+	test_tools.sh
 
 EXTRA_DIST = \
 	$(check_SCRIPTS)
@@ -50,6 +54,9 @@ check_PROGRAMS = \
 	luksde_test_password \
 	luksde_test_sector_data \
 	luksde_test_support \
+	luksde_test_tools_info_handle \
+	luksde_test_tools_output \
+	luksde_test_tools_signal \
 	luksde_test_volume \
 	luksde_test_volume_header
 
@@ -143,6 +150,49 @@ luksde_test_support_LDADD = \
 	@LIBCNOTIFY_LIBADD@ \
 	@LIBCLOCALE_LIBADD@ \
 	@LIBCDATA_LIBADD@ \
+	../libluksde/libluksde.la \
+	@LIBCERROR_LIBADD@
+
+luksde_test_tools_info_handle_SOURCES = \
+	../luksdetools/info_handle.c ../luksdetools/info_handle.h \
+	luksde_test_libcerror.h \
+	luksde_test_macros.h \
+	luksde_test_memory.c luksde_test_memory.h \
+	luksde_test_tools_info_handle.c \
+	luksde_test_unused.h
+
+luksde_test_tools_info_handle_LDADD = \
+	@LIBFGUID_LIBADD@ \
+	@LIBBFIO_LIBADD@ \
+	@LIBCPATH_LIBADD@ \
+	@LIBCFILE_LIBADD@ \
+	@LIBUNA_LIBADD@ \
+	@LIBCSPLIT_LIBADD@ \
+	@LIBCNOTIFY_LIBADD@ \
+	@LIBCLOCALE_LIBADD@ \
+	@LIBCDATA_LIBADD@ \
+	../libluksde/libluksde.la \
+	@LIBCERROR_LIBADD@
+
+luksde_test_tools_output_SOURCES = \
+	../luksdetools/luksdetools_output.c ../luksdetools/luksdetools_output.h \
+	luksde_test_libcerror.h \
+	luksde_test_macros.h \
+	luksde_test_tools_output.c \
+	luksde_test_unused.h
+
+luksde_test_tools_output_LDADD = \
+	../libluksde/libluksde.la \
+	@LIBCERROR_LIBADD@
+
+luksde_test_tools_signal_SOURCES = \
+	../luksdetools/luksdetools_signal.c ../luksdetools/luksdetools_signal.h \
+	luksde_test_libcerror.h \
+	luksde_test_macros.h \
+	luksde_test_tools_signal.c \
+	luksde_test_unused.h
+
+luksde_test_tools_signal_LDADD = \
 	../libluksde/libluksde.la \
 	@LIBCERROR_LIBADD@
 
