@@ -39,17 +39,18 @@ class VolumeTypeTests(unittest.TestCase):
 
   def test_open(self):
     """Tests the open function."""
-    if not unittest.source:
+    test_source = unittest.source
+    if not test_source:
       raise unittest.SkipTest("missing source")
 
     luksde_volume = pyluksde.volume()
     if unittest.password:
       luksde_volume.set_password(unittest.password)
 
-    luksde_volume.open(unittest.source)
+    luksde_volume.open(test_source)
 
     with self.assertRaises(IOError):
-      luksde_volume.open(unittest.source)
+      luksde_volume.open(test_source)
 
     luksde_volume.close()
 
@@ -57,21 +58,22 @@ class VolumeTypeTests(unittest.TestCase):
       luksde_volume.open(None)
 
     with self.assertRaises(ValueError):
-      luksde_volume.open(unittest.source, mode="w")
+      luksde_volume.open(test_source, mode="w")
 
   def test_open_file_object(self):
     """Tests the open_file_object function."""
-    if not unittest.source:
+    test_source = unittest.source
+    if not test_source:
       raise unittest.SkipTest("missing source")
 
-    if not os.path.isfile(unittest.source):
+    if not os.path.isfile(test_source):
       raise unittest.SkipTest("source not a regular file")
 
     luksde_volume = pyluksde.volume()
     if unittest.password:
       luksde_volume.set_password(unittest.password)
 
-    with open(unittest.source, "rb") as file_object:
+    with open(test_source, "rb") as file_object:
 
       luksde_volume.open_file_object(file_object)
 
@@ -88,7 +90,8 @@ class VolumeTypeTests(unittest.TestCase):
 
   def test_close(self):
     """Tests the close function."""
-    if not unittest.source:
+    test_source = unittest.source
+    if not test_source:
       raise unittest.SkipTest("missing source")
 
     luksde_volume = pyluksde.volume()
@@ -100,7 +103,8 @@ class VolumeTypeTests(unittest.TestCase):
 
   def test_open_close(self):
     """Tests the open and close functions."""
-    if not unittest.source:
+    test_source = unittest.source
+    if not test_source:
       return
 
     luksde_volume = pyluksde.volume()
@@ -108,15 +112,15 @@ class VolumeTypeTests(unittest.TestCase):
       luksde_volume.set_password(unittest.password)
 
     # Test open and close.
-    luksde_volume.open(unittest.source)
+    luksde_volume.open(test_source)
     luksde_volume.close()
 
     # Test open and close a second time to validate clean up on close.
-    luksde_volume.open(unittest.source)
+    luksde_volume.open(test_source)
     luksde_volume.close()
 
-    if os.path.isfile(unittest.source):
-      with open(unittest.source, "rb") as file_object:
+    if os.path.isfile(test_source):
+      with open(test_source, "rb") as file_object:
 
         # Test open_file_object and close.
         luksde_volume.open_file_object(file_object)
@@ -133,12 +137,13 @@ class VolumeTypeTests(unittest.TestCase):
 
   def test_is_locked(self):
     """Tests the is_locked function."""
-    if not unittest.source:
+    test_source = unittest.source
+    if not test_source:
       raise unittest.SkipTest("missing source")
 
     luksde_volume = pyluksde.volume()
 
-    luksde_volume.open(unittest.source)
+    luksde_volume.open(test_source)
 
     result = luksde_volume.is_locked()
     self.assertTrue(result)
@@ -149,7 +154,7 @@ class VolumeTypeTests(unittest.TestCase):
       luksde_volume = pyluksde.volume()
       luksde_volume.set_password(unittest.password)
 
-      luksde_volume.open(unittest.source)
+      luksde_volume.open(test_source)
 
       result = luksde_volume.is_locked()
       self.assertFalse(result)
@@ -158,14 +163,15 @@ class VolumeTypeTests(unittest.TestCase):
 
   def test_read_buffer(self):
     """Tests the read_buffer function."""
-    if not unittest.source:
+    test_source = unittest.source
+    if not test_source:
       raise unittest.SkipTest("missing source")
 
     luksde_volume = pyluksde.volume()
     if unittest.password:
       luksde_volume.set_password(unittest.password)
 
-    luksde_volume.open(unittest.source)
+    luksde_volume.open(test_source)
 
     size = luksde_volume.get_size()
 
@@ -238,17 +244,18 @@ class VolumeTypeTests(unittest.TestCase):
 
   def test_read_buffer_file_object(self):
     """Tests the read_buffer function on a file-like object."""
-    if not unittest.source:
+    test_source = unittest.source
+    if not test_source:
       raise unittest.SkipTest("missing source")
 
-    if not os.path.isfile(unittest.source):
+    if not os.path.isfile(test_source):
       raise unittest.SkipTest("source not a regular file")
 
     luksde_volume = pyluksde.volume()
     if unittest.password:
       luksde_volume.set_password(unittest.password)
 
-    with open(unittest.source, "rb") as file_object:
+    with open(test_source, "rb") as file_object:
       luksde_volume.open_file_object(file_object)
 
       size = luksde_volume.get_size()
@@ -263,14 +270,15 @@ class VolumeTypeTests(unittest.TestCase):
 
   def test_read_buffer_at_offset(self):
     """Tests the read_buffer_at_offset function."""
-    if not unittest.source:
+    test_source = unittest.source
+    if not test_source:
       raise unittest.SkipTest("missing source")
 
     luksde_volume = pyluksde.volume()
     if unittest.password:
       luksde_volume.set_password(unittest.password)
 
-    luksde_volume.open(unittest.source)
+    luksde_volume.open(test_source)
 
     size = luksde_volume.get_size()
 
@@ -332,14 +340,15 @@ class VolumeTypeTests(unittest.TestCase):
 
   def test_seek_offset(self):
     """Tests the seek_offset function."""
-    if not unittest.source:
+    test_source = unittest.source
+    if not test_source:
       raise unittest.SkipTest("missing source")
 
     luksde_volume = pyluksde.volume()
     if unittest.password:
       luksde_volume.set_password(unittest.password)
 
-    luksde_volume.open(unittest.source)
+    luksde_volume.open(test_source)
 
     size = luksde_volume.get_size()
 
@@ -393,14 +402,15 @@ class VolumeTypeTests(unittest.TestCase):
 
   def test_get_offset(self):
     """Tests the get_offset function."""
-    if not unittest.source:
+    test_source = unittest.source
+    if not test_source:
       raise unittest.SkipTest("missing source")
 
     luksde_volume = pyluksde.volume()
     if unittest.password:
       luksde_volume.set_password(unittest.password)
 
-    luksde_volume.open(unittest.source)
+    luksde_volume.open(test_source)
 
     offset = luksde_volume.get_offset()
     self.assertIsNotNone(offset)
@@ -409,14 +419,15 @@ class VolumeTypeTests(unittest.TestCase):
 
   def test_get_size(self):
     """Tests the get_size function and size property."""
-    if not unittest.source:
+    test_source = unittest.source
+    if not test_source:
       raise unittest.SkipTest("missing source")
 
     luksde_volume = pyluksde.volume()
     if unittest.password:
       luksde_volume.set_password(unittest.password)
 
-    luksde_volume.open(unittest.source)
+    luksde_volume.open(test_source)
 
     size = luksde_volume.get_size()
     self.assertIsNotNone(size)
