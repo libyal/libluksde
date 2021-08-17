@@ -374,6 +374,15 @@ void pyluksde_volume_free(
 
 		return;
 	}
+	if( pyluksde_volume->file_io_handle != NULL )
+	{
+		if( pyluksde_volume_close(
+		     pyluksde_volume,
+		     NULL ) == NULL )
+		{
+			return;
+		}
+	}
 	if( pyluksde_volume->volume != NULL )
 	{
 		Py_BEGIN_ALLOW_THREADS
