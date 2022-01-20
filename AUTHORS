@@ -1,6 +1,6 @@
 Acknowledgements: libluksde
 
-Copyright (C) 2013-2021, Joachim Metz <joachim.metz@gmail.com>
+Copyright (C) 2013-2022, Joachim Metz <joachim.metz@gmail.com>
 
 Additional credits go to:
 * Bogdan Ștefan, for adding AES-XTS and Serpent-ECB support.

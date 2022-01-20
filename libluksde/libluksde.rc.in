@@ -24,7 +24,7 @@ BEGIN
       VALUE "FileDescription",		"Library to access the Linux Unified Key Setup (LUKS) Disk Encryption format\0"
       VALUE "FileVersion",		"@VERSION@" "\0"
       VALUE "InternalName",		"libluksde.dll\0"
-      VALUE "LegalCopyright",		"(C) 2013-2021, Joachim Metz <joachim.metz@gmail.com>\0"
+      VALUE "LegalCopyright",		"(C) 2013-2022, Joachim Metz <joachim.metz@gmail.com>\0"
       VALUE "OriginalFilename",		"libluksde.dll\0"
       VALUE "ProductName",		"libluksde\0"
       VALUE "ProductVersion",		"@VERSION@" "\0"

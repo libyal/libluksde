@@ -1,7 +1,7 @@
 /*
  * The Linux Unified Key Setup (LUKS) volume definitions
  *
- * Copyright (C) 2013-2021, Joachim Metz <joachim.metz@gmail.com>
+ * Copyright (C) 2013-2022, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
