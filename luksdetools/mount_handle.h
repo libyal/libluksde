@@ -46,19 +46,15 @@ struct mount_handle
 
 	/* The key data
 	 */
-	uint8_t key_data[ 16 ];
+	uint8_t key_data[ 64 ];
 
-	/* The key size
+	/* The key data size
 	 */
-	uint8_t key_size;
+	uint8_t key_data_size;
 
 	/* The volume offset
 	 */
 	off64_t volume_offset;
-
-	/* The libbfio file IO handle
-	 */
-	libbfio_handle_t *file_io_handle;
 
 	/* The password
 	 */
@@ -68,13 +64,17 @@ struct mount_handle
 	 */
 	size_t password_length;
 
-	/* Value to indicate the mount handle is locked
+	/* The libbfio file IO handle
 	 */
-	int is_locked;
+	libbfio_handle_t *file_io_handle;
 
 	/* The notification output stream
 	 */
 	FILE *notify_stream;
+
+	/* Value to indicate if user interaction is disabled
+	 */
+	int unattended_mode;
 };
 
 int mount_handle_system_string_copy_from_64_bit_in_decimal(
@@ -85,6 +85,7 @@ int mount_handle_system_string_copy_from_64_bit_in_decimal(
 
 int mount_handle_initialize(
      mount_handle_t **mount_handle,
+     int unattended_mode,
      libcerror_error_t **error );
 
 int mount_handle_free(
@@ -95,7 +96,7 @@ int mount_handle_signal_abort(
      mount_handle_t *mount_handle,
      libcerror_error_t **error );
 
-int mount_handle_set_keys(
+int mount_handle_set_key(
      mount_handle_t *mount_handle,
      const system_character_t *string,
      libcerror_error_t **error );
@@ -122,10 +123,6 @@ int mount_handle_open(
      libcerror_error_t **error );
 
 int mount_handle_close(
-     mount_handle_t *mount_handle,
-     libcerror_error_t **error );
-
-int mount_handle_is_locked(
      mount_handle_t *mount_handle,
      libcerror_error_t **error );
 

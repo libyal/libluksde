@@ -26,6 +26,7 @@
 #include <types.h>
 #include <wide_string.h>
 
+#include "luksdetools_input.h"
 #include "luksdetools_libbfio.h"
 #include "luksdetools_libcerror.h"
 #include "luksdetools_libcpath.h"
@@ -45,6 +46,8 @@ int libluksde_volume_open_file_io_handle(
      libluksde_error_t **error );
 
 #endif /* !defined( LIBLUKSDE_HAVE_BFIO ) */
+
+#define MOUNT_HANDLE_NOTIFY_STREAM		stdout
 
 /* Copies a string of a decimal value to a 64-bit value
  * Returns 1 if successful or -1 on error
@@ -162,6 +165,7 @@ int mount_handle_system_string_copy_from_64_bit_in_decimal(
  */
 int mount_handle_initialize(
      mount_handle_t **mount_handle,
+     int unattended_mode,
      libcerror_error_t **error )
 {
 	static char *function = "mount_handle_initialize";
@@ -229,6 +233,9 @@ int mount_handle_initialize(
 
 		goto on_error;
 	}
+	( *mount_handle )->notify_stream   = MOUNT_HANDLE_NOTIFY_STREAM;
+	( *mount_handle )->unattended_mode = unattended_mode;
+
 	return( 1 );
 
 on_error:
@@ -265,6 +272,22 @@ int mount_handle_free(
 	}
 	if( *mount_handle != NULL )
 	{
+		if( ( *mount_handle )->file_io_handle != NULL )
+		{
+			if( mount_handle_close(
+			     *mount_handle,
+			     error ) != 0 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_IO,
+				 LIBCERROR_IO_ERROR_CLOSE_FAILED,
+				 "%s: unable to close mount handle.",
+				 function );
+
+				result = -1;
+			}
+		}
 		if( mount_file_system_free(
 		     &( ( *mount_handle )->file_system ),
 		     error ) != 1 )
@@ -336,15 +359,15 @@ int mount_handle_signal_abort(
 	return( 1 );
 }
 
-/* Sets the keys
+/* Sets the key
  * Returns 1 if successful or -1 on error
  */
-int mount_handle_set_keys(
+int mount_handle_set_key(
      mount_handle_t *mount_handle,
      const system_character_t *string,
      libcerror_error_t **error )
 {
-	static char *function   = "mount_handle_set_keys";
+	static char *function   = "mount_handle_set_key";
 	size_t string_length    = 0;
 	uint32_t base16_variant = 0;
 
@@ -365,7 +388,7 @@ int mount_handle_set_keys(
 	if( memory_set(
 	     mount_handle->key_data,
 	     0,
-	     16 ) == NULL )
+	     64 ) == NULL )
 	{
 		libcerror_error_set(
 		 error,
@@ -388,7 +411,9 @@ int mount_handle_set_keys(
 		base16_variant |= LIBUNA_BASE16_VARIANT_ENCODING_UTF16_LITTLE_ENDIAN;
 	}
 #endif
-	if( string_length != 32 )
+	if( ( string_length != 32 )
+	 || ( string_length != 64 )
+	 || ( string_length != 128 ) )
 	{
 		libcerror_error_set(
 		 error,
@@ -403,7 +428,7 @@ int mount_handle_set_keys(
 	     (uint8_t *) string,
 	     string_length,
 	     mount_handle->key_data,
-	     16,
+	     string_length / 2,
 	     base16_variant,
 	     0,
 	     error ) != 1 )
@@ -417,7 +442,7 @@ int mount_handle_set_keys(
 
 		goto on_error;
 	}
-	mount_handle->key_size = 16;
+	mount_handle->key_data_size = string_length / 2;
 
 	return( 1 );
 
@@ -425,9 +450,9 @@ on_error:
 	memory_set(
 	 mount_handle->key_data,
 	 0,
-	 16 );
+	 64 );
 
-	mount_handle->key_size = 0;
+	mount_handle->key_data_size = 0;
 
 	return( -1 );
 }
@@ -568,10 +593,13 @@ int mount_handle_open(
      const system_character_t *filename,
      libcerror_error_t **error )
 {
+	system_character_t password[ 64 ];
+
 	libbfio_handle_t *file_io_handle  = NULL;
 	libluksde_volume_t *luksde_volume = NULL;
 	static char *function             = "mount_handle_open";
 	size_t filename_length            = 0;
+	size_t password_length            = 0;
 	int result                        = 0;
 
 	if( mount_handle == NULL )
@@ -663,12 +691,12 @@ int mount_handle_open(
 
 		goto on_error;
 	}
-	if( mount_handle->key_size > 0 )
+	if( mount_handle->key_data_size > 0 )
 	{
 		if( libluksde_volume_set_key(
 		     luksde_volume,
 		     mount_handle->key_data,
-		     mount_handle->key_size,
+		     mount_handle->key_data_size,
 		     error ) != 1 )
 		{
 			libcerror_error_set(
@@ -707,13 +735,11 @@ int mount_handle_open(
 			goto on_error;
 		}
 	}
-	result = libluksde_volume_open_file_io_handle(
-	          luksde_volume,
-	          file_io_handle,
-	          LIBLUKSDE_OPEN_READ,
-	          error );
-
-	if( result == -1 )
+	if( libluksde_volume_open_file_io_handle(
+	     luksde_volume,
+	     file_io_handle,
+	     LIBLUKSDE_OPEN_READ,
+	     error ) != 1 )
 	{
 		libcerror_error_set(
 		 error,
@@ -739,8 +765,97 @@ int mount_handle_open(
 
 		goto on_error;
 	}
-	mount_handle->is_locked = result;
+	else if( ( result != 0 )
+	      && ( mount_handle->unattended_mode == 0 ) )
+	{
+		fprintf(
+		 stdout,
+		 "Volume is locked and a password is needed to unlock it.\n\n" );
 
+		if( luksdetools_prompt_for_password(
+		     stdout,
+		     "Password",
+		     password,
+		     64,
+		     error ) != 1 )
+		{
+			fprintf(
+			 stderr,
+			 "Unable to retrieve password.\n" );
+
+			goto on_error;
+		}
+		password_length = system_string_length(
+		                   password );
+
+		if( password_length > 0 )
+		{
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
+			if( libluksde_volume_set_utf16_password(
+			     luksde_volume,
+			     (uint16_t *) password,
+			     password_length,
+			     error ) != 1 )
+#else
+			if( libluksde_volume_set_utf8_password(
+			     luksde_volume,
+			     (uint8_t *) password,
+			     password_length,
+			     error ) != 1 )
+#endif
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+				 "%s: unable to set password.",
+				 function );
+
+				goto on_error;
+			}
+			memory_set(
+			 password,
+			 0,
+			 64 );
+		}
+		fprintf(
+		 stdout,
+		 "\n\n" );
+
+		result = libluksde_volume_unlock(
+		          luksde_volume,
+		          error );
+
+		if( result == -1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+			 "%s: unable to unlock volume.",
+			 function );
+
+			goto on_error;
+		}
+		else if( result == 0 )
+		{
+			fprintf(
+			 stdout,
+			 "Unable to unlock volume.\n\n" );
+		}
+		result = ( result == 0 );
+	}
+	if( result != 0 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable unlock volume.",
+		 function );
+
+		goto on_error;
+	}
 	if( mount_file_system_append_volume(
 	     mount_handle->file_system,
 	     luksde_volume,
@@ -772,6 +887,11 @@ on_error:
 		 &file_io_handle,
 		 NULL );
 	}
+	memory_set(
+	 password,
+	 0,
+	 64 );
+
 	return( -1 );
 }
 
@@ -899,29 +1019,6 @@ on_error:
 		 NULL );
 	}
 	return( -1 );
-}
-
-/* Determine if the mount handle is locked
- * Returns 1 if locked, 0 if not or -1 on error
- */
-int mount_handle_is_locked(
-     mount_handle_t *mount_handle,
-     libcerror_error_t **error )
-{
-	static char *function = "mount_handle_is_locked";
-
-	if( mount_handle == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid mount handle.",
-		 function );
-
-		return( -1 );
-	}
-	return( mount_handle->is_locked );
 }
 
 /* Retrieves a file entry for a specific path

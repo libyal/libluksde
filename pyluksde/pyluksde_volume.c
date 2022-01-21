@@ -86,6 +86,13 @@ PyMethodDef pyluksde_volume_object_methods[] = {
 	  "\n"
 	  "Determines if the volume is locked." },
 
+	{ "unlock",
+	  (PyCFunction) pyluksde_volume_unlock,
+	  METH_NOARGS,
+	  "unlock() -> Boolean\n"
+	  "\n"
+	  "Unlocks the volume." },
+
 	{ "read_buffer",
 	  (PyCFunction) pyluksde_volume_read_buffer,
 	  METH_VARARGS | METH_KEYWORDS,
@@ -911,7 +918,63 @@ PyObject *pyluksde_volume_is_locked(
 		pyluksde_error_raise(
 		 error,
 		 PyExc_IOError,
-		 "%s: unable to determine if volume is .",
+		 "%s: unable to determine if volume is locked.",
+		 function );
+
+		libcerror_error_free(
+		 &error );
+
+		return( NULL );
+	}
+	if( result != 0 )
+	{
+		Py_IncRef(
+		 (PyObject *) Py_True );
+
+		return( Py_True );
+	}
+	Py_IncRef(
+	 (PyObject *) Py_False );
+
+	return( Py_False );
+}
+
+/* Unlocks the volume
+ * Returns a Python object if successful or NULL on error
+ */
+PyObject *pyluksde_volume_unlock(
+           pyluksde_volume_t *pyluksde_volume,
+           PyObject *arguments PYLUKSDE_ATTRIBUTE_UNUSED )
+{
+	libcerror_error_t *error = NULL;
+	static char *function    = "pyluksde_volume_unlock";
+	int result               = 0;
+
+	PYLUKSDE_UNREFERENCED_PARAMETER( arguments )
+
+	if( pyluksde_volume == NULL )
+	{
+		PyErr_Format(
+		 PyExc_ValueError,
+		 "%s: invalid volume.",
+		 function );
+
+		return( NULL );
+	}
+	Py_BEGIN_ALLOW_THREADS
+
+	result = libluksde_volume_unlock(
+	          pyluksde_volume->volume,
+	          &error );
+
+	Py_END_ALLOW_THREADS
+
+	if( result == -1 )
+	{
+		pyluksde_error_raise(
+		 error,
+		 PyExc_IOError,
+		 "%s: unable to unlock volume.",
 		 function );
 
 		libcerror_error_free(

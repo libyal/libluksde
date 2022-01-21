@@ -27,6 +27,7 @@ luksdeinfo_SOURCES = \
 	luksdeinfo.c \
 	luksdetools_getopt.c luksdetools_getopt.h \
 	luksdetools_i18n.h \
+	luksdetools_input.c luksdetools_input.h \
 	luksdetools_libluksde.h \
 	luksdetools_libcerror.h \
 	luksdetools_libclocale.h \
@@ -57,6 +58,7 @@ luksdemount_SOURCES = \
 	luksdemount.c \
 	luksdetools_getopt.c luksdetools_getopt.h \
 	luksdetools_i18n.h \
+	luksdetools_input.c luksdetools_input.h \
 	luksdetools_libbfio.h \
 	luksdetools_libcdata.h \
 	luksdetools_libcerror.h \

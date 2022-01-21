@@ -44,9 +44,9 @@ typedef struct libluksde_internal_volume libluksde_internal_volume_t;
 
 struct libluksde_internal_volume
 {
-	/* The (volume) header
+	/* The volume header
 	 */
-	libluksde_volume_header_t *header;
+	libluksde_volume_header_t *volume_header;
 
 	/* The master key
 	 */
@@ -55,6 +55,10 @@ struct libluksde_internal_volume
 	/* The master key size
 	 */
 	uint32_t master_key_size;
+
+	/* Value to indicate the volume master key is set
+	 */
+	uint8_t volume_master_key_is_set;
 
 	/* The user password
 	 */
@@ -67,10 +71,6 @@ struct libluksde_internal_volume
 	/* Value to indicate the user password is set
 	 */
 	uint8_t user_password_is_set;
-
-	/* Value to indicate the keys are set
-	 */
-	uint8_t keys_are_set;
 
 	/* The current (storage media) offset
 	 */
@@ -161,8 +161,23 @@ int libluksde_internal_volume_open_read(
      libbfio_handle_t *file_io_handle,
      libcerror_error_t **error );
 
+int libluksde_internal_volume_open_read_keys(
+     libluksde_internal_volume_t *internal_volume,
+     libbfio_handle_t *file_io_handle,
+     libcerror_error_t **error );
+
 LIBLUKSDE_EXTERN \
 int libluksde_volume_is_locked(
+     libluksde_volume_t *volume,
+     libcerror_error_t **error );
+
+int libluksde_internal_volume_unlock(
+     libluksde_internal_volume_t *internal_volume,
+     libbfio_handle_t *file_io_handle,
+     libcerror_error_t **error );
+
+LIBLUKSDE_EXTERN \
+int libluksde_volume_unlock(
      libluksde_volume_t *volume,
      libcerror_error_t **error );
 

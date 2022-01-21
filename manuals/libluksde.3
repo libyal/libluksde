@@ -1,4 +1,4 @@
-.Dd November 29, 2020
+.Dd January 21, 2022
 .Dt libluksde 3
 .Os libluksde
 .Sh NAME
@@ -60,6 +60,8 @@ Volume functions
 .Fn libluksde_volume_close "libluksde_volume_t *volume" "libluksde_error_t **error"
 .Ft int
 .Fn libluksde_volume_is_locked "libluksde_volume_t *volume" "libluksde_error_t **error"
+.Ft int
+.Fn libluksde_volume_unlock "libluksde_volume_t *volume" "libluksde_error_t **error"
 .Ft ssize_t
 .Fn libluksde_volume_read_buffer "libluksde_volume_t *volume" "void *buffer" "size_t buffer_size" "libluksde_error_t **error"
 .Ft ssize_t

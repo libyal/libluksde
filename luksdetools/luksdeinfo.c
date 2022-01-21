@@ -60,14 +60,15 @@ void usage_fprint(
 	                 "Key Setup (LUKS) volume\n\n" );
 
 	fprintf( stream, "Usage: luksdeinfo [ -k key ] [ -o offset ] [ -p password ]\n"
-	                 "                  [ -hvV ] source\n\n" );
+	                 "                  [ -huvV ] source\n\n" );
 
 	fprintf( stream, "\tsource: the source file or device\n\n" );
 
 	fprintf( stream, "\t-h:     shows this help\n" );
-	fprintf( stream, "\t-k:     the master key, formatted in base16\n" );
+	fprintf( stream, "\t-k:     specify the volume master key formatted in base16\n" );
 	fprintf( stream, "\t-o:     specify the volume offset\n" );
 	fprintf( stream, "\t-p:     specify the password/passphrase\n" );
+	fprintf( stream, "\t-u:     unattended mode (disables user interaction)\n" );
 	fprintf( stream, "\t-v:     verbose output to stderr\n" );
 	fprintf( stream, "\t-V:     print version\n" );
 }
@@ -131,7 +132,7 @@ int main( int argc, char * const argv[] )
 	system_character_t *source               = NULL;
 	char *program                            = "luksdeinfo";
 	system_integer_t option                  = 0;
-	int result                               = 0;
+	int unattended_mode                      = 0;
 	int verbose                              = 0;
 
 	libcnotify_stream_set(
@@ -167,7 +168,7 @@ int main( int argc, char * const argv[] )
 	while( ( option = luksdetools_getopt(
 	                   argc,
 	                   argv,
-	                   _SYSTEM_STRING( "hk:o:p:vV" ) ) ) != (system_integer_t) -1 )
+	                   _SYSTEM_STRING( "hk:o:p:uvV" ) ) ) != (system_integer_t) -1 )
 	{
 		switch( option )
 		{
@@ -201,6 +202,11 @@ int main( int argc, char * const argv[] )
 
 			case (system_integer_t) 'p':
 				option_password = optarg;
+
+				break;
+
+			case (system_integer_t) 'u':
+				unattended_mode = 1;
 
 				break;
 
@@ -239,6 +245,7 @@ int main( int argc, char * const argv[] )
 
 	if( info_handle_initialize(
 	     &luksdeinfo_info_handle,
+	     unattended_mode,
 	     &error ) != 1 )
 	{
 		fprintf(
@@ -289,12 +296,10 @@ int main( int argc, char * const argv[] )
 			goto on_error;
 		}
 	}
-	result = info_handle_open_input(
-	          luksdeinfo_info_handle,
-	          source,
-	          &error );
-
-	if( result == -1 )
+	if( info_handle_open(
+	     luksdeinfo_info_handle,
+	     source,
+	     &error ) != 1 )
 	{
 		fprintf(
 		 stderr,
@@ -313,19 +318,7 @@ int main( int argc, char * const argv[] )
 
 		goto on_error;
 	}
-	result = info_handle_input_is_locked(
-	          luksdeinfo_info_handle,
-	          &error );
-
-	if( result != 0 )
-	{
-		fprintf(
-		 stderr,
-		 "Unable to unlock volume.\n" );
-
-		goto on_error;
-	}
-	if( info_handle_close_input(
+	if( info_handle_close(
 	     luksdeinfo_info_handle,
 	     &error ) != 0 )
 	{

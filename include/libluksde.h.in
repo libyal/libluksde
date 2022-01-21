@@ -211,7 +211,7 @@ int libluksde_volume_signal_abort(
      libluksde_error_t **error );
 
 /* Opens a volume
- * Returns 1 if successful, 0 if the keys could not be read or -1 on error
+ * Returns 1 if successful or -1 on error
  */
 LIBLUKSDE_EXTERN \
 int libluksde_volume_open(
@@ -223,7 +223,7 @@ int libluksde_volume_open(
 #if defined( LIBLUKSDE_HAVE_WIDE_CHARACTER_TYPE )
 
 /* Opens a volume
- * Returns 1 if successful, 0 if the keys could not be read or -1 on error
+ * Returns 1 if successful or -1 on error
  */
 LIBLUKSDE_EXTERN \
 int libluksde_volume_open_wide(
@@ -237,7 +237,7 @@ int libluksde_volume_open_wide(
 #if defined( LIBLUKSDE_HAVE_BFIO )
 
 /* Opens a volume using a Basic File IO (bfio) handle
- * Returns 1 if successful, 0 if the keys could not be read or -1 on error
+ * Returns 1 if successful or -1 on error
  */
 LIBLUKSDE_EXTERN \
 int libluksde_volume_open_file_io_handle(
@@ -261,6 +261,14 @@ int libluksde_volume_close(
  */
 LIBLUKSDE_EXTERN \
 int libluksde_volume_is_locked(
+     libluksde_volume_t *volume,
+     libluksde_error_t **error );
+
+/* Unlocks the volume
+ * Returns 1 if the volume is unlocked, 0 if not or -1 on error
+ */
+LIBLUKSDE_EXTERN \
+int libluksde_volume_unlock(
      libluksde_volume_t *volume,
      libluksde_error_t **error );
 

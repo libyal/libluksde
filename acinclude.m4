@@ -21,6 +21,14 @@ AC_DEFUN([AX_LUKSDETOOLS_CHECK_LOCAL],
      [1])
   ])
 
+  dnl Headers and functions included in luksdetools/luksdetools_input.c
+  AC_CHECK_HEADERS([termios.h])
+
+  AS_IF(
+    [test "x$ac_cv_enable_winapi" = xno],
+    [AC_CHECK_FUNCS([getchar tcgetattr tcsetattr])
+  ])
+
   dnl Headers included in luksdetools/luksdemount.c
   AC_CHECK_HEADERS([errno.h])
 

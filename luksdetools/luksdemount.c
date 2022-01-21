@@ -66,18 +66,19 @@ void usage_fprint(
 	}
 	fprintf( stream, "Use luksdemount to mount a Linux Unified Key Setup (LUKS) Disk Encrypted volume\n\n" );
 
-	fprintf( stream, "Usage: luksdemount [ -k keys ] [ -o offset ] [ -p password ] [ -X\n"
-	                 "                   extended_options ] [ -hvV ] volume mount_point\n\n" );
+	fprintf( stream, "Usage: luksdemount [ -k key ] [ -o offset ] [ -p password ]\n"
+	                 "                   [ -X extended_options ] [ -huvV ] volume mount_point\n\n" );
 
 	fprintf( stream, "\tvolume:      a Linux Unified Key Setup (LUKS) Disk Encrypted volume\n\n" );
 	fprintf( stream, "\tmount_point: the directory to serve as mount point\n\n" );
 
 	fprintf( stream, "\t-h:          shows this help\n" );
-	fprintf( stream, "\t-k:          specify the key formatted in base16\n" );
+	fprintf( stream, "\t-k:          specify the volume master key formatted in base16\n" );
 	fprintf( stream, "\t-o:          specify the volume offset in bytes\n" );
 	fprintf( stream, "\t-p:          specify the password/passphrase\n" );
 	fprintf( stream, "\t-v:          verbose output to stderr, while luksdemount will remain running in the\n"
 	                 "\t             foreground\n" );
+	fprintf( stream, "\t-u:          unattended mode (disables user interaction)\n" );
 	fprintf( stream, "\t-V:          print version\n" );
 	fprintf( stream, "\t-X:          extended options to pass to sub system\n" );
 }
@@ -137,7 +138,7 @@ int main( int argc, char * const argv[] )
 	libluksde_error_t *error                    = NULL;
 	system_character_t *mount_point             = NULL;
 	system_character_t *option_extended_options = NULL;
-	system_character_t *option_keys             = NULL;
+	system_character_t *option_key              = NULL;
 	system_character_t *option_offset           = NULL;
 	system_character_t *option_password         = NULL;
 	const system_character_t *path_prefix       = NULL;
@@ -146,6 +147,7 @@ int main( int argc, char * const argv[] )
 	system_integer_t option                     = 0;
 	size_t path_prefix_size                     = 0;
 	int result                                  = 0;
+	int unattended_mode                         = 0;
 	int verbose                                 = 0;
 
 #if defined( HAVE_LIBFUSE ) || defined( HAVE_LIBOSXFUSE )
@@ -193,7 +195,7 @@ int main( int argc, char * const argv[] )
 	while( ( option = luksdetools_getopt(
 	                   argc,
 	                   argv,
-	                   _SYSTEM_STRING( "hk:o:p:vVX:" ) ) ) != (system_integer_t) -1 )
+	                   _SYSTEM_STRING( "hk:o:p:uvVX:" ) ) ) != (system_integer_t) -1 )
 	{
 		switch( option )
 		{
@@ -216,7 +218,7 @@ int main( int argc, char * const argv[] )
 				return( EXIT_SUCCESS );
 
 			case (system_integer_t) 'k':
-				option_keys = optarg;
+				option_key = optarg;
 
 				break;
 
@@ -227,6 +229,11 @@ int main( int argc, char * const argv[] )
 
 			case (system_integer_t) 'p':
 				option_password = optarg;
+
+				break;
+
+			case (system_integer_t) 'u':
+				unattended_mode = 1;
 
 				break;
 
@@ -283,6 +290,7 @@ int main( int argc, char * const argv[] )
 
 	if( mount_handle_initialize(
 	     &luksdemount_mount_handle,
+	     unattended_mode,
 	     &error ) != 1 )
 	{
 		fprintf(
@@ -291,16 +299,16 @@ int main( int argc, char * const argv[] )
 
 		goto on_error;
 	}
-	if( option_keys != NULL )
+	if( option_key != NULL )
 	{
-		if( mount_handle_set_keys(
+		if( mount_handle_set_key(
 		     luksdemount_mount_handle,
-		     option_keys,
+		     option_key,
 		     &error ) != 1 )
 		{
 			fprintf(
 			 stderr,
-			 "Unable to set keys.\n" );
+			 "Unable to set key.\n" );
 
 			goto on_error;
 		}
@@ -361,16 +369,6 @@ int main( int argc, char * const argv[] )
 		fprintf(
 		 stderr,
 		 "Unable to open source volume\n" );
-
-		goto on_error;
-	}
-	if( mount_handle_is_locked(
-	     luksdemount_mount_handle,
-	     &error ) != 0 )
-	{
-		fprintf(
-		 stderr,
-		 "Unable to unlock source volume\n" );
 
 		goto on_error;
 	}

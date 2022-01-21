@@ -188,6 +188,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\luksdetools\luksdetools_input.c"
+				>
+			</File>
+			<File
 				RelativePath="..\..\luksdetools\luksdetools_output.c"
 				>
 			</File>
@@ -211,6 +215,10 @@
 			</File>
 			<File
 				RelativePath="..\..\luksdetools\luksdetools_i18n.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\luksdetools\luksdetools_input.h"
 				>
 			</File>
 			<File

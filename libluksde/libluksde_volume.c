@@ -294,7 +294,7 @@ int libluksde_volume_signal_abort(
 }
 
 /* Opens a volume
- * Returns 1 if successful, 0 if the keys could not be read or -1 on error
+ * Returns 1 if successful or -1 on error
  */
 int libluksde_volume_open(
      libluksde_volume_t *volume,
@@ -306,7 +306,6 @@ int libluksde_volume_open(
 	libluksde_internal_volume_t *internal_volume = NULL;
 	static char *function                        = "libluksde_volume_open";
 	size_t filename_length                       = 0;
-	int result                                   = 0;
 
 	if( volume == NULL )
 	{
@@ -413,13 +412,11 @@ int libluksde_volume_open(
 
 		goto on_error;
 	}
-	result = libluksde_volume_open_file_io_handle(
-	          volume,
-	          file_io_handle,
-	          access_flags,
-	          error );
-
-	if( result == -1 )
+	if( libluksde_volume_open_file_io_handle(
+	     volume,
+	     file_io_handle,
+	     access_flags,
+	     error ) != 1 )
 	{
 		libcerror_error_set(
 		 error,
@@ -431,42 +428,39 @@ int libluksde_volume_open(
 
 		goto on_error;
 	}
-	else
+#if defined( HAVE_LIBLUKSDE_MULTI_THREAD_SUPPORT )
+	if( libcthreads_read_write_lock_grab_for_write(
+	     internal_volume->read_write_lock,
+	     error ) != 1 )
 	{
-#if defined( HAVE_LIBLUKSDE_MULTI_THREAD_SUPPORT )
-		if( libcthreads_read_write_lock_grab_for_write(
-		     internal_volume->read_write_lock,
-		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
-			 "%s: unable to grab read/write lock for writing.",
-			 function );
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to grab read/write lock for writing.",
+		 function );
 
-			return( -1 );
-		}
-#endif
-		internal_volume->file_io_handle_created_in_library = 1;
-
-#if defined( HAVE_LIBLUKSDE_MULTI_THREAD_SUPPORT )
-		if( libcthreads_read_write_lock_release_for_write(
-		     internal_volume->read_write_lock,
-		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
-			 "%s: unable to release read/write lock for writing.",
-			 function );
-
-			return( -1 );
-		}
-#endif
+		return( -1 );
 	}
-	return( result );
+#endif
+	internal_volume->file_io_handle_created_in_library = 1;
+
+#if defined( HAVE_LIBLUKSDE_MULTI_THREAD_SUPPORT )
+	if( libcthreads_read_write_lock_release_for_write(
+	     internal_volume->read_write_lock,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to release read/write lock for writing.",
+		 function );
+
+		return( -1 );
+	}
+#endif
+	return( 1 );
 
 on_error:
 	if( file_io_handle != NULL )
@@ -493,7 +487,6 @@ int libluksde_volume_open_wide(
 	libluksde_internal_volume_t *internal_volume = NULL;
 	static char *function                        = "libluksde_volume_open_wide";
 	size_t filename_length                       = 0;
-	int result                                   = 0;
 
 	if( volume == NULL )
 	{
@@ -600,13 +593,11 @@ int libluksde_volume_open_wide(
 
 		goto on_error;
 	}
-	result = libluksde_volume_open_file_io_handle(
-	          volume,
-	          file_io_handle,
-	          access_flags,
-	          error );
-
-	if( result == -1 )
+	if( libluksde_volume_open_file_io_handle(
+	     volume,
+	     file_io_handle,
+	     access_flags,
+	     error ) != 1 )
 	{
 		libcerror_error_set(
 		 error,
@@ -618,42 +609,39 @@ int libluksde_volume_open_wide(
 
 		goto on_error;
 	}
-	else
+#if defined( HAVE_LIBLUKSDE_MULTI_THREAD_SUPPORT )
+	if( libcthreads_read_write_lock_grab_for_write(
+	     internal_volume->read_write_lock,
+	     error ) != 1 )
 	{
-#if defined( HAVE_LIBLUKSDE_MULTI_THREAD_SUPPORT )
-		if( libcthreads_read_write_lock_grab_for_write(
-		     internal_volume->read_write_lock,
-		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
-			 "%s: unable to grab read/write lock for writing.",
-			 function );
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to grab read/write lock for writing.",
+		 function );
 
-			return( -1 );
-		}
-#endif
-		internal_volume->file_io_handle_created_in_library = 1;
-
-#if defined( HAVE_LIBLUKSDE_MULTI_THREAD_SUPPORT )
-		if( libcthreads_read_write_lock_release_for_write(
-		     internal_volume->read_write_lock,
-		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
-			 "%s: unable to release read/write lock for writing.",
-			 function );
-
-			return( -1 );
-		}
-#endif
+		return( -1 );
 	}
-	return( result );
+#endif
+	internal_volume->file_io_handle_created_in_library = 1;
+
+#if defined( HAVE_LIBLUKSDE_MULTI_THREAD_SUPPORT )
+	if( libcthreads_read_write_lock_release_for_write(
+	     internal_volume->read_write_lock,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to release read/write lock for writing.",
+		 function );
+
+		return( -1 );
+	}
+#endif
+	return( 1 );
 
 on_error:
 	if( file_io_handle != NULL )
@@ -668,7 +656,7 @@ on_error:
 #endif /* defined( HAVE_WIDE_CHARACTER_TYPE ) */
 
 /* Opens a volume using a Basic File IO (bfio) handle
- * Returns 1 if successful, 0 if the keys could not be read or -1 on error
+ * Returns 1 if successful or -1 on error
  */
 int libluksde_volume_open_file_io_handle(
      libluksde_volume_t *volume,
@@ -681,7 +669,7 @@ int libluksde_volume_open_file_io_handle(
 	int bfio_access_flags                        = 0;
 	int file_io_handle_is_open                   = 0;
 	int file_io_handle_opened_in_library         = 0;
-	int result                                   = 0;
+	int result                                   = 1;
 
 	if( volume == NULL )
 	{
@@ -778,12 +766,25 @@ int libluksde_volume_open_file_io_handle(
 		}
 		file_io_handle_opened_in_library = 1;
 	}
-	result = libluksde_internal_volume_open_read(
-	          internal_volume,
-	          file_io_handle,
-	          error );
+#if defined( HAVE_LIBLUKSDE_MULTI_THREAD_SUPPORT )
+	if( libcthreads_read_write_lock_grab_for_write(
+	     internal_volume->read_write_lock,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to grab read/write lock for writing.",
+		 function );
 
-	if( result == -1 )
+		return( -1 );
+	}
+#endif
+	if( libluksde_internal_volume_open_read(
+	     internal_volume,
+	     file_io_handle,
+	     error ) != 1 )
 	{
 		libcerror_error_set(
 		 error,
@@ -792,45 +793,33 @@ int libluksde_volume_open_file_io_handle(
 		 "%s: unable to read from volume handle.",
 		 function );
 
-		goto on_error;
+		result = -1;
 	}
 	else
 	{
-#if defined( HAVE_LIBLUKSDE_MULTI_THREAD_SUPPORT )
-		if( libcthreads_read_write_lock_grab_for_write(
-		     internal_volume->read_write_lock,
-		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
-			 "%s: unable to grab read/write lock for writing.",
-			 function );
-
-			return( -1 );
-		}
-#endif
 		internal_volume->file_io_handle                   = file_io_handle;
 		internal_volume->file_io_handle_opened_in_library = file_io_handle_opened_in_library;
-
-#if defined( HAVE_LIBLUKSDE_MULTI_THREAD_SUPPORT )
-		if( libcthreads_read_write_lock_release_for_write(
-		     internal_volume->read_write_lock,
-		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
-			 "%s: unable to release read/write lock for writing.",
-			 function );
-
-			return( -1 );
-		}
-#endif
 	}
-	return( result );
+#if defined( HAVE_LIBLUKSDE_MULTI_THREAD_SUPPORT )
+	if( libcthreads_read_write_lock_release_for_write(
+	     internal_volume->read_write_lock,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to release read/write lock for writing.",
+		 function );
+
+		return( -1 );
+	}
+#endif
+	if( result == -1 )
+	{
+		goto on_error;
+	}
+	return( 1 );
 
 on_error:
 	if( file_io_handle_opened_in_library == 0 )
@@ -974,14 +963,14 @@ int libluksde_volume_close(
 		result = -1;
 	}
 	if( libluksde_volume_header_free(
-	     &( internal_volume->header ),
+	     &( internal_volume->volume_header ),
 	     error ) != 1 )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
-		 "%s: unable to free header.",
+		 "%s: unable to free volume header.",
 		 function );
 
 		result = -1;
@@ -1061,28 +1050,16 @@ int libluksde_volume_close(
 }
 
 /* Opens a volume for reading
- * Returns 1 if successful, 0 if the keys could not be read or -1 on error
+ * Returns 1 if successful or -1 on error
  */
 int libluksde_internal_volume_open_read(
      libluksde_internal_volume_t *internal_volume,
      libbfio_handle_t *file_io_handle,
      libcerror_error_t **error )
 {
-	uint8_t master_key_validation_hash[ 20 ];
-	uint8_t user_key[ 32 ];
-
-	libluksde_encryption_context_t *user_key_encryption_context = NULL;
-	libluksde_key_slot_t *key_slot                              = NULL;
-	uint8_t *key_material_data                                  = NULL;
-	uint8_t *split_master_key_data                              = NULL;
-	static char *function                                       = "libluksde_internal_volume_open_read";
-	size_t key_material_data_offset                             = 0;
-	size_t key_material_size                                    = 0;
-	ssize_t read_count                                          = 0;
-	uint64_t key_material_block_key                             = 0;
-	int element_index                                           = 0;
-	int key_slot_index                                          = 0;
-	int result                                                  = 0;
+	static char *function = "libluksde_internal_volume_open_read";
+	int element_index     = 0;
+	int result            = 0;
 
 	if( internal_volume == NULL )
 	{
@@ -1117,13 +1094,13 @@ int libluksde_internal_volume_open_read(
 
 		return( -1 );
 	}
-	if( internal_volume->header != NULL )
+	if( internal_volume->volume_header != NULL )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
-		 "%s: invalid volume - header value already set.",
+		 "%s: invalid volume - volume header value already set.",
 		 function );
 
 		return( -1 );
@@ -1172,7 +1149,7 @@ int libluksde_internal_volume_open_read(
 	}
 #endif
 	if( libluksde_volume_header_initialize(
-	     &( internal_volume->header ),
+	     &( internal_volume->volume_header ),
 	     error ) != 1 )
 	{
 		libcerror_error_set(
@@ -1185,7 +1162,7 @@ int libluksde_internal_volume_open_read(
 		goto on_error;
 	}
 	if( libluksde_volume_header_read_file_io_handle(
-	     internal_volume->header,
+	     internal_volume->volume_header,
 	     file_io_handle,
 	     0,
 	     error ) != 1 )
@@ -1199,8 +1176,8 @@ int libluksde_internal_volume_open_read(
 
 		goto on_error;
 	}
-	if( ( internal_volume->header->master_key_size == 0 )
-	 || ( internal_volume->header->master_key_size > 64 ) )
+	if( ( internal_volume->volume_header->master_key_size == 0 )
+	 || ( internal_volume->volume_header->master_key_size > 64 ) )
 	{
 		libcerror_error_set(
 		 error,
@@ -1211,9 +1188,9 @@ int libluksde_internal_volume_open_read(
 
 		goto on_error;
 	}
-	internal_volume->master_key_size = internal_volume->header->master_key_size;
+	internal_volume->master_key_size = internal_volume->volume_header->master_key_size;
 
-	if( internal_volume->header->encrypted_volume_start_sector >= ( internal_volume->io_handle->volume_size / internal_volume->io_handle->bytes_per_sector ) )
+	if( internal_volume->volume_header->encrypted_volume_start_sector >= ( internal_volume->io_handle->volume_size / internal_volume->io_handle->bytes_per_sector ) )
 	{
 		libcerror_error_set(
 		 error,
@@ -1224,21 +1201,179 @@ int libluksde_internal_volume_open_read(
 
 		goto on_error;
 	}
-	internal_volume->io_handle->encrypted_volume_offset = internal_volume->header->encrypted_volume_start_sector
+	internal_volume->io_handle->encrypted_volume_offset = internal_volume->volume_header->encrypted_volume_start_sector
 	                                                    * internal_volume->io_handle->bytes_per_sector;
 
 	internal_volume->io_handle->encrypted_volume_size = internal_volume->io_handle->volume_size
 	                                                  - internal_volume->io_handle->encrypted_volume_offset;
 
-	if( internal_volume->keys_are_set != 0 )
+	result = libluksde_internal_volume_unlock(
+	          internal_volume,
+	          file_io_handle,
+	          error );
+
+	if( result == -1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to unlock volume.",
+		 function );
+
+		goto on_error;
+	}
+	if( libfdata_vector_initialize(
+	     &( internal_volume->sectors_vector ),
+	     (size64_t) internal_volume->io_handle->bytes_per_sector,
+	     (intptr_t *) internal_volume->io_handle,
+	     NULL,
+	     NULL,
+	     (int (*)(intptr_t *, intptr_t *, libfdata_vector_t *, libfdata_cache_t *, int, int, off64_t, size64_t, uint32_t, uint8_t, libcerror_error_t **)) &libluksde_io_handle_read_sector,
+	     NULL,
+	     LIBFDATA_DATA_HANDLE_FLAG_NON_MANAGED,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 "%s: unable to create sectors vector.",
+		 function );
+
+		goto on_error;
+	}
+	if( libfdata_vector_append_segment(
+	     internal_volume->sectors_vector,
+	     &element_index,
+	     0,
+	     internal_volume->io_handle->encrypted_volume_offset,
+	     internal_volume->io_handle->volume_size,
+	     0,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_APPEND_FAILED,
+		 "%s: unable to append segment to sectors vector.",
+		 function );
+
+		goto on_error;
+	}
+	if( libfcache_cache_initialize(
+	     &( internal_volume->sectors_cache ),
+	     LIBLUKSDE_MAXIMUM_CACHE_ENTRIES_SECTORS,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 "%s: unable to create sectors cache.",
+		 function );
+
+		goto on_error;
+	}
+	return( 1 );
+
+on_error:
+	if( internal_volume->sectors_cache != NULL )
+	{
+		libfcache_cache_free(
+		 &( internal_volume->sectors_cache ),
+		 NULL );
+	}
+	if( internal_volume->sectors_vector != NULL )
+	{
+		libfdata_vector_free(
+		 &( internal_volume->sectors_vector ),
+		 NULL );
+	}
+	if( internal_volume->volume_header != NULL )
+	{
+		libluksde_volume_header_free(
+		 &( internal_volume->volume_header ),
+		 NULL );
+	}
+	return( -1 );
+}
+
+/* Reads the keys from when unlocking the volume
+ * Returns 1 if successful, 0 if not or -1 on error
+ */
+int libluksde_internal_volume_open_read_keys(
+     libluksde_internal_volume_t *internal_volume,
+     libbfio_handle_t *file_io_handle,
+     libcerror_error_t **error )
+{
+	uint8_t master_key_validation_hash[ 20 ];
+	uint8_t user_key[ 32 ];
+
+	libluksde_encryption_context_t *user_key_encryption_context = NULL;
+	libluksde_key_slot_t *key_slot                              = NULL;
+	uint8_t *key_material_data                                  = NULL;
+	uint8_t *split_master_key_data                              = NULL;
+	static char *function                                       = "libluksde_internal_volume_open_read_keys";
+	size_t key_material_data_offset                             = 0;
+	size_t key_material_size                                    = 0;
+	ssize_t read_count                                          = 0;
+	uint64_t key_material_block_key                             = 0;
+	int key_slot_index                                          = 0;
+
+	if( internal_volume == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid volume.",
+		 function );
+
+		return( -1 );
+	}
+	if( internal_volume->io_handle == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: invalid volume - missing IO handle.",
+		 function );
+
+		return( -1 );
+	}
+	if( internal_volume->io_handle->bytes_per_sector == 0 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: invalid volume - invalid IO handle - missing bytes per sector.",
+		 function );
+
+		return( -1 );
+	}
+	if( internal_volume->volume_header == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: invalid volume - missing volume header.",
+		 function );
+
+		return( -1 );
+	}
+	if( internal_volume->volume_master_key_is_set != 0 )
 	{
 		if( libluksde_password_pbkdf2(
 		     internal_volume->master_key,
 		     internal_volume->master_key_size,
-		     internal_volume->header->hashing_method,
-		     internal_volume->header->master_key_salt,
+		     internal_volume->volume_header->hashing_method,
+		     internal_volume->volume_header->master_key_salt,
 		     32,
-		     internal_volume->header->master_key_number_of_iterations,
+		     internal_volume->volume_header->master_key_number_of_iterations,
 		     master_key_validation_hash,
 		     20,
 		     error ) == -1 )
@@ -1266,13 +1401,17 @@ int libluksde_internal_volume_open_read(
 #endif
 		if( memory_compare(
 		     master_key_validation_hash,
-		     internal_volume->header->master_key_validation_hash,
+		     internal_volume->volume_header->master_key_validation_hash,
 		     20 ) == 0 )
 		{
-			internal_volume->is_locked = 0;
+			internal_volume->volume_master_key_is_set = 1;
+		}
+		else
+		{
+			internal_volume->volume_master_key_is_set = 0;
 		}
 	}
-	if( ( internal_volume->is_locked != 0 )
+	if( ( internal_volume->volume_master_key_is_set == 0 )
 	 && ( internal_volume->user_password_is_set != 0 ) )
 	{
 		for( key_slot_index = 0;
@@ -1280,7 +1419,7 @@ int libluksde_internal_volume_open_read(
 		     key_slot_index++ )
 		{
 			if( libcdata_array_get_entry_by_index(
-			     internal_volume->header->key_slots_array,
+			     internal_volume->volume_header->key_slots_array,
 			     key_slot_index,
 			     (intptr_t **) &key_slot,
 			     error ) != 1 )
@@ -1316,7 +1455,7 @@ int libluksde_internal_volume_open_read(
 				if( libluksde_password_pbkdf2(
 				     internal_volume->user_password,
 				     internal_volume->user_password_size - 1,
-				     internal_volume->header->hashing_method,
+				     internal_volume->volume_header->hashing_method,
 				     key_slot->salt,
 				     32,
 				     key_slot->number_of_iterations,
@@ -1444,10 +1583,10 @@ int libluksde_internal_volume_open_read(
 #endif
 				if( libluksde_encryption_initialize(
 				     &user_key_encryption_context,
-				     internal_volume->header->encryption_method,
-				     internal_volume->header->encryption_chaining_mode,
-				     internal_volume->header->initialization_vector_mode,
-				     internal_volume->header->essiv_hashing_method,
+				     internal_volume->volume_header->encryption_method,
+				     internal_volume->volume_header->encryption_chaining_mode,
+				     internal_volume->volume_header->initialization_vector_mode,
+				     internal_volume->volume_header->essiv_hashing_method,
 				     error ) != 1 )
 				{
 					libcerror_error_set(
@@ -1552,7 +1691,7 @@ int libluksde_internal_volume_open_read(
 				     internal_volume->master_key,
 				     internal_volume->master_key_size,
 				     key_slot->number_of_stripes,
-				     internal_volume->header->hashing_method,
+				     internal_volume->volume_header->hashing_method,
 				     error ) != 1 )
 				{
 					libcerror_error_set(
@@ -1598,10 +1737,10 @@ int libluksde_internal_volume_open_read(
 				if( libluksde_password_pbkdf2(
 				     internal_volume->master_key,
 				     internal_volume->master_key_size,
-				     internal_volume->header->hashing_method,
-				     internal_volume->header->master_key_salt,
+				     internal_volume->volume_header->hashing_method,
+				     internal_volume->volume_header->master_key_salt,
 				     32,
-				     internal_volume->header->master_key_number_of_iterations,
+				     internal_volume->volume_header->master_key_number_of_iterations,
 				     master_key_validation_hash,
 				     20,
 				     error ) == -1 )
@@ -1634,33 +1773,32 @@ int libluksde_internal_volume_open_read(
 					 "%s: check:\n",
 					 function );
 					libcnotify_print_data(
-					 internal_volume->header->master_key_validation_hash,
+					 internal_volume->volume_header->master_key_validation_hash,
 					 20,
 					 0 );
 				}
 #endif
 				if( memory_compare(
 				     master_key_validation_hash,
-				     internal_volume->header->master_key_validation_hash,
+				     internal_volume->volume_header->master_key_validation_hash,
 				     20 ) == 0 )
 				{
-					internal_volume->is_locked = 0;
+					internal_volume->volume_master_key_is_set = 1;
 
 					break;
 				}
 			}
 		}
 	}
-	result = 0;
-
-	if( internal_volume->is_locked == 0 )
+	if( ( internal_volume->volume_master_key_is_set != 0 )
+	 && ( internal_volume->io_handle->encryption_context == NULL ) )
 	{
 		if( libluksde_encryption_initialize(
 		     &( internal_volume->io_handle->encryption_context ),
-		     internal_volume->header->encryption_method,
-		     internal_volume->header->encryption_chaining_mode,
-		     internal_volume->header->initialization_vector_mode,
-		     internal_volume->header->essiv_hashing_method,
+		     internal_volume->volume_header->encryption_method,
+		     internal_volume->volume_header->encryption_chaining_mode,
+		     internal_volume->volume_header->initialization_vector_mode,
+		     internal_volume->volume_header->essiv_hashing_method,
 		     error ) != 1 )
 		{
 			libcerror_error_set(
@@ -1687,80 +1825,24 @@ int libluksde_internal_volume_open_read(
 
 			goto on_error;
 		}
-/* TODO clone function ? */
-		if( libfdata_vector_initialize(
-		     &( internal_volume->sectors_vector ),
-		     (size64_t) internal_volume->io_handle->bytes_per_sector,
-		     (intptr_t *) internal_volume->io_handle,
-		     NULL,
-		     NULL,
-		     (int (*)(intptr_t *, intptr_t *, libfdata_vector_t *, libfdata_cache_t *, int, int, off64_t, size64_t, uint32_t, uint8_t, libcerror_error_t **)) &libluksde_io_handle_read_sector,
-		     NULL,
-		     LIBFDATA_DATA_HANDLE_FLAG_NON_MANAGED,
-		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-			 "%s: unable to create sectors vector.",
-			 function );
-
-			goto on_error;
-		}
-		if( libfdata_vector_append_segment(
-		     internal_volume->sectors_vector,
-		     &element_index,
-		     0,
-		     internal_volume->io_handle->encrypted_volume_offset,
-		     internal_volume->io_handle->volume_size,
-		     0,
-		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_APPEND_FAILED,
-			 "%s: unable to append segment to sectors vector.",
-			 function );
-
-			goto on_error;
-		}
-		if( libfcache_cache_initialize(
-		     &( internal_volume->sectors_cache ),
-		     LIBLUKSDE_MAXIMUM_CACHE_ENTRIES_SECTORS,
-		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-			 "%s: unable to create sectors cache.",
-			 function );
-
-			goto on_error;
-		}
-		result = 1;
 	}
-	return( result );
+	if( internal_volume->io_handle->encryption_context != NULL )
+	{
+		return( 1 );
+	}
+	return( 0 );
 
 on_error:
-	if( internal_volume->sectors_cache != NULL )
-	{
-		libfcache_cache_free(
-		 &( internal_volume->sectors_cache ),
-		 NULL );
-	}
-	if( internal_volume->sectors_vector != NULL )
-	{
-		libfdata_vector_free(
-		 &( internal_volume->sectors_vector ),
-		 NULL );
-	}
 	if( internal_volume->io_handle->encryption_context != NULL )
 	{
 		libluksde_encryption_free(
 		 &( internal_volume->io_handle->encryption_context ),
+		 NULL );
+	}
+	if( user_key_encryption_context != NULL )
+	{
+		libluksde_encryption_free(
+		 &user_key_encryption_context,
 		 NULL );
 	}
 	if( split_master_key_data != NULL )
@@ -1777,18 +1859,6 @@ on_error:
 	{
 		memory_free(
 		 key_material_data );
-	}
-	if( user_key_encryption_context != NULL )
-	{
-		libluksde_encryption_free(
-		 &user_key_encryption_context,
-		 NULL );
-	}
-	if( internal_volume->header != NULL )
-	{
-		libluksde_volume_header_free(
-		 &( internal_volume->header ),
-		 NULL );
 	}
 	memory_set(
 	 user_key,
@@ -1855,6 +1925,127 @@ int libluksde_volume_is_locked(
 	}
 #endif
 	return( is_locked );
+}
+
+/* Unlocks the volume
+ * Returns 1 if the volume is unlocked, 0 if not or -1 on error
+ */
+int libluksde_internal_volume_unlock(
+     libluksde_internal_volume_t *internal_volume,
+     libbfio_handle_t *file_io_handle,
+     libcerror_error_t **error )
+{
+	static char *function = "libluksde_internal_volume_unlock";
+	int result            = 0;
+
+	if( internal_volume == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid volume.",
+		 function );
+
+		return( -1 );
+	}
+	result = libluksde_internal_volume_open_read_keys(
+	          internal_volume,
+	          file_io_handle,
+	          error );
+
+	if( result == -1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_IO,
+		 LIBCERROR_IO_ERROR_READ_FAILED,
+		 "%s: unable to read keys.",
+		 function );
+
+		return( -1 );
+	}
+	else if( result != 0 )
+	{
+		internal_volume->is_locked = 0;
+	}
+	return( result );
+}
+
+/* Unlocks the volume
+ * Returns 1 if the volume is unlocked, 0 if not or -1 on error
+ */
+int libluksde_volume_unlock(
+     libluksde_volume_t *volume,
+     libcerror_error_t **error )
+{
+	libluksde_internal_volume_t *internal_volume = NULL;
+	static char *function                        = "libluksde_volume_unlock";
+	int result                                   = 1;
+
+	if( volume == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid volume.",
+		 function );
+
+		return( -1 );
+	}
+	internal_volume = (libluksde_internal_volume_t *) volume;
+
+#if defined( HAVE_LIBLUKSDE_MULTI_THREAD_SUPPORT )
+	if( libcthreads_read_write_lock_grab_for_write(
+	     internal_volume->read_write_lock,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to grab read/write lock for writing.",
+		 function );
+
+		return( -1 );
+	}
+#endif
+	if( internal_volume->is_locked != 0 )
+	{
+		result = libluksde_internal_volume_unlock(
+		          internal_volume,
+		          internal_volume->file_io_handle,
+		          error );
+
+		if( result == -1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to unlock volume.",
+			 function );
+
+			result = -1;
+		}
+	}
+#if defined( HAVE_LIBLUKSDE_MULTI_THREAD_SUPPORT )
+	if( libcthreads_read_write_lock_release_for_write(
+	     internal_volume->read_write_lock,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to release read/write lock for writing.",
+		 function );
+
+		return( -1 );
+	}
+#endif
+	return( result );
 }
 
 /* Reads (volume) data from the last current into a buffer using a Basic File IO (bfio) handle
@@ -1936,6 +2127,17 @@ ssize_t libluksde_internal_volume_read_buffer_from_file_io_handle(
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
 		 "%s: invalid volume - current offset value out of bounds.",
+		 function );
+
+		return( -1 );
+	}
+	if( internal_volume->is_locked != 0 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: invalid volume - volume is locked.",
 		 function );
 
 		return( -1 );
@@ -2601,6 +2803,17 @@ int libluksde_volume_get_encryption_method(
 	}
 	internal_volume = (libluksde_internal_volume_t *) volume;
 
+	if( internal_volume->volume_header == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: invalid volume - missing volume header.",
+		 function );
+
+		return( -1 );
+	}
 	if( encryption_method == NULL )
 	{
 		libcerror_error_set(
@@ -2638,8 +2851,8 @@ int libluksde_volume_get_encryption_method(
 		return( -1 );
 	}
 #endif
-	*encryption_method        = internal_volume->header->encryption_method;
-	*encryption_chaining_mode = internal_volume->header->encryption_chaining_mode;
+	*encryption_method        = internal_volume->volume_header->encryption_method;
+	*encryption_chaining_mode = internal_volume->volume_header->encryption_chaining_mode;
 
 #if defined( HAVE_LIBLUKSDE_MULTI_THREAD_SUPPORT )
 	if( libcthreads_read_write_lock_release_for_read(
@@ -2701,10 +2914,10 @@ int libluksde_volume_get_volume_identifier(
 		return( -1 );
 	}
 #endif
-	if( internal_volume->header != NULL )
+	if( internal_volume->volume_header != NULL )
 	{
 		result = libluksde_volume_header_get_volume_identifier(
-		          internal_volume->header,
+		          internal_volume->volume_header,
 		          uuid_data,
 		          uuid_data_size,
 		          error );
@@ -2845,7 +3058,7 @@ int libluksde_volume_set_key(
 	}
 	internal_volume->master_key_size = (uint32_t) master_key_size;
 
-	internal_volume->keys_are_set = 1;
+	internal_volume->volume_master_key_is_set = 1;
 
 #if defined( HAVE_LIBLUKSDE_MULTI_THREAD_SUPPORT )
 	if( libcthreads_read_write_lock_release_for_write(
@@ -2904,17 +3117,6 @@ int libluksde_volume_set_keys(
 	}
 	internal_volume = (libluksde_internal_volume_t *) volume;
 
-	if( internal_volume->file_io_handle != NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
-		 "%s: invalid volume - file IO handle already set.",
-		 function );
-
-		return( -1 );
-	}
 	if( master_key == NULL )
 	{
 		libcerror_error_set(
@@ -2986,7 +3188,7 @@ int libluksde_volume_set_keys(
 	}
 	internal_volume->master_key_size = (uint32_t) master_key_size;
 
-	internal_volume->keys_are_set = 1;
+	internal_volume->volume_master_key_is_set = 1;
 
 #if defined( HAVE_LIBLUKSDE_MULTI_THREAD_SUPPORT )
 	if( libcthreads_read_write_lock_release_for_write(
@@ -3045,17 +3247,6 @@ int libluksde_volume_set_utf8_password(
 	}
 	internal_volume = (libluksde_internal_volume_t *) volume;
 
-	if( internal_volume->file_io_handle != NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
-		 "%s: invalid volume - file IO handle already set.",
-		 function );
-
-		return( -1 );
-	}
 #if defined( HAVE_LIBLUKSDE_MULTI_THREAD_SUPPORT )
 	if( libcthreads_read_write_lock_grab_for_write(
 	     internal_volume->read_write_lock,
@@ -3236,17 +3427,6 @@ int libluksde_volume_set_utf16_password(
 	}
 	internal_volume = (libluksde_internal_volume_t *) volume;
 
-	if( internal_volume->file_io_handle != NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
-		 "%s: invalid volume - file IO handle already set.",
-		 function );
-
-		return( -1 );
-	}
 #if defined( HAVE_LIBLUKSDE_MULTI_THREAD_SUPPORT )
 	if( libcthreads_read_write_lock_grab_for_write(
 	     internal_volume->read_write_lock,

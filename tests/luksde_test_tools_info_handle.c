@@ -55,6 +55,7 @@ int luksde_test_tools_info_handle_initialize(
 	 */
 	result = info_handle_initialize(
 	          &info_handle,
+	          1,
 	          &error );
 
 	LUKSDE_TEST_ASSERT_EQUAL_INT(
@@ -91,6 +92,7 @@ int luksde_test_tools_info_handle_initialize(
 	 */
 	result = info_handle_initialize(
 	          NULL,
+	          1,
 	          &error );
 
 	LUKSDE_TEST_ASSERT_EQUAL_INT(
@@ -109,6 +111,7 @@ int luksde_test_tools_info_handle_initialize(
 
 	result = info_handle_initialize(
 	          &info_handle,
+	          1,
 	          &error );
 
 	info_handle = NULL;
@@ -137,6 +140,7 @@ int luksde_test_tools_info_handle_initialize(
 
 		result = info_handle_initialize(
 		          &info_handle,
+		          1,
 		          &error );
 
 		if( luksde_test_malloc_attempts_before_fail != -1 )
@@ -179,6 +183,7 @@ int luksde_test_tools_info_handle_initialize(
 
 		result = info_handle_initialize(
 		          &info_handle,
+		          1,
 		          &error );
 
 		if( luksde_test_memset_attempts_before_fail != -1 )

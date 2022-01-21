@@ -1,4 +1,4 @@
-.Dd March  5, 2019
+.Dd January 21, 2022
 .Dt luksdeinfo
 .Os libluksde
 .Sh NAME
@@ -6,10 +6,10 @@
 .Nd determines information about a Linux Unified Key Setup (LUKS) Disk Encryption volume
 .Sh SYNOPSIS
 .Nm luksdeinfo
-.Op Fl k Ar keys
+.Op Fl k Ar key
 .Op Fl o Ar offset
 .Op Fl p Ar password
-.Op Fl hvV
+.Op Fl huvV
 .Ar source
 .Sh DESCRIPTION
 .Nm luksdeinfo
@@ -29,12 +29,14 @@ The options are as follows:
 .Bl -tag -width Ds
 .It Fl h
 shows this help
-.It Fl k Ar keys
-the master key, formatted in base16
+.It Fl k Ar key
+specify the volume master key formatted in base16
 .It Fl o Ar offset
 specify the volume offset
 .It fl p Ar password
 specify the password
+.It Fl u
+unattended mode (disables user interaction)
 .It Fl v
 verbose output to stderr
 .It Fl V
@@ -48,10 +50,10 @@ None
 .Bd -literal
 # luksdeinfo -p Password /dev/sda1
 luksdeinfo 20130704
-
+.sp
 Linux Unified Key Setup Disk Encryption information:
 	Encryption method:		AES 128-bit
-
+.sp
 .Ed
 .Sh DIAGNOSTICS
 Errors, verbose and debug output are printed to stderr when verbose output \-v is enabled.

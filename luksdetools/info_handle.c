@@ -28,6 +28,7 @@
 #include <types.h>
 #include <wide_string.h>
 
+#include "luksdetools_input.h"
 #include "luksdetools_libbfio.h"
 #include "luksdetools_libcerror.h"
 #include "luksdetools_libcsplit.h"
@@ -165,6 +166,7 @@ int luksdetools_system_string_copy_from_64_bit_in_decimal(
  */
 int info_handle_initialize(
      info_handle_t **info_handle,
+     int unattended_mode,
      libcerror_error_t **error )
 {
 	static char *function = "info_handle_initialize";
@@ -224,45 +226,14 @@ int info_handle_initialize(
 
 		return( -1 );
 	}
-	if( libbfio_file_range_initialize(
-	     &( ( *info_handle )->input_file_io_handle ),
-	     error ) != 1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-		 "%s: unable to initialize input file IO handle.",
-		 function );
-
-		goto on_error;
-	}
-	if( libluksde_volume_initialize(
-	     &( ( *info_handle )->input_volume ),
-	     error ) != 1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-		 "%s: unable to initialize input volume.",
-		 function );
-
-		goto on_error;
-	}
-	( *info_handle )->notify_stream = INFO_HANDLE_NOTIFY_STREAM;
+	( *info_handle )->notify_stream   = INFO_HANDLE_NOTIFY_STREAM;
+	( *info_handle )->unattended_mode = unattended_mode;
 
 	return( 1 );
 
 on_error:
 	if( *info_handle != NULL )
 	{
-		if( ( *info_handle )->input_file_io_handle != NULL )
-		{
-			libbfio_handle_free(
-			 &( ( *info_handle )->input_file_io_handle ),
-			 NULL );
-		}
 		memory_free(
 		 *info_handle );
 
@@ -294,28 +265,32 @@ int info_handle_free(
 	}
 	if( *info_handle != NULL )
 	{
-		if( libluksde_volume_free(
-		     &( ( *info_handle )->input_volume ),
-		     error ) != 1 )
+		if( ( *info_handle )->file_io_handle != NULL )
 		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
-			 "%s: unable to free input volume.",
-			 function );
+			if( info_handle_close(
+			     *info_handle,
+			     error ) != 0 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_IO,
+				 LIBCERROR_IO_ERROR_CLOSE_FAILED,
+				 "%s: unable to close info handle.",
+				 function );
 
-			result = -1;
+				result = -1;
+			}
 		}
-		if( libbfio_handle_free(
-		     &( ( *info_handle )->input_file_io_handle ),
-		     error ) != 1 )
+		if( memory_set(
+		     ( *info_handle )->key_data,
+		     0,
+		     64 ) == NULL )
 		{
 			libcerror_error_set(
 			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
-			 "%s: unable to free input file IO handle.",
+			 LIBCERROR_ERROR_DOMAIN_MEMORY,
+			 LIBCERROR_MEMORY_ERROR_SET_FAILED,
+			 "%s: unable to clear key data.",
 			 function );
 
 			result = -1;
@@ -348,17 +323,17 @@ int info_handle_signal_abort(
 
 		return( -1 );
 	}
-	if( info_handle->input_volume != NULL )
+	if( info_handle->volume != NULL )
 	{
 		if( libluksde_volume_signal_abort(
-		     info_handle->input_volume,
+		     info_handle->volume,
 		     error ) != 1 )
 		{
 			libcerror_error_set(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
-			 "%s: unable to signal input volume to abort.",
+			 "%s: unable to signal volume to abort.",
 			 function );
 
 			return( -1 );
@@ -375,21 +350,9 @@ int info_handle_set_key(
      const system_character_t *string,
      libcerror_error_t **error )
 {
-	uint8_t key_data[ 64 ];
-
-	system_character_t *string_segment               = NULL;
-	static char *function                            = "info_handle_set_key";
-	size_t full_volume_encryption_key_size           = 0;
-	size_t string_length                             = 0;
-	size_t string_segment_size                       = 0;
-	uint32_t base16_variant                          = 0;
-	int number_of_segments                           = 0;
-
-#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
-	libcsplit_wide_split_string_t *string_elements   = NULL;
-#else
-	libcsplit_narrow_split_string_t *string_elements = NULL;
-#endif
+	static char *function   = "info_handle_set_key";
+	size_t string_length    = 0;
+	uint32_t base16_variant = 0;
 
 	if( info_handle == NULL )
 	{
@@ -405,66 +368,8 @@ int info_handle_set_key(
 	string_length = system_string_length(
 	                 string );
 
-#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
-	if( libcsplit_wide_string_split(
-	     string,
-	     string_length + 1,
-	     (wchar_t) ':',
-	     &string_elements,
-	     error ) != 1 )
-#else
-	if( libcsplit_narrow_string_split(
-	     string,
-	     string_length + 1,
-	     (char) ':',
-	     &string_elements,
-	     error ) != 1 )
-#endif
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-		 "%s: unable to split string.",
-		 function );
-
-		goto on_error;
-	}
-#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
-	if( libcsplit_wide_split_string_get_number_of_segments(
-	     string_elements,
-	     &number_of_segments,
-	     error ) != 1 )
-#else
-	if( libcsplit_narrow_split_string_get_number_of_segments(
-	     string_elements,
-	     &number_of_segments,
-	     error ) != 1 )
-#endif
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve number of segments.",
-		 function );
-
-		goto on_error;
-	}
-	if( ( number_of_segments == 0 )
-	 || ( number_of_segments > 2 ) )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_UNSUPPORTED_VALUE,
-		 "%s: unsupported number of segments.",
-		 function );
-
-		goto on_error;
-	}
 	if( memory_set(
-	     key_data,
+	     info_handle->key_data,
 	     0,
 	     64 ) == NULL )
 	{
@@ -489,187 +394,48 @@ int info_handle_set_key(
 		base16_variant |= LIBUNA_BASE16_VARIANT_ENCODING_UTF16_LITTLE_ENDIAN;
 	}
 #endif
-#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
-	if( libcsplit_wide_split_string_get_segment_by_index(
-	     string_elements,
-	     0,
-	     &string_segment,
-	     &string_segment_size,
-	     error ) != 1 )
-#else
-	if( libcsplit_narrow_split_string_get_segment_by_index(
-	     string_elements,
-	     0,
-	     &string_segment,
-	     &string_segment_size,
-	     error ) != 1 )
-#endif
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve string segment: 0.",
-		 function );
-
-		goto on_error;
-	}
-	if( string_segment == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: missing string segment: 0.",
-		 function );
-
-		goto on_error;
-	}
-	if( ( string_segment_size != 33 )
-	 && ( string_segment_size != 65 )
-	 && ( string_segment_size != 129 ) )
+	if( ( string_length != 32 )
+	 || ( string_length != 64 )
+	 || ( string_length != 128 ) )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBCERROR_ARGUMENT_ERROR_UNSUPPORTED_VALUE,
-		 "%s: unsupported string segment: 0 size.",
+		 "%s: unsupported string length.",
 		 function );
 
 		goto on_error;
 	}
-	if( string_segment_size == 129 )
-	{
-		/* Allow the key to be specified as a single 512-bit stream
-		 */
-		if( number_of_segments != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-			 LIBCERROR_ARGUMENT_ERROR_UNSUPPORTED_VALUE,
-			 "%s: unsupported number of segments.",
-			 function );
-
-			goto on_error;
-		}
-		if( libuna_base16_stream_copy_to_byte_stream(
-		     (uint8_t *) string_segment,
-		     string_segment_size - 1,
-		     key_data,
-		     64,
-		     base16_variant,
-		     0,
-		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
-			 "%s: unable to copy key data.",
-			 function );
-
-			goto on_error;
-		}
-		full_volume_encryption_key_size = 32;
-	}
-	else if( ( string_segment_size == 33 )
-	      || ( string_segment_size == 65 ) )
-	{
-		if( libuna_base16_stream_copy_to_byte_stream(
-		     (uint8_t *) string_segment,
-		     string_segment_size - 1,
-		     key_data,
-		     32,
-		     base16_variant,
-		     0,
-		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
-			 "%s: unable to copy key data.",
-			 function );
-
-			goto on_error;
-		}
-		if( string_segment_size == 33 )
-		{
-			full_volume_encryption_key_size = 16;
-		}
-		else
-		{
-			full_volume_encryption_key_size = 32;
-		}
-	}
-	if( libluksde_volume_set_key(
-	     info_handle->input_volume,
-	     key_data,
-	     full_volume_encryption_key_size,
-	     error ) != 1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
-		 "%s: unable to set key.",
-		 function );
-
-		goto on_error;
-	}
-	if( memory_set(
-	     key_data,
+	if( libuna_base16_stream_copy_to_byte_stream(
+	     (uint8_t *) string,
+	     string_length,
+	     info_handle->key_data,
+	     string_length / 2,
+	     base16_variant,
 	     0,
-	     64 ) == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_MEMORY,
-		 LIBCERROR_MEMORY_ERROR_SET_FAILED,
-		 "%s: unable to clear key data.",
-		 function );
-
-		goto on_error;
-	}
-#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
-	if( libcsplit_wide_split_string_free(
-	     &string_elements,
 	     error ) != 1 )
-#else
-	if( libcsplit_narrow_split_string_free(
-	     &string_elements,
-	     error ) != 1 )
-#endif
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
-		 "%s: unable to free split string.",
+		 LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
+		 "%s: unable to copy key data.",
 		 function );
 
 		goto on_error;
 	}
+	info_handle->key_data_size = string_length / 2;
+
 	return( 1 );
 
 on_error:
-	if( string_elements != NULL )
-	{
-#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
-		libcsplit_wide_split_string_free(
-		 &string_elements,
-		 NULL );
-#else
-		libcsplit_narrow_split_string_free(
-		 &string_elements,
-		 NULL );
-#endif
-	}
 	memory_set(
-	 key_data,
+	 info_handle->key_data,
 	 0,
 	 64 );
+
+	info_handle->key_data_size = 0;
 
 	return( -1 );
 }
@@ -691,7 +457,18 @@ int info_handle_set_password(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid info handle.",
+		 "%s: invalid mount handle.",
+		 function );
+
+		return( -1 );
+	}
+	if( string == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid string.",
 		 function );
 
 		return( -1 );
@@ -699,29 +476,9 @@ int info_handle_set_password(
 	string_length = system_string_length(
 	                 string );
 
-#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
-	if( libluksde_volume_set_utf16_password(
-	     info_handle->input_volume,
-	     (uint16_t *) string,
-	     string_length,
-	     error ) != 1 )
-#else
-	if( libluksde_volume_set_utf8_password(
-	     info_handle->input_volume,
-	     (uint8_t *) string,
-	     string_length,
-	     error ) != 1 )
-#endif
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
-		 "%s: unable to set password.",
-		 function );
+	info_handle->user_password        = string;
+	info_handle->user_password_length = string_length;
 
-		return( -1 );
-	}
 	return( 1 );
 }
 
@@ -772,15 +529,18 @@ int info_handle_set_volume_offset(
 }
 
 /* Opens the info handle
- * Returns 1 if successful, 0 if the key could not be read or -1 on error
+ * Returns 1 if successful or -1 on error
  */
-int info_handle_open_input(
+int info_handle_open(
      info_handle_t *info_handle,
      const system_character_t *filename,
      libcerror_error_t **error )
 {
-	static char *function  = "info_handle_open_input";
+	system_character_t password[ 64 ];
+
+	static char *function  = "info_handle_open";
 	size_t filename_length = 0;
+	size_t password_length = 0;
 	int result             = 0;
 
 	if( info_handle == NULL )
@@ -794,18 +554,53 @@ int info_handle_open_input(
 
 		return( -1 );
 	}
+	if( info_handle->file_io_handle != NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
+		 "%s: invalid info handle - file IO handle value already set.",
+		 function );
+
+		return( -1 );
+	}
+	if( info_handle->volume != NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
+		 "%s: invalid info handle - volume value already set.",
+		 function );
+
+		return( -1 );
+	}
+	if( libbfio_file_range_initialize(
+	     &( info_handle->file_io_handle ),
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 "%s: unable to initialize file IO handle.",
+		 function );
+
+		goto on_error;
+	}
 	filename_length = system_string_length(
 	                   filename );
 
 #if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 	if( libbfio_file_range_set_name_wide(
-	     info_handle->input_file_io_handle,
+	     info_handle->file_io_handle,
 	     filename,
 	     filename_length,
 	     error ) != 1 )
 #else
 	if( libbfio_file_range_set_name(
-	     info_handle->input_file_io_handle,
+	     info_handle->file_io_handle,
 	     filename,
 	     filename_length,
 	     error ) != 1 )
@@ -818,10 +613,10 @@ int info_handle_open_input(
 		 "%s: unable to open set file name.",
 		 function );
 
-		return( -1 );
+		goto on_error;
 	}
 	if( libbfio_file_range_set(
-	     info_handle->input_file_io_handle,
+	     info_handle->file_io_handle,
 	     info_handle->volume_offset,
 	     0,
 	     error ) != 1 )
@@ -833,72 +628,205 @@ int info_handle_open_input(
 		 "%s: unable to open set volume offset.",
 		 function );
 
-		return( -1 );
+		goto on_error;
 	}
-	result = libluksde_volume_open_file_io_handle(
-	          info_handle->input_volume,
-	          info_handle->input_file_io_handle,
-	          LIBLUKSDE_OPEN_READ,
+	if( libluksde_volume_initialize(
+	     &( info_handle->volume ),
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 "%s: unable to initialize volume.",
+		 function );
+
+		goto on_error;
+	}
+	if( info_handle->key_data_size != 0 )
+	{
+		if( libluksde_volume_set_key(
+		     info_handle->volume,
+		     info_handle->key_data,
+		     info_handle->key_data_size,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+			 "%s: unable to set key.",
+			 function );
+
+			goto on_error;
+		}
+	}
+	if( info_handle->user_password != NULL )
+	{
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
+		if( libluksde_volume_set_utf16_password(
+		     info_handle->volume,
+		     (uint16_t *) info_handle->user_password,
+		     info_handle->user_password_length,
+		     error ) != 1 )
+#else
+		if( libluksde_volume_set_utf8_password(
+		     info_handle->volume,
+		     (uint8_t *) info_handle->user_password,
+		     info_handle->user_password_length,
+		     error ) != 1 )
+#endif
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+			 "%s: unable to set password.",
+			 function );
+
+			goto on_error;
+		}
+	}
+	if( libluksde_volume_open_file_io_handle(
+	     info_handle->volume,
+	     info_handle->file_io_handle,
+	     LIBLUKSDE_OPEN_READ,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_IO,
+		 LIBCERROR_IO_ERROR_OPEN_FAILED,
+		 "%s: unable to open volume.",
+		 function );
+
+		goto on_error;
+	}
+	result = libluksde_volume_is_locked(
+	          info_handle->volume,
 	          error );
 
 	if( result == -1 )
 	{
 		libcerror_error_set(
 		 error,
-		 LIBCERROR_ERROR_DOMAIN_IO,
-		 LIBCERROR_IO_ERROR_OPEN_FAILED,
-		 "%s: unable to open input volume.",
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to determine if volume is locked.",
 		 function );
 
-		return( -1 );
+		goto on_error;
 	}
-	return( result );
+	else if( ( result != 0 )
+	      && ( info_handle->unattended_mode == 0 ) )
+	{
+		fprintf(
+		 stdout,
+		 "Volume is locked and a password is needed to unlock it.\n\n" );
+
+		if( luksdetools_prompt_for_password(
+		     stdout,
+		     "Password",
+		     password,
+		     64,
+		     error ) != 1 )
+		{
+			fprintf(
+			 stderr,
+			 "Unable to retrieve password.\n" );
+
+			goto on_error;
+		}
+		password_length = system_string_length(
+		                   password );
+
+		if( password_length > 0 )
+		{
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
+			if( libluksde_volume_set_utf16_password(
+			     info_handle->volume,
+			     (uint16_t *) password,
+			     password_length,
+			     error ) != 1 )
+#else
+			if( libluksde_volume_set_utf8_password(
+			     info_handle->volume,
+			     (uint8_t *) password,
+			     password_length,
+			     error ) != 1 )
+#endif
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+				 "%s: unable to set password.",
+				 function );
+
+				goto on_error;
+			}
+			memory_set(
+			 password,
+			 0,
+			 64 );
+		}
+		fprintf(
+		 stdout,
+		 "\n\n" );
+
+		result = libluksde_volume_unlock(
+		          info_handle->volume,
+		          error );
+
+		if( result == -1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+			 "%s: unable to unlock volume.",
+			 function );
+
+			goto on_error;
+		}
+		else if( result == 0 )
+		{
+			fprintf(
+			 stdout,
+			 "Unable to unlock volume.\n\n" );
+		}
+	}
+	return( 1 );
+
+on_error:
+	if( info_handle->volume != NULL )
+	{
+		libluksde_volume_free(
+		 &( info_handle->volume ),
+		 NULL );
+	}
+	if( info_handle->file_io_handle != NULL )
+	{
+		libbfio_handle_free(
+		 &( info_handle->file_io_handle ),
+		 NULL );
+	}
+	memory_set(
+	 password,
+	 0,
+	 64 );
+
+	return( -1 );
 }
 
 /* Closes the info handle
  * Returns the 0 if succesful or -1 on error
  */
-int info_handle_close_input(
+int info_handle_close(
      info_handle_t *info_handle,
      libcerror_error_t **error )
 {
-	static char *function = "info_handle_close_input";
-
-	if( info_handle == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid info handle.",
-		 function );
-
-		return( -1 );
-	}
-	if( libluksde_volume_close(
-	     info_handle->input_volume,
-	     error ) != 0 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_IO,
-		 LIBCERROR_IO_ERROR_CLOSE_FAILED,
-		 "%s: unable to close input volume.",
-		 function );
-
-		return( -1 );
-	}
-	return( 0 );
-}
-
-/* Determine if the input is locked
- * Returns 1 if locked, 0 if not or -1 on error
- */
-int info_handle_input_is_locked(
-     info_handle_t *info_handle,
-     libcerror_error_t **error )
-{
-	static char *function = "info_handle_input_is_locked";
+	static char *function = "info_handle_close";
 	int result            = 0;
 
 	if( info_handle == NULL )
@@ -912,20 +840,44 @@ int info_handle_input_is_locked(
 
 		return( -1 );
 	}
-	result = libluksde_volume_is_locked(
-	          info_handle->input_volume,
-	          error );
+	if( libluksde_volume_close(
+	     info_handle->volume,
+	     error ) != 0 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_IO,
+		 LIBCERROR_IO_ERROR_CLOSE_FAILED,
+		 "%s: unable to close volume.",
+		 function );
 
-	if( result == -1 )
+		result = -1;
+	}
+	if( libluksde_volume_free(
+	     &( info_handle->volume ),
+	     error ) != 1 )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to determine if volume is locked.",
+		 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+		 "%s: unable to free volume.",
 		 function );
 
-		return( -1 );
+		result = -1;
+	}
+	if( libbfio_handle_free(
+	     &( info_handle->file_io_handle ),
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+		 "%s: unable to free file IO handle.",
+		 function );
+
+		result = -1;
 	}
 	return( result );
 }
@@ -1072,7 +1024,7 @@ int info_handle_volume_fprint(
 	 "Linux Unified Key Setup Disk Encryption information:\n" );
 
 	if( libluksde_volume_get_encryption_method(
-	     info_handle->input_volume,
+	     info_handle->volume,
 	     &encryption_method,
 	     &encryption_chaining_mode,
 	     error ) != 1 )
@@ -1186,7 +1138,7 @@ int info_handle_volume_fprint(
 	 "\n" );
 
 	if( libluksde_volume_get_volume_identifier(
-	     info_handle->input_volume,
+	     info_handle->volume,
 	     guid_data,
 	     16,
 	     error ) != 1 )
@@ -1216,7 +1168,7 @@ int info_handle_volume_fprint(
 		return( -1 );
 	}
 	result = libluksde_volume_is_locked(
-	          info_handle->input_volume,
+	          info_handle->volume,
 	          error );
 
 	if( result == -1 )

@@ -180,6 +180,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\luksdetools\luksdetools_input.c"
+				>
+			</File>
+			<File
 				RelativePath="..\..\tests\luksde_test_memory.c"
 				>
 			</File>
@@ -195,6 +199,10 @@
 			>
 			<File
 				RelativePath="..\..\luksdetools\info_handle.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\luksdetools\luksdetools_input.h"
 				>
 			</File>
 			<File

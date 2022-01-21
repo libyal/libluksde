@@ -155,6 +155,7 @@ luksde_test_support_LDADD = \
 
 luksde_test_tools_info_handle_SOURCES = \
 	../luksdetools/info_handle.c ../luksdetools/info_handle.h \
+	../luksdetools/luksdetools_input.c ../luksdetools/luksdetools_input.h \
 	luksde_test_libcerror.h \
 	luksde_test_macros.h \
 	luksde_test_memory.c luksde_test_memory.h \

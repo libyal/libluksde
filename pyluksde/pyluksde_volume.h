@@ -81,6 +81,10 @@ PyObject *pyluksde_volume_is_locked(
            pyluksde_volume_t *pyluksde_volume,
            PyObject *arguments );
 
+PyObject *pyluksde_volume_unlock(
+           pyluksde_volume_t *pyluksde_volume,
+           PyObject *arguments );
+
 PyObject *pyluksde_volume_read_buffer(
            pyluksde_volume_t *pyluksde_volume,
            PyObject *arguments,

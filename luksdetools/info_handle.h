@@ -42,17 +42,37 @@ struct info_handle
 	 */
 	off64_t volume_offset;
 
-	/* The libbfio input file IO handle
+	/* The key data
 	 */
-	libbfio_handle_t *input_file_io_handle;
+	uint8_t key_data[ 64 ];
 
-	/* The libluksde input volume
+	/* The key data size
 	 */
-	libluksde_volume_t *input_volume;
+	size_t key_data_size;
+
+	/* The user password
+	 */
+	const system_character_t *user_password;
+
+	/* The user password length
+	 */
+	size_t user_password_length;
+
+	/* The libbfio file IO handle
+	 */
+	libbfio_handle_t *file_io_handle;
+
+	/* The libluksde volume
+	 */
+	libluksde_volume_t *volume;
 
 	/* The notification output stream
 	 */
 	FILE *notify_stream;
+
+	/* Value to indicate if user interaction is disabled
+	 */
+	int unattended_mode;
 
 	/* Value to indicate if abort was signalled
 	 */
@@ -67,6 +87,7 @@ int luksdetools_system_string_copy_from_64_bit_in_decimal(
 
 int info_handle_initialize(
      info_handle_t **info_handle,
+     int unattended_mode,
      libcerror_error_t **error );
 
 int info_handle_free(
@@ -92,16 +113,12 @@ int info_handle_set_volume_offset(
      const system_character_t *string,
      libcerror_error_t **error );
 
-int info_handle_open_input(
+int info_handle_open(
      info_handle_t *info_handle,
      const system_character_t *filename,
      libcerror_error_t **error );
 
-int info_handle_close_input(
-     info_handle_t *info_handle,
-     libcerror_error_t **error );
-
-int info_handle_input_is_locked(
+int info_handle_close(
      info_handle_t *info_handle,
      libcerror_error_t **error );
 
