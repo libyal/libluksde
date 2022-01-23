@@ -2170,11 +2170,11 @@ ssize_t libluksde_internal_volume_read_buffer_from_file_io_handle(
 	{
 		return( 0 );
 	}
-	if( (size64_t) ( internal_volume->current_offset + buffer_size ) >= internal_volume->io_handle->encrypted_volume_size )
+	if( (size64_t) buffer_size > ( internal_volume->io_handle->encrypted_volume_size - internal_volume->current_offset ) )
 	{
 		buffer_size = (size_t) ( internal_volume->io_handle->encrypted_volume_size - internal_volume->current_offset );
 	}
-	while( buffer_size > 0 )
+	while( buffer_offset < buffer_size )
 	{
 		if( libfdata_vector_get_element_value_at_offset(
 		     internal_volume->sectors_vector,
@@ -2210,9 +2210,9 @@ ssize_t libluksde_internal_volume_read_buffer_from_file_io_handle(
 		}
 		read_size = sector_data->data_size - element_data_offset;
 
-		if( read_size > buffer_size )
+		if( read_size > ( buffer_size - buffer_offset ) )
 		{
-			read_size = buffer_size;
+			read_size = buffer_size - buffer_offset;
 		}
 		if( read_size == 0 )
 		{
@@ -2233,7 +2233,6 @@ ssize_t libluksde_internal_volume_read_buffer_from_file_io_handle(
 			return( -1 );
 		}
 		buffer_offset      += read_size;
-		buffer_size        -= read_size;
 		element_data_offset = 0;
 
 		internal_volume->current_offset += (off64_t) read_size;
@@ -2978,17 +2977,6 @@ int libluksde_volume_set_key(
 	}
 	internal_volume = (libluksde_internal_volume_t *) volume;
 
-	if( internal_volume->file_io_handle != NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
-		 "%s: invalid volume - file IO handle already set.",
-		 function );
-
-		return( -1 );
-	}
 	if( master_key == NULL )
 	{
 		libcerror_error_set(
