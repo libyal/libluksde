@@ -25,7 +25,7 @@
 #include <types.h>
 
 #include "libluksde_definitions.h"
-#include "libluksde_encryption.h"
+#include "libluksde_encryption_context.h"
 #include "libluksde_libcaes.h"
 #include "libluksde_libcerror.h"
 #include "libluksde_libcnotify.h"
@@ -36,7 +36,7 @@
  * Make sure the value context is referencing, is set to NULL
  * Returns 1 if successful or -1 on error
  */
-int libluksde_encryption_initialize(
+int libluksde_encryption_context_initialize(
      libluksde_encryption_context_t **context,
      int method,
      int chaining_mode,
@@ -44,7 +44,7 @@ int libluksde_encryption_initialize(
      int essiv_hashing_method,
      libcerror_error_t **error )
 {
-	static char *function = "libluksde_encryption_initialize";
+	static char *function = "libluksde_encryption_context_initialize";
 	int encryption_mode   = 0;
 	int result            = 0;
 
@@ -334,11 +334,11 @@ on_error:
 /* Frees an encryption context
  * Returns 1 if successful or -1 on error
  */
-int libluksde_encryption_free(
+int libluksde_encryption_context_free(
      libluksde_encryption_context_t **context,
      libcerror_error_t **error )
 {
-	static char *function = "libluksde_encryption_free";
+	static char *function = "libluksde_encryption_context_free";
 	int result            = 1;
 
 	if( context == NULL )
@@ -509,7 +509,7 @@ int libluksde_encryption_free(
 /* Sets the de- and encryption key
  * Returns 1 if successful or -1 on error
  */
-int libluksde_encryption_set_key(
+int libluksde_encryption_context_set_key(
      libluksde_encryption_context_t *context,
      const uint8_t *key,
      size_t key_size,
@@ -517,7 +517,7 @@ int libluksde_encryption_set_key(
 {
 	uint8_t essiv_key[ 32 ];
 
-	static char *function = "libluksde_encryption_set_key";
+	static char *function = "libluksde_encryption_context_set_key";
 	size_t key_bit_size   = 0;
 	int result            = 0;
 
@@ -776,7 +776,7 @@ on_error:
 /* De- or encrypts a block of data
  * Returns 1 if successful or -1 on error
  */
-int libluksde_encryption_crypt(
+int libluksde_encryption_context_crypt(
      libluksde_encryption_context_t *context,
      int mode,
      const uint8_t *input_data,
@@ -789,7 +789,7 @@ int libluksde_encryption_crypt(
 	uint8_t block_key_data[ 16 ];
 	uint8_t initialization_vector[ 16 ];
 
-	static char *function = "libluksde_encryption_crypt";
+	static char *function = "libluksde_encryption_context_crypt";
 	size_t data_offset    = 0;
 	uint64_t block_key    = 0;
 	int result            = 0;

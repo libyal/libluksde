@@ -25,15 +25,14 @@
 #include <common.h>
 #include <types.h>
 
-#include "libluksde_encryption.h"
+#include "libluksde_encryption_context.h"
 #include "libluksde_extern.h"
 #include "libluksde_io_handle.h"
 #include "libluksde_libbfio.h"
 #include "libluksde_libcerror.h"
 #include "libluksde_libcthreads.h"
-#include "libluksde_libfcache.h"
-#include "libluksde_libfdata.h"
 #include "libluksde_types.h"
+#include "libluksde_sector_data_vector.h"
 #include "libluksde_volume_header.h"
 
 #if defined( __cplusplus )
@@ -72,17 +71,17 @@ struct libluksde_internal_volume
 	 */
 	uint8_t user_password_is_set;
 
+	/* The encryption context
+	 */
+	libluksde_encryption_context_t *encryption_context;
+
 	/* The current (storage media) offset
 	 */
 	off64_t current_offset;
 
-	/* The sectors vector
+	/* The sector data vector
 	 */
-	libfdata_vector_t *sectors_vector;
-
-	/* The sectors cache
-	 */
-	libfcache_cache_t *sectors_cache;
+	libluksde_sector_data_vector_t *sector_data_vector;
 
 	/* The file IO handle
 	 */

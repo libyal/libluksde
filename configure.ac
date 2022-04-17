@@ -100,9 +100,6 @@ AX_LIBBFIO_CHECK_ENABLE
 dnl Check if libfcache or required headers and functions are available
 AX_LIBFCACHE_CHECK_ENABLE
 
-dnl Check if libfdata or required headers and functions are available
-AX_LIBFDATA_CHECK_ENABLE
-
 dnl Check if libfguid or required headers and functions are available
 AX_LIBFGUID_CHECK_ENABLE
 
@@ -152,7 +149,7 @@ CFLAGS="$CFLAGS -Wall";
 
 dnl Check if requires and build requires should be set in spec file
 AS_IF(
- [test "x$ac_cv_libcerror" = xyes || test "x$ac_cv_libcthreads" = xyes || test "x$ac_cv_libcdata" = xyes || test "x$ac_cv_libclocale" = xyes || test "x$ac_cv_libcnotify" = xyes || test "x$ac_cv_libcsplit" = xyes || test "x$ac_cv_libuna" = xyes || test "x$ac_cv_libcfile" = xyes || test "x$ac_cv_libcpath" = xyes || test "x$ac_cv_libbfio" = xyes || test "x$ac_cv_libfcache" = xyes || test "x$ac_cv_libfdata" = xyes || test "x$ac_cv_libfguid" = xyes || test "x$ac_cv_libhmac" = xyes || test "x$ac_cv_libcaes" = xyes || test "x$ac_cv_libfcrypto" = xyes || test "x$ac_cv_libcrypto" != xno],
+ [test "x$ac_cv_libcerror" = xyes || test "x$ac_cv_libcthreads" = xyes || test "x$ac_cv_libcdata" = xyes || test "x$ac_cv_libclocale" = xyes || test "x$ac_cv_libcnotify" = xyes || test "x$ac_cv_libcsplit" = xyes || test "x$ac_cv_libuna" = xyes || test "x$ac_cv_libcfile" = xyes || test "x$ac_cv_libcpath" = xyes || test "x$ac_cv_libbfio" = xyes || test "x$ac_cv_libfcache" = xyes || test "x$ac_cv_libfguid" = xyes || test "x$ac_cv_libhmac" = xyes || test "x$ac_cv_libcaes" = xyes || test "x$ac_cv_libfcrypto" = xyes || test "x$ac_cv_libcrypto" != xno],
  [AC_SUBST(
   [libluksde_spec_requires],
   [Requires:])
@@ -190,7 +187,6 @@ AC_CONFIG_FILES([libcfile/Makefile])
 AC_CONFIG_FILES([libcpath/Makefile])
 AC_CONFIG_FILES([libbfio/Makefile])
 AC_CONFIG_FILES([libfcache/Makefile])
-AC_CONFIG_FILES([libfdata/Makefile])
 AC_CONFIG_FILES([libfguid/Makefile])
 AC_CONFIG_FILES([libhmac/Makefile])
 AC_CONFIG_FILES([libcaes/Makefile])
@@ -237,7 +233,6 @@ Building:
    libcpath support:                            $ac_cv_libcpath
    libbfio support:                             $ac_cv_libbfio
    libfcache support:                           $ac_cv_libfcache
-   libfdata support:                            $ac_cv_libfdata
    libfguid support:                            $ac_cv_libfguid
    libhmac support:                             $ac_cv_libhmac
    SHA1 support:                                $ac_cv_libhmac_sha1

@@ -92,7 +92,7 @@ struct libluksde_encryption_context
 	libcaes_context_t *essiv_encryption_context;
 };
 
-int libluksde_encryption_initialize(
+int libluksde_encryption_context_initialize(
      libluksde_encryption_context_t **context,
      int method,
      int chaining_mode,
@@ -100,17 +100,17 @@ int libluksde_encryption_initialize(
      int essiv_hashing_method,
      libcerror_error_t **error );
 
-int libluksde_encryption_free(
+int libluksde_encryption_context_free(
      libluksde_encryption_context_t **context,
      libcerror_error_t **error );
 
-int libluksde_encryption_set_key(
+int libluksde_encryption_context_set_key(
      libluksde_encryption_context_t *context,
      const uint8_t *key,
      size_t key_size,
      libcerror_error_t **error );
 
-int libluksde_encryption_crypt(
+int libluksde_encryption_context_crypt(
      libluksde_encryption_context_t *context,
      int mode,
      const uint8_t *input_data,

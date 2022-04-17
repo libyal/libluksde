@@ -25,10 +25,8 @@
 #include <common.h>
 #include <types.h>
 
-#include "libluksde_encryption.h"
 #include "libluksde_libbfio.h"
 #include "libluksde_libcerror.h"
-#include "libluksde_libfdata.h"
 
 #if defined( __cplusplus )
 extern "C" {
@@ -56,10 +54,6 @@ struct libluksde_io_handle
 	 */
 	size64_t encrypted_volume_size;
 
-	/* The encryption context
-	 */
-	libluksde_encryption_context_t *encryption_context;
-
 	/* Value to indicate if abort was signalled
 	 */
 	int abort;
@@ -75,19 +69,6 @@ int libluksde_io_handle_free(
 
 int libluksde_io_handle_clear(
      libluksde_io_handle_t *io_handle,
-     libcerror_error_t **error );
-
-int libluksde_io_handle_read_sector(
-     libluksde_io_handle_t *io_handle,
-     libbfio_handle_t *file_io_handle,
-     libfdata_vector_t *vector,
-     libfdata_cache_t *cache,
-     int element_index,
-     int element_data_file_index,
-     off64_t element_data_offset,
-     size64_t element_data_size,
-     uint32_t element_data_flags,
-     uint8_t read_flags,
      libcerror_error_t **error );
 
 #if defined( __cplusplus )

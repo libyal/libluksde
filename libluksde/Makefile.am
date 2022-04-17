@@ -12,7 +12,6 @@ AM_CPPFLAGS = \
 	@LIBCPATH_CPPFLAGS@ \
 	@LIBBFIO_CPPFLAGS@ \
 	@LIBFCACHE_CPPFLAGS@ \
-	@LIBFDATA_CPPFLAGS@ \
 	@LIBFGUID_CPPFLAGS@ \
 	@LIBHMAC_CPPFLAGS@ \
 	@LIBCAES_CPPFLAGS@ \
@@ -28,7 +27,7 @@ libluksde_la_SOURCES = \
 	libluksde_debug.c libluksde_debug.h \
 	libluksde_definitions.h \
 	libluksde_diffuser.c libluksde_diffuser.h \
-	libluksde_encryption.c libluksde_encryption.h \
+	libluksde_encryption_context.c libluksde_encryption_context.h \
 	libluksde_error.c libluksde_error.h \
 	libluksde_extern.h \
 	libluksde_io_handle.c libluksde_io_handle.h \
@@ -42,13 +41,13 @@ libluksde_la_SOURCES = \
 	libluksde_libcthreads.h \
 	libluksde_libfcache.h \
 	libluksde_libfcrypto.h \
-	libluksde_libfdata.h \
 	libluksde_libfguid.h \
 	libluksde_libhmac.h \
 	libluksde_libuna.h \
 	libluksde_notify.c libluksde_notify.h \
 	libluksde_password.c libluksde_password.h \
 	libluksde_sector_data.c libluksde_sector_data.h \
+	libluksde_sector_data_vector.c libluksde_sector_data_vector.h \
 	libluksde_support.c libluksde_support.h \
 	libluksde_types.h \
 	libluksde_unused.h \
@@ -69,7 +68,6 @@ libluksde_la_LIBADD = \
 	@LIBCPATH_LIBADD@ \
 	@LIBBFIO_LIBADD@ \
 	@LIBFCACHE_LIBADD@ \
-	@LIBFDATA_LIBADD@ \
 	@LIBFGUID_LIBADD@ \
 	@LIBHMAC_LIBADD@ \
 	@LIBCAES_LIBADD@ \

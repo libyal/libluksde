@@ -2,9 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9,00"
-	Name="luksde_test_volume"
-	ProjectGUID="{135A029A-7731-402F-8E84-E9C2A693B9A5}"
-	RootNamespace="luksde_test_volume"
+	Name="luksde_test_sector_data_vector"
+	ProjectGUID="{DCEEF49D-5DC0-4774-8527-3821CEC98CAE}"
+	RootNamespace="luksde_test_sector_data_vector"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="131072"
 	>
@@ -180,15 +180,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\tests\luksde_test_getopt.c"
-				>
-			</File>
-			<File
 				RelativePath="..\..\tests\luksde_test_memory.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\tests\luksde_test_volume.c"
+				RelativePath="..\..\tests\luksde_test_sector_data_vector.c"
 				>
 			</File>
 		</Filter>
@@ -202,7 +198,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\tests\luksde_test_getopt.h"
+				RelativePath="..\..\tests\luksde_test_libbfio.h"
 				>
 			</File>
 			<File
@@ -210,19 +206,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\tests\luksde_test_libclocale.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\tests\luksde_test_libcnotify.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\tests\luksde_test_libluksde.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\tests\luksde_test_libuna.h"
 				>
 			</File>
 			<File

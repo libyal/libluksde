@@ -2,9 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9,00"
-	Name="luksde_test_volume"
-	ProjectGUID="{135A029A-7731-402F-8E84-E9C2A693B9A5}"
-	RootNamespace="luksde_test_volume"
+	Name="luksde_test_encryption_context"
+	ProjectGUID="{55E2523A-BCB1-4FFA-B41F-1F3A12DFE0F2}"
+	RootNamespace="luksde_test_encryption_context"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="131072"
 	>
@@ -176,19 +176,11 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath="..\..\tests\luksde_test_functions.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\tests\luksde_test_getopt.c"
+				RelativePath="..\..\tests\luksde_test_encryption_context.c"
 				>
 			</File>
 			<File
 				RelativePath="..\..\tests\luksde_test_memory.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\tests\luksde_test_volume.c"
 				>
 			</File>
 		</Filter>
@@ -198,31 +190,11 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath="..\..\tests\luksde_test_functions.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\tests\luksde_test_getopt.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\tests\luksde_test_libcerror.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\tests\luksde_test_libclocale.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\tests\luksde_test_libcnotify.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\tests\luksde_test_libluksde.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\tests\luksde_test_libuna.h"
 				>
 			</File>
 			<File

@@ -14,7 +14,6 @@ AM_CPPFLAGS = \
 	@LIBCPATH_CPPFLAGS@ \
 	@LIBBFIO_CPPFLAGS@ \
 	@LIBFCACHE_CPPFLAGS@ \
-	@LIBFDATA_CPPFLAGS@ \
 	@LIBFGUID_CPPFLAGS@ \
 	@LIBHMAC_CPPFLAGS@ \
 	@LIBCAES_CPPFLAGS@ \
@@ -47,18 +46,36 @@ EXTRA_DIST = \
 	$(check_SCRIPTS)
 
 check_PROGRAMS = \
+	luksde_test_encryption_context \
 	luksde_test_error \
 	luksde_test_io_handle \
 	luksde_test_key_slot \
 	luksde_test_notify \
 	luksde_test_password \
 	luksde_test_sector_data \
+	luksde_test_sector_data_vector \
 	luksde_test_support \
 	luksde_test_tools_info_handle \
 	luksde_test_tools_output \
 	luksde_test_tools_signal \
 	luksde_test_volume \
 	luksde_test_volume_header
+
+luksde_test_aes_ccm_encrypted_key_LDADD = \
+	../libluksde/libluksde.la \
+	@LIBCERROR_LIBADD@
+
+luksde_test_encryption_context_SOURCES = \
+	luksde_test_encryption_context.c \
+	luksde_test_libluksde.h \
+	luksde_test_libcerror.h \
+	luksde_test_macros.h \
+	luksde_test_memory.c luksde_test_memory.h \
+	luksde_test_unused.h
+
+luksde_test_encryption_context_LDADD = \
+	../libluksde/libluksde.la \
+	@LIBCERROR_LIBADD@
 
 luksde_test_error_SOURCES = \
 	luksde_test_error.c \
@@ -124,6 +141,28 @@ luksde_test_sector_data_SOURCES = \
 	luksde_test_unused.h
 
 luksde_test_sector_data_LDADD = \
+	../libluksde/libluksde.la \
+	@LIBCERROR_LIBADD@
+
+luksde_test_sector_data_vector_SOURCES = \
+	luksde_test_functions.c luksde_test_functions.h \
+	luksde_test_libluksde.h \
+	luksde_test_libbfio.h \
+	luksde_test_libcerror.h \
+	luksde_test_macros.h \
+	luksde_test_memory.c luksde_test_memory.h \
+	luksde_test_sector_data_vector.c \
+	luksde_test_unused.h
+
+luksde_test_sector_data_vector_LDADD = \
+	@LIBBFIO_LIBADD@ \
+	@LIBCPATH_LIBADD@ \
+	@LIBCFILE_LIBADD@ \
+	@LIBUNA_LIBADD@ \
+	@LIBCSPLIT_LIBADD@ \
+	@LIBCNOTIFY_LIBADD@ \
+	@LIBCLOCALE_LIBADD@ \
+	@LIBCDATA_LIBADD@ \
 	../libluksde/libluksde.la \
 	@LIBCERROR_LIBADD@
 

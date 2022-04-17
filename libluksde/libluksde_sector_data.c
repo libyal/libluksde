@@ -25,7 +25,7 @@
 #include <types.h>
 
 #include "libluksde_definitions.h"
-#include "libluksde_encryption.h"
+#include "libluksde_encryption_context.h"
 #include "libluksde_io_handle.h"
 #include "libluksde_libbfio.h"
 #include "libluksde_libcerror.h"
@@ -214,7 +214,7 @@ int libluksde_sector_data_free(
 /* Reads sector data
  * Returns 1 if successful or -1 on error
  */
-int libluksde_sector_data_read(
+int libluksde_sector_data_read_file_io_handle(
      libluksde_sector_data_t *sector_data,
      libluksde_io_handle_t *io_handle,
      libbfio_handle_t *file_io_handle,
@@ -222,7 +222,7 @@ int libluksde_sector_data_read(
      libluksde_encryption_context_t *encryption_context,
      libcerror_error_t **error )
 {
-	static char *function = "libluksde_sector_data_read";
+	static char *function = "libluksde_sector_data_read_file_io_handle";
 	ssize_t read_count    = 0;
 
 	if( sector_data == NULL )
@@ -325,7 +325,7 @@ int libluksde_sector_data_read(
 	file_offset -= io_handle->encrypted_volume_offset;
 	file_offset /= io_handle->bytes_per_sector;
 
-	if( libluksde_encryption_crypt(
+	if( libluksde_encryption_context_crypt(
 	     encryption_context,
 	     LIBLUKSDE_ENCRYPTION_CRYPT_MODE_DECRYPT,
 	     sector_data->encrypted_data,

@@ -1,5 +1,5 @@
 /*
- * Sector data functions
+ * Sector data vector functions
  *
  * Copyright (C) 2013-2022, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -19,58 +19,71 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#if !defined( _LIBLUKSDE_SECTOR_DATA_H )
-#define _LIBLUKSDE_SECTOR_DATA_H
+#if !defined( _LIBLUKSDE_SECTOR_DATA_VECTOR_H )
+#define _LIBLUKSDE_SECTOR_DATA_VECTOR_H
 
 #include <common.h>
 #include <types.h>
 
 #include "libluksde_encryption_context.h"
 #include "libluksde_io_handle.h"
-#include "libluksde_libbfio.h"
 #include "libluksde_libcerror.h"
+#include "libluksde_libbfio.h"
+#include "libluksde_libfcache.h"
+#include "libluksde_sector_data.h"
 
 #if defined( __cplusplus )
 extern "C" {
 #endif
 
-typedef struct libluksde_sector_data libluksde_sector_data_t;
+typedef struct libluksde_sector_data_vector libluksde_sector_data_vector_t;
 
-struct libluksde_sector_data
+struct libluksde_sector_data_vector
 {
-	/* The encrypted data
+	/* The cache timestamp
 	 */
-	uint8_t *encrypted_data;
+	int64_t cache_timestamp;
 
-	/* The data
+	/* The sector data cache
 	 */
-	uint8_t *data;
+	libfcache_cache_t *cache;
+
+	/* The number of bytes per sector
+	 */
+	uint16_t bytes_per_sector;
+
+	/* The data offset
+	 */
+	off64_t data_offset;
 
 	/* The data size
 	 */
-	size_t data_size;
+	size64_t data_size;
 };
 
-int libluksde_sector_data_initialize(
-     libluksde_sector_data_t **sector_data,
-     size_t data_size,
+int libluksde_sector_data_vector_initialize(
+     libluksde_sector_data_vector_t **sector_data_vector,
+     uint16_t bytes_per_sector,
+     off64_t data_offset,
+     size64_t data_size,
      libcerror_error_t **error );
 
-int libluksde_sector_data_free(
-     libluksde_sector_data_t **sector_data,
+int libluksde_sector_data_vector_free(
+     libluksde_sector_data_vector_t **sector_data_vector,
      libcerror_error_t **error );
 
-int libluksde_sector_data_read_file_io_handle(
-     libluksde_sector_data_t *sector_data,
+int libluksde_sector_data_vector_get_sector_data_at_offset(
+     libluksde_sector_data_vector_t *sector_data_vector,
      libluksde_io_handle_t *io_handle,
      libbfio_handle_t *file_io_handle,
-     off64_t file_offset,
      libluksde_encryption_context_t *encryption_context,
+     off64_t offset,
+     libluksde_sector_data_t **sector_data,
      libcerror_error_t **error );
 
 #if defined( __cplusplus )
 }
 #endif
 
-#endif /* !defined( _LIBLUKSDE_SECTOR_DATA_H ) */
+#endif /* !defined( _LIBLUKSDE_SECTOR_DATA_VECTOR_H ) */
 

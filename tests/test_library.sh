@@ -7,7 +7,7 @@ EXIT_SUCCESS=0;
 EXIT_FAILURE=1;
 EXIT_IGNORE=77;
 
-LIBRARY_TESTS="error key_slot notify password sector_data volume_header";
+LIBRARY_TESTS="encryption_context error io_handle key_slot notify password sector_data sector_data_vector volume_header";
 LIBRARY_TESTS_WITH_INPUT="support volume";
 OPTION_SETS="password";
 

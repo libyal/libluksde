@@ -6,7 +6,7 @@ $ExitSuccess = 0
 $ExitFailure = 1
 $ExitIgnore = 77
 
-$LibraryTests = "error key_slot notify password sector_data volume_header"
+$LibraryTests = "encryption_context error io_handle key_slot notify password sector_data sector_data_vector volume_header"
 $LibraryTestsWithInput = "support volume"
 $OptionSets = "password"
 
