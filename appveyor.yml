@@ -1,5 +1,5 @@
 environment:
-  pypi_token:
+  PYPI_TOKEN:
     secure: VHuZiUWgTqTciKE2nsv/LpxGYokQY/xdx7Q/60OQapQBI4sdKLCB3SEJTL/JGtVSZtDSGaL+9QgHA9vsll3SbKDwf2hpkKJ071wVGYPWZ3SxpB5FexiPOi2TSRmSqPBiCI8jkIiF9oSDuRIHNNOYFVXXhsxXQ/Bb2GbvAv2F+3oP7c34sxPSyCa04OzRTs/0TZfK05+gKpkWwyGJDwqzRNnP1gjZIeNSxqWI8jfH7Z0J7dPinSXRrS7xUJkBP1qHcOfJEaDJtRATPq64tse6K5CwaP/3xb2Vo9ZHSNSKEw4=
   matrix:
   - TARGET: vs2008
@@ -205,8 +205,8 @@ install:
     }
 - sh: if test ${BUILD_ENVIRONMENT} = "xcode" || test ${BUILD_ENVIRONMENT} = "python"; then brew update -q; fi
 - sh: if test ${BUILD_ENVIRONMENT} = "xcode" || test ${BUILD_ENVIRONMENT} = "python"; then brew install -q gettext gnu-sed || true; fi
-- sh: if test ${BUILD_ENVIRONMENT} = "python"; then brew install -q python3 twine-pypi || true; fi
-- ps: If ($env:BUILD_ENVIRONMENT -eq "python" -and $isWindows) {
+- sh: if test ${BUILD_ENVIRONMENT} = "python"; then brew install -q python3 || true; fi
+- ps: If ($env:BUILD_ENVIRONMENT -eq "python") {
     Invoke-Expression "${env:PYTHON} -m pip install -U pip setuptools twine wheel" }
 - cmd: if [%BUILD_ENVIRONMENT%]==[cygwin] (
     C:\cygwin\setup-x86.exe -qgnNdO -l C:\cygwin\var\cache\setup -R c:\cygwin -s http://cygwin.mirror.constant.com -P gettext-devel -P zlib-devel -P libssl-devel -P python2-devel -P python3-devel )
