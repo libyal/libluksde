@@ -21,6 +21,7 @@
 
 #include <common.h>
 #include <file_stream.h>
+#include <memory.h>
 #include <types.h>
 
 #if defined( HAVE_STDLIB_H ) || defined( WINAPI )
@@ -50,7 +51,9 @@ int luksde_test_encryption_context_initialize(
 
 #if defined( HAVE_LUKSDE_TEST_MEMORY )
 	int number_of_malloc_fail_tests                    = 1;
+#if defined( OPTIMIZATION_DISABLED )
 	int number_of_memset_fail_tests                    = 1;
+#endif
 	int test_number                                    = 0;
 #endif
 
@@ -60,6 +63,234 @@ int luksde_test_encryption_context_initialize(
 	          &encryption_context,
 	          LIBLUKSDE_ENCRYPTION_METHOD_AES,
 	          LIBLUKSDE_ENCRYPTION_CHAINING_MODE_CBC,
+	          LIBLUKSDE_INITIALIZATION_VECTOR_MODE_ESSIV,
+	          LIBLUKSDE_HASHING_METHOD_SHA1,
+	          &error );
+
+	LUKSDE_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	LUKSDE_TEST_ASSERT_IS_NOT_NULL(
+	 "encryption_context",
+	 encryption_context );
+
+	LUKSDE_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	result = libluksde_encryption_context_free(
+	          &encryption_context,
+	          &error );
+
+	LUKSDE_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	LUKSDE_TEST_ASSERT_IS_NULL(
+	 "encryption_context",
+	 encryption_context );
+
+	LUKSDE_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	result = libluksde_encryption_context_initialize(
+	          &encryption_context,
+	          LIBLUKSDE_ENCRYPTION_METHOD_AES,
+	          LIBLUKSDE_ENCRYPTION_CHAINING_MODE_ECB,
+	          LIBLUKSDE_INITIALIZATION_VECTOR_MODE_ESSIV,
+	          LIBLUKSDE_HASHING_METHOD_SHA1,
+	          &error );
+
+	LUKSDE_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	LUKSDE_TEST_ASSERT_IS_NOT_NULL(
+	 "encryption_context",
+	 encryption_context );
+
+	LUKSDE_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	result = libluksde_encryption_context_free(
+	          &encryption_context,
+	          &error );
+
+	LUKSDE_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	LUKSDE_TEST_ASSERT_IS_NULL(
+	 "encryption_context",
+	 encryption_context );
+
+	LUKSDE_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	result = libluksde_encryption_context_initialize(
+	          &encryption_context,
+	          LIBLUKSDE_ENCRYPTION_METHOD_AES,
+	          LIBLUKSDE_ENCRYPTION_CHAINING_MODE_XTS,
+	          LIBLUKSDE_INITIALIZATION_VECTOR_MODE_NONE,
+	          LIBLUKSDE_HASHING_METHOD_SHA1,
+	          &error );
+
+	LUKSDE_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	LUKSDE_TEST_ASSERT_IS_NOT_NULL(
+	 "encryption_context",
+	 encryption_context );
+
+	LUKSDE_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	result = libluksde_encryption_context_free(
+	          &encryption_context,
+	          &error );
+
+	LUKSDE_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	LUKSDE_TEST_ASSERT_IS_NULL(
+	 "encryption_context",
+	 encryption_context );
+
+	LUKSDE_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	result = libluksde_encryption_context_initialize(
+	          &encryption_context,
+	          LIBLUKSDE_ENCRYPTION_METHOD_ARC4,
+	          LIBLUKSDE_ENCRYPTION_CHAINING_MODE_CBC,
+	          LIBLUKSDE_INITIALIZATION_VECTOR_MODE_NONE,
+	          LIBLUKSDE_HASHING_METHOD_SHA1,
+	          &error );
+
+	LUKSDE_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	LUKSDE_TEST_ASSERT_IS_NOT_NULL(
+	 "encryption_context",
+	 encryption_context );
+
+	LUKSDE_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	result = libluksde_encryption_context_free(
+	          &encryption_context,
+	          &error );
+
+	LUKSDE_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	LUKSDE_TEST_ASSERT_IS_NULL(
+	 "encryption_context",
+	 encryption_context );
+
+	LUKSDE_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	result = libluksde_encryption_context_initialize(
+	          &encryption_context,
+	          LIBLUKSDE_ENCRYPTION_METHOD_ARC4,
+	          LIBLUKSDE_ENCRYPTION_CHAINING_MODE_ECB,
+	          LIBLUKSDE_INITIALIZATION_VECTOR_MODE_NONE,
+	          LIBLUKSDE_HASHING_METHOD_SHA1,
+	          &error );
+
+	LUKSDE_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	LUKSDE_TEST_ASSERT_IS_NOT_NULL(
+	 "encryption_context",
+	 encryption_context );
+
+	LUKSDE_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	result = libluksde_encryption_context_free(
+	          &encryption_context,
+	          &error );
+
+	LUKSDE_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	LUKSDE_TEST_ASSERT_IS_NULL(
+	 "encryption_context",
+	 encryption_context );
+
+	LUKSDE_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	result = libluksde_encryption_context_initialize(
+	          &encryption_context,
+	          LIBLUKSDE_ENCRYPTION_METHOD_SERPENT,
+	          LIBLUKSDE_ENCRYPTION_CHAINING_MODE_CBC,
+	          LIBLUKSDE_INITIALIZATION_VECTOR_MODE_NONE,
+	          LIBLUKSDE_HASHING_METHOD_SHA1,
+	          &error );
+
+	LUKSDE_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	LUKSDE_TEST_ASSERT_IS_NOT_NULL(
+	 "encryption_context",
+	 encryption_context );
+
+	LUKSDE_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	result = libluksde_encryption_context_free(
+	          &encryption_context,
+	          &error );
+
+	LUKSDE_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	LUKSDE_TEST_ASSERT_IS_NULL(
+	 "encryption_context",
+	 encryption_context );
+
+	LUKSDE_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	result = libluksde_encryption_context_initialize(
+	          &encryption_context,
+	          LIBLUKSDE_ENCRYPTION_METHOD_SERPENT,
+	          LIBLUKSDE_ENCRYPTION_CHAINING_MODE_ECB,
 	          LIBLUKSDE_INITIALIZATION_VECTOR_MODE_NONE,
 	          LIBLUKSDE_HASHING_METHOD_SHA1,
 	          &error );
@@ -100,7 +331,7 @@ int luksde_test_encryption_context_initialize(
 	          NULL,
 	          LIBLUKSDE_ENCRYPTION_METHOD_AES,
 	          LIBLUKSDE_ENCRYPTION_CHAINING_MODE_CBC,
-	          LIBLUKSDE_INITIALIZATION_VECTOR_MODE_NONE,
+	          LIBLUKSDE_INITIALIZATION_VECTOR_MODE_ESSIV,
 	          LIBLUKSDE_HASHING_METHOD_SHA1,
 	          &error );
 
@@ -122,11 +353,31 @@ int luksde_test_encryption_context_initialize(
 	          &encryption_context,
 	          LIBLUKSDE_ENCRYPTION_METHOD_AES,
 	          LIBLUKSDE_ENCRYPTION_CHAINING_MODE_CBC,
-	          LIBLUKSDE_INITIALIZATION_VECTOR_MODE_NONE,
+	          LIBLUKSDE_INITIALIZATION_VECTOR_MODE_ESSIV,
 	          LIBLUKSDE_HASHING_METHOD_SHA1,
 	          &error );
 
 	encryption_context = NULL;
+
+	LUKSDE_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	LUKSDE_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libluksde_encryption_context_initialize(
+	          &encryption_context,
+	          -1,
+	          LIBLUKSDE_ENCRYPTION_CHAINING_MODE_CBC,
+	          LIBLUKSDE_INITIALIZATION_VECTOR_MODE_ESSIV,
+	          LIBLUKSDE_HASHING_METHOD_SHA1,
+	          &error );
 
 	LUKSDE_TEST_ASSERT_EQUAL_INT(
 	 "result",
@@ -154,7 +405,7 @@ int luksde_test_encryption_context_initialize(
 		          &encryption_context,
 		          LIBLUKSDE_ENCRYPTION_METHOD_AES,
 		          LIBLUKSDE_ENCRYPTION_CHAINING_MODE_CBC,
-		          LIBLUKSDE_INITIALIZATION_VECTOR_MODE_NONE,
+		          LIBLUKSDE_INITIALIZATION_VECTOR_MODE_ESSIV,
 		          LIBLUKSDE_HASHING_METHOD_SHA1,
 		          &error );
 
@@ -188,6 +439,8 @@ int luksde_test_encryption_context_initialize(
 			 &error );
 		}
 	}
+#if defined( OPTIMIZATION_DISABLED )
+
 	for( test_number = 0;
 	     test_number < number_of_memset_fail_tests;
 	     test_number++ )
@@ -200,7 +453,7 @@ int luksde_test_encryption_context_initialize(
 		          &encryption_context,
 		          LIBLUKSDE_ENCRYPTION_METHOD_AES,
 		          LIBLUKSDE_ENCRYPTION_CHAINING_MODE_CBC,
-		          LIBLUKSDE_INITIALIZATION_VECTOR_MODE_NONE,
+		          LIBLUKSDE_INITIALIZATION_VECTOR_MODE_ESSIV,
 		          LIBLUKSDE_HASHING_METHOD_SHA1,
 		          &error );
 
@@ -234,6 +487,7 @@ int luksde_test_encryption_context_initialize(
 			 &error );
 		}
 	}
+#endif /* defined( OPTIMIZATION_DISABLED ) */
 #endif /* defined( HAVE_LUKSDE_TEST_MEMORY ) */
 
 	return( 1 );
@@ -291,6 +545,459 @@ on_error:
 	return( 0 );
 }
 
+/* Tests the libluksde_encryption_context_set_key function
+ * Returns 1 if successful or 0 if not
+ */
+int luksde_test_encryption_context_set_key(
+     void )
+{
+	uint8_t key_data[ 32 ] = {
+		0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
+		16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31 };
+
+	libcerror_error_t *error                           = NULL;
+	libluksde_encryption_context_t *encryption_context = NULL;
+	int result                                         = 0;
+
+	/* Initialize test
+	 */
+	result = libluksde_encryption_context_initialize(
+	          &encryption_context,
+	          LIBLUKSDE_ENCRYPTION_METHOD_AES,
+	          LIBLUKSDE_ENCRYPTION_CHAINING_MODE_CBC,
+	          LIBLUKSDE_INITIALIZATION_VECTOR_MODE_ESSIV,
+	          LIBLUKSDE_HASHING_METHOD_SHA1,
+	          &error );
+
+	LUKSDE_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	LUKSDE_TEST_ASSERT_IS_NOT_NULL(
+	 "encryption_context",
+	 encryption_context );
+
+	LUKSDE_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Test regular cases
+	 */
+	result = libluksde_encryption_context_set_key(
+	          encryption_context,
+	          key_data,
+	          16,
+	          &error );
+
+	LUKSDE_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	LUKSDE_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Clean up
+	 */
+	result = libluksde_encryption_context_free(
+	          &encryption_context,
+	          &error );
+
+	LUKSDE_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	LUKSDE_TEST_ASSERT_IS_NULL(
+	 "encryption_context",
+	 encryption_context );
+
+	LUKSDE_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Initialize test
+	 */
+	result = libluksde_encryption_context_initialize(
+	          &encryption_context,
+	          LIBLUKSDE_ENCRYPTION_METHOD_AES,
+	          LIBLUKSDE_ENCRYPTION_CHAINING_MODE_XTS,
+	          LIBLUKSDE_INITIALIZATION_VECTOR_MODE_NONE,
+	          LIBLUKSDE_HASHING_METHOD_SHA1,
+	          &error );
+
+	LUKSDE_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	LUKSDE_TEST_ASSERT_IS_NOT_NULL(
+	 "encryption_context",
+	 encryption_context );
+
+	LUKSDE_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Test regular cases
+	 */
+	result = libluksde_encryption_context_set_key(
+	          encryption_context,
+	          key_data,
+	          32,
+	          &error );
+
+	LUKSDE_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	LUKSDE_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Clean up
+	 */
+	result = libluksde_encryption_context_free(
+	          &encryption_context,
+	          &error );
+
+	LUKSDE_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	LUKSDE_TEST_ASSERT_IS_NULL(
+	 "encryption_context",
+	 encryption_context );
+
+	LUKSDE_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Initialize test
+	 */
+	result = libluksde_encryption_context_initialize(
+	          &encryption_context,
+	          LIBLUKSDE_ENCRYPTION_METHOD_ARC4,
+	          LIBLUKSDE_ENCRYPTION_CHAINING_MODE_CBC,
+	          LIBLUKSDE_INITIALIZATION_VECTOR_MODE_NONE,
+	          LIBLUKSDE_HASHING_METHOD_SHA1,
+	          &error );
+
+	LUKSDE_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	LUKSDE_TEST_ASSERT_IS_NOT_NULL(
+	 "encryption_context",
+	 encryption_context );
+
+	LUKSDE_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Test regular cases
+	 */
+	result = libluksde_encryption_context_set_key(
+	          encryption_context,
+	          key_data,
+	          16,
+	          &error );
+
+	LUKSDE_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	LUKSDE_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Clean up
+	 */
+	result = libluksde_encryption_context_free(
+	          &encryption_context,
+	          &error );
+
+	LUKSDE_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	LUKSDE_TEST_ASSERT_IS_NULL(
+	 "encryption_context",
+	 encryption_context );
+
+	LUKSDE_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Initialize test
+	 */
+	result = libluksde_encryption_context_initialize(
+	          &encryption_context,
+	          LIBLUKSDE_ENCRYPTION_METHOD_SERPENT,
+	          LIBLUKSDE_ENCRYPTION_CHAINING_MODE_CBC,
+	          LIBLUKSDE_INITIALIZATION_VECTOR_MODE_NONE,
+	          LIBLUKSDE_HASHING_METHOD_SHA1,
+	          &error );
+
+	LUKSDE_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	LUKSDE_TEST_ASSERT_IS_NOT_NULL(
+	 "encryption_context",
+	 encryption_context );
+
+	LUKSDE_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Test regular cases
+	 */
+	result = libluksde_encryption_context_set_key(
+	          encryption_context,
+	          key_data,
+	          16,
+	          &error );
+
+	LUKSDE_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	LUKSDE_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Test error cases
+	 */
+	result = libluksde_encryption_context_set_key(
+	          NULL,
+	          key_data,
+	          16,
+	          &error );
+
+	LUKSDE_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	LUKSDE_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libluksde_encryption_context_set_key(
+	          encryption_context,
+	          NULL,
+	          16,
+	          &error );
+
+	LUKSDE_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	LUKSDE_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libluksde_encryption_context_set_key(
+	          encryption_context,
+	          key_data,
+	          (size_t) SSIZE_MAX + 1,
+	          &error );
+
+	LUKSDE_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	LUKSDE_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	/* Clean up
+	 */
+	result = libluksde_encryption_context_free(
+	          &encryption_context,
+	          &error );
+
+	LUKSDE_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	LUKSDE_TEST_ASSERT_IS_NULL(
+	 "encryption_context",
+	 encryption_context );
+
+	LUKSDE_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	if( encryption_context != NULL )
+	{
+		libluksde_encryption_context_free(
+		 &encryption_context,
+		 NULL );
+	}
+	return( 0 );
+}
+
+/* Tests the libluksde_encryption_context_crypt function
+ * Returns 1 if successful or 0 if not
+ */
+int luksde_test_encryption_context_crypt(
+     void )
+{
+	uint8_t encrypted_data[ 128 ];
+	uint8_t data[ 128 ];
+
+	libcerror_error_t *error                           = NULL;
+	libluksde_encryption_context_t *encryption_context = NULL;
+	int result                                         = 0;
+
+	memory_set(
+	 encrypted_data,
+	 0,
+	 128 );
+
+	/* Initialize test
+	 */
+	result = libluksde_encryption_context_initialize(
+	          &encryption_context,
+	          LIBLUKSDE_ENCRYPTION_METHOD_AES,
+	          LIBLUKSDE_ENCRYPTION_CHAINING_MODE_CBC,
+	          LIBLUKSDE_INITIALIZATION_VECTOR_MODE_ESSIV,
+	          LIBLUKSDE_HASHING_METHOD_SHA1,
+	          &error );
+
+	LUKSDE_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	LUKSDE_TEST_ASSERT_IS_NOT_NULL(
+	 "encryption_context",
+	 encryption_context );
+
+	LUKSDE_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Test regular cases
+	 */
+/* TODO implement */
+
+	/* Test error cases
+	 */
+	result = libluksde_encryption_context_crypt(
+	          NULL,
+	          LIBLUKSDE_ENCRYPTION_CRYPT_MODE_DECRYPT,
+	          encrypted_data,
+	          128,
+	          data,
+	          128,
+	          0,
+	          &error );
+
+	LUKSDE_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	LUKSDE_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libluksde_encryption_context_crypt(
+	          encryption_context,
+	          -1,
+	          encrypted_data,
+	          128,
+	          data,
+	          128,
+	          0,
+	          &error );
+
+	LUKSDE_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	LUKSDE_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libluksde_encryption_context_crypt(
+	          encryption_context,
+	          LIBLUKSDE_ENCRYPTION_CRYPT_MODE_DECRYPT,
+	          encrypted_data,
+	          0,
+	          data,
+	          128,
+	          0,
+	          &error );
+
+	LUKSDE_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	LUKSDE_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	if( encryption_context != NULL )
+	{
+		libluksde_encryption_context_free(
+		 &encryption_context,
+		 NULL );
+	}
+	return( 0 );
+}
+
 #endif /* defined( __GNUC__ ) && !defined( LIBLUKSDE_DLL_IMPORT ) */
 
 /* The main program
@@ -318,9 +1025,13 @@ int main(
 	 "libluksde_encryption_context_free",
 	 luksde_test_encryption_context_free );
 
-	/* TODO: add tests for libluksde_encryption_set_keys */
+	LUKSDE_TEST_RUN(
+	 "libluksde_encryption_context_set_key",
+	 luksde_test_encryption_context_set_key );
 
-	/* TODO: add tests for libluksde_encryption_crypt */
+	LUKSDE_TEST_RUN(
+	 "libluksde_encryption_context_crypt",
+	 luksde_test_encryption_context_crypt );
 
 #endif /* defined( __GNUC__ ) && !defined( LIBLUKSDE_DLL_IMPORT ) */
 

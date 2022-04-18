@@ -427,13 +427,14 @@ int libluksde_diffuser_merge(
 
 		return( -1 );
 	}
-	if( split_data_size > (size_t) SSIZE_MAX )
+	if( ( split_data_size == 0 )
+	 || ( split_data_size > (size_t) SSIZE_MAX ) )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_VALUE_EXCEEDS_MAXIMUM,
-		 "%s: invalid split data size value exceeds maximum.",
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
+		 "%s: invalid split data size value out of bounds.",
 		 function );
 
 		return( -1 );
@@ -449,18 +450,20 @@ int libluksde_diffuser_merge(
 
 		return( -1 );
 	}
-	if( data_size > (size_t) SSIZE_MAX )
+	if( ( data_size == 0 )
+	 || ( data_size > split_data_size ) )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_VALUE_EXCEEDS_MAXIMUM,
-		 "%s: invalid data size value exceeds maximum.",
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
+		 "%s: invalid data size value out of bounds.",
 		 function );
 
 		return( -1 );
 	}
-	if( ( data_size * (size_t) number_of_stripes ) != split_data_size )
+	if( ( number_of_stripes < 1 )
+	 || ( number_of_stripes > ( split_data_size / data_size ) ) )
 	{
 		libcerror_error_set(
 		 error,

@@ -88,7 +88,9 @@ int luksde_test_sector_data_initialize(
 
 #if defined( HAVE_LUKSDE_TEST_MEMORY )
 	int number_of_malloc_fail_tests      = 2;
+#if defined( OPTIMIZATION_DISABLED )
 	int number_of_memset_fail_tests      = 1;
+#endif
 	int test_number                      = 0;
 #endif
 
@@ -248,6 +250,8 @@ int luksde_test_sector_data_initialize(
 			 &error );
 		}
 	}
+#if defined( OPTIMIZATION_DISABLED )
+
 	for( test_number = 0;
 	     test_number < number_of_memset_fail_tests;
 	     test_number++ )
@@ -291,6 +295,7 @@ int luksde_test_sector_data_initialize(
 			 &error );
 		}
 	}
+#endif /* defined( OPTIMIZATION_DISABLED ) */
 #endif /* defined( HAVE_LUKSDE_TEST_MEMORY ) */
 
 	return( 1 );
@@ -362,6 +367,7 @@ int luksde_test_sector_data_read_file_io_handle(
 	libcerror_error_t *error                           = NULL;
 	libluksde_encryption_context_t *encryption_context = NULL;
 	libluksde_sector_data_t *sector_data               = NULL;
+	uint8_t *data                                      = NULL;
 	int result                                         = 0;
 
 	/* Initialize test
@@ -482,6 +488,31 @@ int luksde_test_sector_data_read_file_io_handle(
 	libcerror_error_free(
 	 &error );
 
+	data              = sector_data->data;
+	sector_data->data = NULL;
+
+	result = libluksde_sector_data_read_file_io_handle(
+	          sector_data,
+	          file_io_handle,
+	          0,
+	          encryption_context,
+	          0,
+	          &error );
+
+	sector_data->data = data;
+
+	LUKSDE_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	LUKSDE_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
 	result = libluksde_sector_data_read_file_io_handle(
 	          sector_data,
 	          NULL,
@@ -541,6 +572,40 @@ int luksde_test_sector_data_read_file_io_handle(
 
 	libcerror_error_free(
 	 &error );
+
+#if defined( HAVE_LUKSDE_TEST_MEMORY )
+
+	/* Test libluksde_sector_data_read_file_io_handle with malloc failing
+	 */
+	luksde_test_malloc_attempts_before_fail = 1;
+
+	result = libluksde_sector_data_read_file_io_handle(
+	          sector_data,
+	          file_io_handle,
+	          0,
+	          encryption_context,
+	          0,
+	          &error );
+
+	if( luksde_test_malloc_attempts_before_fail != -1 )
+	{
+		luksde_test_malloc_attempts_before_fail = -1;
+	}
+	else
+	{
+		LUKSDE_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
+
+		LUKSDE_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
+
+		libcerror_error_free(
+		 &error );
+	}
+#endif /* defined( HAVE_LUKSDE_TEST_MEMORY ) */
 
 	/* Clean up file IO handle
 	 */

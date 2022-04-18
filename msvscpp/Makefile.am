@@ -11,11 +11,11 @@ MSVSCPP_FILES = \
 	libcthreads/libcthreads.vcproj \
 	libfcache/libfcache.vcproj \
 	libfcrypto/libfcrypto.vcproj \
-	libfdata/libfdata.vcproj \
 	libfguid/libfguid.vcproj \
 	libhmac/libhmac.vcproj \
 	libluksde/libluksde.vcproj \
 	libuna/libuna.vcproj \
+	luksde_test_diffuser/luksde_test_diffuser.vcproj \
 	luksde_test_encryption_context/luksde_test_encryption_context.vcproj \
 	luksde_test_error/luksde_test_error.vcproj \
 	luksde_test_io_handle/luksde_test_io_handle.vcproj \

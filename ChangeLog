@@ -6,6 +6,7 @@ TODO
 * add thread-safety in volume
   - add tests
 * detect encryption types (notify as unsupported)
+* add libluksde_diffuser_split?
 
 * library: add support to set the master key directly
 

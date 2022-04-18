@@ -35,6 +35,11 @@
 
 #include "../libluksde/libluksde_key_slot.h"
 
+uint8_t luksde_test_key_slot_data1[ 48 ] = {
+	0x00, 0xac, 0x71, 0xf3, 0x00, 0x24, 0xe8, 0xac, 0x40, 0x02, 0x66, 0xda, 0x97, 0xf5, 0xae, 0xed,
+	0x98, 0x84, 0x3b, 0x6e, 0x6b, 0x1c, 0x45, 0x2e, 0xab, 0x91, 0x2b, 0xd9, 0xa3, 0xc6, 0x84, 0x9d,
+	0xb1, 0xa0, 0x1c, 0xb1, 0x30, 0x69, 0xeb, 0x5a, 0x00, 0x00, 0x00, 0x08, 0x00, 0x00, 0x0f, 0xa0 };
+
 #if defined( __GNUC__ ) && !defined( LIBLUKSDE_DLL_IMPORT )
 
 /* Tests the libluksde_key_slot_initialize function
@@ -270,6 +275,162 @@ on_error:
 	return( 0 );
 }
 
+/* Tests the libluksde_key_slot_read_data function
+ * Returns 1 if successful or 0 if not
+ */
+int luksde_test_key_slot_read_data(
+     void )
+{
+	libcerror_error_t *error       = NULL;
+	libluksde_key_slot_t *key_slot = NULL;
+	int result                     = 0;
+
+	/* Initialize test
+	 */
+	result = libluksde_key_slot_initialize(
+	          &key_slot,
+	          &error );
+
+	LUKSDE_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	LUKSDE_TEST_ASSERT_IS_NOT_NULL(
+	 "key_slot",
+	 key_slot );
+
+	LUKSDE_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Test regular cases
+	 */
+	result = libluksde_key_slot_read_data(
+	          key_slot,
+	          luksde_test_key_slot_data1,
+	          4096,
+	          &error );
+
+	LUKSDE_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	LUKSDE_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Test error cases
+	 */
+	result = libluksde_key_slot_read_data(
+	          NULL,
+	          luksde_test_key_slot_data1,
+	          4096,
+	          &error );
+
+	LUKSDE_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	LUKSDE_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libluksde_key_slot_read_data(
+	          key_slot,
+	          NULL,
+	          4096,
+	          &error );
+
+	LUKSDE_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	LUKSDE_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libluksde_key_slot_read_data(
+	          key_slot,
+	          luksde_test_key_slot_data1,
+	          (size_t) SSIZE_MAX + 1,
+	          &error );
+
+	LUKSDE_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	LUKSDE_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libluksde_key_slot_read_data(
+	          key_slot,
+	          luksde_test_key_slot_data1,
+	          0,
+	          &error );
+
+	LUKSDE_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	LUKSDE_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	/* Clean up
+	 */
+	result = libluksde_key_slot_free(
+	          &key_slot,
+	          &error );
+
+	LUKSDE_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	LUKSDE_TEST_ASSERT_IS_NULL(
+	 "key_slot",
+	 key_slot );
+
+	LUKSDE_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	if( key_slot != NULL )
+	{
+		libluksde_key_slot_free(
+		 &key_slot,
+		 NULL );
+	}
+	return( 0 );
+}
+
 #endif /* defined( __GNUC__ ) && !defined( LIBLUKSDE_DLL_IMPORT ) */
 
 /* The main program
@@ -297,13 +458,19 @@ int main(
 	 "libluksde_key_slot_free",
 	 luksde_test_key_slot_free );
 
-	/* TODO: add tests for libluksde_key_slot_read_data */
+	LUKSDE_TEST_RUN(
+	 "libluksde_key_slot_read_data",
+	 luksde_test_key_slot_read_data );
 
 #endif /* defined( __GNUC__ ) && !defined( LIBLUKSDE_DLL_IMPORT ) */
 
 	return( EXIT_SUCCESS );
 
+#if defined( __GNUC__ ) && !defined( LIBLUKSDE_DLL_IMPORT )
+
 on_error:
 	return( EXIT_FAILURE );
+
+#endif /* defined( __GNUC__ ) && !defined( LIBLUKSDE_DLL_IMPORT ) */
 }
 

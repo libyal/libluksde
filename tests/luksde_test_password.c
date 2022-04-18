@@ -30,6 +30,7 @@
 
 #include "luksde_test_libcerror.h"
 #include "luksde_test_macros.h"
+#include "luksde_test_memory.h"
 #include "luksde_test_unused.h"
 
 #include "../libluksde/libluksde_definitions.h"
@@ -176,9 +177,13 @@ int luksde_test_password_pbkdf2(
 		  { 0x4d, 0xdc, 0xd8, 0xf6, 0x0b, 0x98, 0xbe, 0x21, 0x83, 0x0c, 0xee, 0x5e, 0xf2, 0x27, 0x01, 0xf9, 0x64, 0x1a, 0x44, 0x18, 0xd0, 0x4c, 0x04, 0x14, 0xae, 0xff, 0x08, 0x87, 0x6b, 0x34, 0xab, 0x56, 0xa1, 0xd4, 0x25, 0xa1, 0x22, 0x58, 0x33, 0x54, 0x9a, 0xdb, 0x84, 0x1b, 0x51, 0xc9, 0xb3, 0x17, 0x6a, 0x27, 0x2b, 0xde, 0xbb, 0xa1, 0xd0, 0x78, 0x47, 0x8f, 0x62, 0xb3, 0x97, 0xf3, 0x3c, 0x8d }, 64 },
 	};
 
-	libcerror_error_t *error = NULL;
-	int result               = 0;
-	int test_number          = 0;
+	libcerror_error_t *error        = NULL;
+	int result                      = 0;
+	int test_number                 = 0;
+
+#if defined( HAVE_LUKSDE_TEST_MEMORY ) && defined( OPTIMIZATION_DISABLED )
+	int number_of_memset_fail_tests = 3;
+#endif
 
 	/* Test regular
 	 */
@@ -339,6 +344,29 @@ int luksde_test_password_pbkdf2(
 	          test_vectors[ 0 ].password_hashing_method,
 	          test_vectors[ 0 ].salt,
 	          test_vectors[ 0 ].salt_size,
+	          0,
+	          output_data,
+	          test_vectors[ 0 ].output_data_size,
+	          &error );
+
+	LUKSDE_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	LUKSDE_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libluksde_password_pbkdf2(
+	          (uint8_t *) test_vectors[ 0 ].password,
+	          test_vectors[ 0 ].password_length,
+	          test_vectors[ 0 ].password_hashing_method,
+	          test_vectors[ 0 ].salt,
+	          test_vectors[ 0 ].salt_size,
 	          test_vectors[ 0 ].number_of_iterations,
 	          NULL,
 	          test_vectors[ 0 ].output_data_size,
@@ -379,6 +407,48 @@ int luksde_test_password_pbkdf2(
 	libcerror_error_free(
 	 &error );
 
+#if defined( HAVE_LUKSDE_TEST_MEMORY ) && defined( OPTIMIZATION_DISABLED )
+
+	for( test_number = 0;
+	     test_number < number_of_memset_fail_tests;
+	     test_number++ )
+	{
+		/* Test libluksde_password_pbkdf2 with memset failing
+		 */
+		luksde_test_memset_attempts_before_fail = test_number;
+
+		result = libluksde_password_pbkdf2(
+		          (uint8_t *) test_vectors[ 0 ].password,
+		          test_vectors[ 0 ].password_length,
+		          test_vectors[ 0 ].password_hashing_method,
+		          test_vectors[ 0 ].salt,
+		          test_vectors[ 0 ].salt_size,
+		          test_vectors[ 0 ].number_of_iterations,
+		          output_data,
+		          test_vectors[ 0 ].output_data_size,
+		          &error );
+
+		if( luksde_test_memset_attempts_before_fail != -1 )
+		{
+			luksde_test_memset_attempts_before_fail = -1;
+		}
+		else
+		{
+			LUKSDE_TEST_ASSERT_EQUAL_INT(
+			 "result",
+			 result,
+			 -1 );
+
+			LUKSDE_TEST_ASSERT_IS_NOT_NULL(
+			 "error",
+			 error );
+
+			libcerror_error_free(
+			 &error );
+		}
+	}
+#endif /* defined( HAVE_LUKSDE_TEST_MEMORY ) && defined( OPTIMIZATION_DISABLED ) */
+
 	return( 1 );
 
 on_error:
@@ -418,6 +488,7 @@ int main(
 	return( EXIT_SUCCESS );
 
 #if defined( __GNUC__ ) && !defined( LIBLUKSDE_DLL_IMPORT )
+
 on_error:
 	return( EXIT_FAILURE );
 

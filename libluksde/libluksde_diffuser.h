@@ -46,16 +46,6 @@ int libluksde_diffuser_merge(
      int hashing_method,
      libcerror_error_t **error );
 
-/* TODO */
-int libluksde_diffuser_split(
-     uint8_t *split_data,
-     size_t split_data_size,
-     const uint8_t *data,
-     size_t data_size,
-     uint32_t number_of_stripes,
-     int hashing_method,
-     libcerror_error_t **error );
-
 #if defined( __cplusplus )
 }
 #endif

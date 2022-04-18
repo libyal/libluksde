@@ -46,6 +46,7 @@ EXTRA_DIST = \
 	$(check_SCRIPTS)
 
 check_PROGRAMS = \
+	luksde_test_diffuser \
 	luksde_test_encryption_context \
 	luksde_test_error \
 	luksde_test_io_handle \
@@ -61,7 +62,14 @@ check_PROGRAMS = \
 	luksde_test_volume \
 	luksde_test_volume_header
 
-luksde_test_aes_ccm_encrypted_key_LDADD = \
+luksde_test_diffuser_SOURCES = \
+	luksde_test_diffuser.c \
+	luksde_test_libcerror.h \
+	luksde_test_libluksde.h \
+	luksde_test_macros.h \
+	luksde_test_unused.h
+
+luksde_test_diffuser_LDADD = \
 	../libluksde/libluksde.la \
 	@LIBCERROR_LIBADD@
 
@@ -125,6 +133,7 @@ luksde_test_password_SOURCES = \
 	luksde_test_libcerror.h \
 	luksde_test_libluksde.h \
 	luksde_test_macros.h \
+	luksde_test_memory.c luksde_test_memory.h \
 	luksde_test_password.c \
 	luksde_test_unused.h
 

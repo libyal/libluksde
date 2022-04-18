@@ -429,13 +429,15 @@ int main(
 	 "libluksde_io_handle_clear",
 	 luksde_test_io_handle_clear );
 
-	/* TODO: add tests for libluksde_io_handle_read_sector */
-
 #endif /* defined( __GNUC__ ) && !defined( LIBLUKSDE_DLL_IMPORT ) */
 
 	return( EXIT_SUCCESS );
 
+#if defined( __GNUC__ ) && !defined( LIBLUKSDE_DLL_IMPORT )
+
 on_error:
 	return( EXIT_FAILURE );
+
+#endif /* defined( __GNUC__ ) && !defined( LIBLUKSDE_DLL_IMPORT ) */
 }
 

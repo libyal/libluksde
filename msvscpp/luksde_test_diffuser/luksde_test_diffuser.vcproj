@@ -2,9 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9,00"
-	Name="luksde_test_password"
-	ProjectGUID="{2ACE821C-81A4-4D2E-821E-145CBAF4FB90}"
-	RootNamespace="luksde_test_password"
+	Name="luksde_test_diffuser"
+	ProjectGUID="{73DE1836-5071-4D21-A97C-52B66F1B3672}"
+	RootNamespace="luksde_test_diffuser"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="131072"
 	>
@@ -176,11 +176,7 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath="..\..\tests\luksde_test_memory.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\tests\luksde_test_password.c"
+				RelativePath="..\..\tests\luksde_test_diffuser.c"
 				>
 			</File>
 		</Filter>
@@ -199,10 +195,6 @@
 			</File>
 			<File
 				RelativePath="..\..\tests\luksde_test_macros.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\tests\luksde_test_memory.h"
 				>
 			</File>
 			<File

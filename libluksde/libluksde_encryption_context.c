@@ -817,13 +817,26 @@ int libluksde_encryption_context_crypt(
 
 		return( -1 );
 	}
-	if( output_data_size < input_data_size )
+	if( ( input_data_size < 16 )
+	 || ( input_data_size > (size_t) SSIZE_MAX ) )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_VALUE_TOO_SMALL,
-		 "%s: output data size value too small.",
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
+		 "%s: input data size value out of bounds.",
+		 function );
+
+		return( -1 );
+	}
+	if( ( output_data_size < input_data_size )
+	 || ( output_data_size > (size_t) SSIZE_MAX ) )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
+		 "%s: output data size value out of bounds.",
 		 function );
 
 		return( -1 );
