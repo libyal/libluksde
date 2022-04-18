@@ -26,7 +26,6 @@
 #include <types.h>
 
 #include "libluksde_encryption_context.h"
-#include "libluksde_io_handle.h"
 #include "libluksde_libcerror.h"
 #include "libluksde_libbfio.h"
 #include "libluksde_libfcache.h"
@@ -74,7 +73,6 @@ int libluksde_sector_data_vector_free(
 
 int libluksde_sector_data_vector_get_sector_data_at_offset(
      libluksde_sector_data_vector_t *sector_data_vector,
-     libluksde_io_handle_t *io_handle,
      libbfio_handle_t *file_io_handle,
      libluksde_encryption_context_t *encryption_context,
      off64_t offset,

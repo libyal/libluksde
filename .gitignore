@@ -158,7 +158,6 @@ stamp-h[1-9]
 /libcthreads
 /libfcache
 /libfcrypto
-/libfdata
 /libfguid
 /libhmac
 /libuna

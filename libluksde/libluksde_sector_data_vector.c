@@ -78,6 +78,17 @@ int libluksde_sector_data_vector_initialize(
 
 		return( -1 );
 	}
+	if( bytes_per_sector == 0 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
+		 "%s: invalid bytes per sector value out of bounds.",
+		 function );
+
+		return( -1 );
+	}
 	*sector_data_vector = memory_allocate_structure(
 	                       libluksde_sector_data_vector_t );
 
@@ -199,7 +210,6 @@ int libluksde_sector_data_vector_free(
  */
 int libluksde_sector_data_vector_get_sector_data_at_offset(
      libluksde_sector_data_vector_t *sector_data_vector,
-     libluksde_io_handle_t *io_handle,
      libbfio_handle_t *file_io_handle,
      libluksde_encryption_context_t *encryption_context,
      off64_t offset,
@@ -210,6 +220,7 @@ int libluksde_sector_data_vector_get_sector_data_at_offset(
 	libluksde_sector_data_t *safe_sector_data = NULL;
 	static char *function                     = "libluksde_sector_data_vector_get_sector_data_at_offset";
 	off64_t sector_data_offset                = 0;
+	uint64_t sector_number                    = 0;
 	int result                                = 0;
 
 	if( sector_data_vector == NULL )
@@ -219,17 +230,6 @@ int libluksde_sector_data_vector_get_sector_data_at_offset(
 		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid sector data vector.",
-		 function );
-
-		return( -1 );
-	}
-	if( io_handle == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid IO handle.",
 		 function );
 
 		return( -1 );
@@ -259,9 +259,11 @@ int libluksde_sector_data_vector_get_sector_data_at_offset(
 		if( libcnotify_verbose != 0 )
 		{
 			libcnotify_printf(
-			 "%s: cache: 0x%08" PRIjx " hit\n",
+			 "%s: cache: 0x%08" PRIjx " hit for offset: %" PRIi64 " (0x%08" PRIx64 ")\n",
 			 function,
-			 (intptr_t) sector_data_vector->cache );
+			 (intptr_t) sector_data_vector->cache,
+			 offset,
+			 offset );
 		}
 #endif /* defined( HAVE_DEBUG_OUTPUT ) */
 
@@ -286,9 +288,11 @@ int libluksde_sector_data_vector_get_sector_data_at_offset(
 		if( libcnotify_verbose != 0 )
 		{
 			libcnotify_printf(
-			 "%s: cache: 0x%08" PRIjx " miss\n",
+			 "%s: cache: 0x%08" PRIjx " miss for offset: %" PRIi64 " (0x%08" PRIx64 ")\n",
 			 function,
-			 (intptr_t) sector_data_vector->cache );
+			 (intptr_t) sector_data_vector->cache,
+			 offset,
+			 offset );
 		}
 #endif /* defined( HAVE_DEBUG_OUTPUT ) */
 
@@ -307,21 +311,23 @@ int libluksde_sector_data_vector_get_sector_data_at_offset(
 			goto on_error;
 		}
 		sector_data_offset = sector_data_vector->data_offset + offset;
+		sector_number      = (uint64_t) offset / sector_data_vector->bytes_per_sector;
 
 		if( libluksde_sector_data_read_file_io_handle(
 		     safe_sector_data,
-		     io_handle,
 		     file_io_handle,
 		     sector_data_offset,
 		     encryption_context,
+		     sector_number,
 		     error ) != 1 )
 		{
 			libcerror_error_set(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_IO,
 			 LIBCERROR_IO_ERROR_READ_FAILED,
-			 "%s: unable to read sector data at offset: %" PRIi64 " (0x%08" PRIx64 ").",
+			 "%s: unable to read sector: %" PRIu64 " data at offset: %" PRIi64 " (0x%08" PRIx64 ").",
 			 function,
+			 sector_number,
 			 sector_data_offset,
 			 sector_data_offset );
 

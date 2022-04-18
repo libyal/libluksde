@@ -19,7 +19,6 @@ coverage:
     - "libcthreads/*"
     - "libfcache/*"
     - "libfcrypto/*"
-    - "libfdata/*"
     - "libfguid/*"
     - "libhmac/*"
     - "libuna/*"

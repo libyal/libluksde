@@ -155,7 +155,6 @@ int libluksde_io_handle_clear(
      libcerror_error_t **error )
 {
 	static char *function = "libluksde_io_handle_clear";
-	int result            = 1;
 
 	if( io_handle == NULL )
 	{

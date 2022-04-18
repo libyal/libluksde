@@ -26,7 +26,6 @@
 #include <types.h>
 
 #include "libluksde_encryption_context.h"
-#include "libluksde_io_handle.h"
 #include "libluksde_libbfio.h"
 #include "libluksde_libcerror.h"
 
@@ -38,10 +37,6 @@ typedef struct libluksde_sector_data libluksde_sector_data_t;
 
 struct libluksde_sector_data
 {
-	/* The encrypted data
-	 */
-	uint8_t *encrypted_data;
-
 	/* The data
 	 */
 	uint8_t *data;
@@ -62,10 +57,10 @@ int libluksde_sector_data_free(
 
 int libluksde_sector_data_read_file_io_handle(
      libluksde_sector_data_t *sector_data,
-     libluksde_io_handle_t *io_handle,
      libbfio_handle_t *file_io_handle,
      off64_t file_offset,
      libluksde_encryption_context_t *encryption_context,
+     uint64_t sector_number,
      libcerror_error_t **error );
 
 #if defined( __cplusplus )

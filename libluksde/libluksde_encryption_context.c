@@ -569,8 +569,8 @@ int libluksde_encryption_context_set_key(
 			break;
 
 		case LIBLUKSDE_ENCRYPTION_MODE_AES_XTS:
-			key_bit_size  /= 2;
-			key_size /= 2;
+			key_bit_size /= 2;
+			key_size     /= 2;
 
 			result = libcaes_tweaked_context_set_keys(
 			          context->aes_xts_decryption_context,

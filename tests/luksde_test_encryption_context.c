@@ -59,7 +59,7 @@ int luksde_test_encryption_context_initialize(
 	result = libluksde_encryption_context_initialize(
 	          &encryption_context,
 	          LIBLUKSDE_ENCRYPTION_METHOD_AES,
-	          LIBLUKSDE_ENCRYPTION_MODE_AES_CBC,
+	          LIBLUKSDE_ENCRYPTION_CHAINING_MODE_CBC,
 	          LIBLUKSDE_INITIALIZATION_VECTOR_MODE_NONE,
 	          LIBLUKSDE_HASHING_METHOD_SHA1,
 	          &error );
@@ -99,7 +99,7 @@ int luksde_test_encryption_context_initialize(
 	result = libluksde_encryption_context_initialize(
 	          NULL,
 	          LIBLUKSDE_ENCRYPTION_METHOD_AES,
-	          LIBLUKSDE_ENCRYPTION_MODE_AES_CBC,
+	          LIBLUKSDE_ENCRYPTION_CHAINING_MODE_CBC,
 	          LIBLUKSDE_INITIALIZATION_VECTOR_MODE_NONE,
 	          LIBLUKSDE_HASHING_METHOD_SHA1,
 	          &error );
@@ -121,7 +121,7 @@ int luksde_test_encryption_context_initialize(
 	result = libluksde_encryption_context_initialize(
 	          &encryption_context,
 	          LIBLUKSDE_ENCRYPTION_METHOD_AES,
-	          LIBLUKSDE_ENCRYPTION_MODE_AES_CBC,
+	          LIBLUKSDE_ENCRYPTION_CHAINING_MODE_CBC,
 	          LIBLUKSDE_INITIALIZATION_VECTOR_MODE_NONE,
 	          LIBLUKSDE_HASHING_METHOD_SHA1,
 	          &error );
@@ -153,7 +153,7 @@ int luksde_test_encryption_context_initialize(
 		result = libluksde_encryption_context_initialize(
 		          &encryption_context,
 		          LIBLUKSDE_ENCRYPTION_METHOD_AES,
-		          LIBLUKSDE_ENCRYPTION_MODE_AES_CBC,
+		          LIBLUKSDE_ENCRYPTION_CHAINING_MODE_CBC,
 		          LIBLUKSDE_INITIALIZATION_VECTOR_MODE_NONE,
 		          LIBLUKSDE_HASHING_METHOD_SHA1,
 		          &error );
@@ -199,7 +199,7 @@ int luksde_test_encryption_context_initialize(
 		result = libluksde_encryption_context_initialize(
 		          &encryption_context,
 		          LIBLUKSDE_ENCRYPTION_METHOD_AES,
-		          LIBLUKSDE_ENCRYPTION_MODE_AES_CBC,
+		          LIBLUKSDE_ENCRYPTION_CHAINING_MODE_CBC,
 		          LIBLUKSDE_INITIALIZATION_VECTOR_MODE_NONE,
 		          LIBLUKSDE_HASHING_METHOD_SHA1,
 		          &error );

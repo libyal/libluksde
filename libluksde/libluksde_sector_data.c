@@ -26,7 +26,6 @@
 
 #include "libluksde_definitions.h"
 #include "libluksde_encryption_context.h"
-#include "libluksde_io_handle.h"
 #include "libluksde_libbfio.h"
 #include "libluksde_libcerror.h"
 #include "libluksde_libcnotify.h"
@@ -110,20 +109,6 @@ int libluksde_sector_data_initialize(
 
 		return( -1 );
 	}
-	( *sector_data )->encrypted_data = (uint8_t *) memory_allocate(
-	                                                sizeof( uint8_t ) * data_size );
-
-	if( ( *sector_data )->encrypted_data == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_MEMORY,
-		 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
-		 "%s: unable to create encrypted data.",
-		 function );
-
-		goto on_error;
-	}
 	( *sector_data )->data = (uint8_t *) memory_allocate(
 	                                      sizeof( uint8_t ) * data_size );
 
@@ -145,11 +130,6 @@ int libluksde_sector_data_initialize(
 on_error:
 	if( *sector_data != NULL )
 	{
-		if( ( *sector_data )->encrypted_data != NULL )
-		{
-			memory_free(
-			 ( *sector_data )->encrypted_data );
-		}
 		memory_free(
 		 *sector_data );
 
@@ -181,28 +161,23 @@ int libluksde_sector_data_free(
 	}
 	if( *sector_data != NULL )
 	{
-		if( ( *sector_data )->data != NULL )
+		if( memory_set(
+		     ( *sector_data )->data,
+		     0,
+		     ( *sector_data )->data_size ) == NULL )
 		{
-			if( memory_set(
-			     ( *sector_data )->data,
-			     0,
-			     ( *sector_data )->data_size ) == NULL )
-			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_MEMORY,
-				 LIBCERROR_MEMORY_ERROR_SET_FAILED,
-				 "%s: unable to clear data.",
-				 function );
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_MEMORY,
+			 LIBCERROR_MEMORY_ERROR_SET_FAILED,
+			 "%s: unable to clear data.",
+			 function );
 
-				result = -1;
-			}
-			memory_free(
-			 ( *sector_data )->data );
-
-			memory_free(
-			 ( *sector_data )->encrypted_data );
+			result = -1;
 		}
+		memory_free(
+		 ( *sector_data )->data );
+
 		memory_free(
 		 *sector_data );
 
@@ -216,14 +191,15 @@ int libluksde_sector_data_free(
  */
 int libluksde_sector_data_read_file_io_handle(
      libluksde_sector_data_t *sector_data,
-     libluksde_io_handle_t *io_handle,
      libbfio_handle_t *file_io_handle,
      off64_t file_offset,
      libluksde_encryption_context_t *encryption_context,
+     uint64_t sector_number,
      libcerror_error_t **error )
 {
-	static char *function = "libluksde_sector_data_read_file_io_handle";
-	ssize_t read_count    = 0;
+	uint8_t *encrypted_data = NULL;
+	static char *function   = "libluksde_sector_data_read_file_io_handle";
+	ssize_t read_count      = 0;
 
 	if( sector_data == NULL )
 	{
@@ -232,17 +208,6 @@ int libluksde_sector_data_read_file_io_handle(
 		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid sector data.",
-		 function );
-
-		return( -1 );
-	}
-	if( sector_data->encrypted_data == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid sector data - missing encrypted data.",
 		 function );
 
 		return( -1 );
@@ -258,41 +223,34 @@ int libluksde_sector_data_read_file_io_handle(
 
 		return( -1 );
 	}
-	if( io_handle == NULL )
+	encrypted_data = (uint8_t *) memory_allocate(
+	                              sizeof( uint8_t ) * sector_data->data_size );
+
+	if( encrypted_data == NULL )
 	{
 		libcerror_error_set(
 		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid IO handle.",
+		 LIBCERROR_ERROR_DOMAIN_MEMORY,
+		 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
+		 "%s: unable to create encrypted data.",
 		 function );
 
-		return( -1 );
-	}
-	if( io_handle->bytes_per_sector == 0 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid IO handle - missing bytes per sector.",
-		 function );
-
-		return( -1 );
+		goto on_error;
 	}
 #if defined( HAVE_DEBUG_OUTPUT )
 	if( libcnotify_verbose != 0 )
 	{
 		libcnotify_printf(
-		 "%s: reading sector data at offset: %" PRIi64 " (0x%08" PRIx64 ")\n",
+		 "%s: reading sector: %" PRIu64 " data at offset: %" PRIi64 " (0x%08" PRIx64 ")\n",
 		 function,
+		 sector_number,
 		 file_offset,
 		 file_offset );
 	}
 #endif
 	read_count = libbfio_handle_read_buffer_at_offset(
 	              file_io_handle,
-	              sector_data->encrypted_data,
+	              encrypted_data,
 	              sector_data->data_size,
 	              file_offset,
 	              error );
@@ -303,59 +261,71 @@ int libluksde_sector_data_read_file_io_handle(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_IO,
 		 LIBCERROR_IO_ERROR_READ_FAILED,
-		 "%s: unable to read sector data at offset: %" PRIi64 " (0x%08" PRIx64 ").",
+		 "%s: unable to read sector: %" PRIu64 " data at offset: %" PRIi64 " (0x%08" PRIx64 ").",
 		 function,
+		 sector_number,
 		 file_offset,
 		 file_offset );
 
-		return( -1 );
+		goto on_error;
 	}
 #if defined( HAVE_DEBUG_OUTPUT )
 	if( libcnotify_verbose != 0 )
 	{
 		libcnotify_printf(
-		 "%s: encrypted sector data:\n",
-		 function );
+		 "%s: encrypted sector: %" PRIu64 " data:\n",
+		 function,
+		 sector_number );
 		libcnotify_print_data(
-		 sector_data->encrypted_data,
+		 encrypted_data,
 		 sector_data->data_size,
 		 0 );
 	}
 #endif
-	file_offset -= io_handle->encrypted_volume_offset;
-	file_offset /= io_handle->bytes_per_sector;
-
 	if( libluksde_encryption_context_crypt(
 	     encryption_context,
 	     LIBLUKSDE_ENCRYPTION_CRYPT_MODE_DECRYPT,
-	     sector_data->encrypted_data,
+	     encrypted_data,
 	     sector_data->data_size,
 	     sector_data->data,
 	     sector_data->data_size,
-	     (uint64_t) file_offset,
+	     sector_number,
 	     error ) != 1 )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_ENCRYPTION,
 		 LIBCERROR_ENCRYPTION_ERROR_GENERIC,
-		 "%s: unable to decrypt sector data.",
-		 function );
+		 "%s: unable to decrypt sector: %" PRIu64 " data.",
+		 function,
+		 sector_number );
 
-		return( -1 );
+		goto on_error;
 	}
 #if defined( HAVE_DEBUG_OUTPUT )
 	if( libcnotify_verbose != 0 )
 	{
 		libcnotify_printf(
-		 "%s: sector data:\n",
-		 function );
+		 "%s: sector: %" PRIu64 " data:\n",
+		 function,
+		 sector_number );
 		libcnotify_print_data(
 		 sector_data->data,
 		 sector_data->data_size,
 		 0 );
 	}
 #endif
+	memory_free(
+	 encrypted_data );
+
 	return( 1 );
+
+on_error:
+	if( encrypted_data != NULL )
+	{
+		memory_free(
+		 encrypted_data );
+	}
+	return( -1 );
 }
 

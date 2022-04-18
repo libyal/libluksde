@@ -2120,7 +2120,6 @@ ssize_t libluksde_internal_volume_read_buffer_from_file_io_handle(
 		}
 		if( libluksde_sector_data_vector_get_sector_data_at_offset(
 		     internal_volume->sector_data_vector,
-		     internal_volume->io_handle,
 		     file_io_handle,
 		     internal_volume->encryption_context,
 		     sector_file_offset,
@@ -2165,8 +2164,9 @@ ssize_t libluksde_internal_volume_read_buffer_from_file_io_handle(
 
 			return( -1 );
 		}
-                remaining_buffer_size -= read_size;
                 buffer_offset         += read_size;
+                remaining_buffer_size -= read_size;
+		sector_file_offset    += read_size;
 		sector_data_offset     = 0;
 
 		if( internal_volume->io_handle->abort != 0 )

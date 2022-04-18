@@ -133,6 +133,8 @@ luksde_test_password_LDADD = \
 	@LIBCERROR_LIBADD@
 
 luksde_test_sector_data_SOURCES = \
+	luksde_test_functions.c luksde_test_functions.h \
+	luksde_test_libbfio.h \
 	luksde_test_libcerror.h \
 	luksde_test_libluksde.h \
 	luksde_test_macros.h \
@@ -141,14 +143,22 @@ luksde_test_sector_data_SOURCES = \
 	luksde_test_unused.h
 
 luksde_test_sector_data_LDADD = \
+	@LIBBFIO_LIBADD@ \
+	@LIBCPATH_LIBADD@ \
+	@LIBCFILE_LIBADD@ \
+	@LIBUNA_LIBADD@ \
+	@LIBCSPLIT_LIBADD@ \
+	@LIBCNOTIFY_LIBADD@ \
+	@LIBCLOCALE_LIBADD@ \
+	@LIBCDATA_LIBADD@ \
 	../libluksde/libluksde.la \
 	@LIBCERROR_LIBADD@
 
 luksde_test_sector_data_vector_SOURCES = \
 	luksde_test_functions.c luksde_test_functions.h \
-	luksde_test_libluksde.h \
 	luksde_test_libbfio.h \
 	luksde_test_libcerror.h \
+	luksde_test_libluksde.h \
 	luksde_test_macros.h \
 	luksde_test_memory.c luksde_test_memory.h \
 	luksde_test_sector_data_vector.c \
