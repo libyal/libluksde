@@ -38,7 +38,6 @@ DPKG_FILES = \
 	dpkg/rules \
 	dpkg/libluksde.install \
 	dpkg/libluksde-dev.install \
-	dpkg/libluksde-python.install \
 	dpkg/libluksde-python3.install \
 	dpkg/libluksde-tools.install \
 	dpkg/source/format
