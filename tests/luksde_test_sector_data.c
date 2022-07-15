@@ -577,7 +577,7 @@ int luksde_test_sector_data_read_file_io_handle(
 
 	/* Test libluksde_sector_data_read_file_io_handle with malloc failing
 	 */
-	luksde_test_malloc_attempts_before_fail = 1;
+	luksde_test_malloc_attempts_before_fail = 0;
 
 	result = libluksde_sector_data_read_file_io_handle(
 	          sector_data,
