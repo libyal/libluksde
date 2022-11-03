@@ -981,6 +981,25 @@ int luksde_test_encryption_context_crypt(
 	libcerror_error_free(
 	 &error );
 
+	/* Clean up
+	 */
+	result = libluksde_encryption_context_free(
+	          &encryption_context,
+	          &error );
+
+	LUKSDE_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	LUKSDE_TEST_ASSERT_IS_NULL(
+	 "encryption_context",
+	 encryption_context );
+
+	LUKSDE_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
 	return( 1 );
 
 on_error:
