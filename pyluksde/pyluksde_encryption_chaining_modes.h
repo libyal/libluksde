@@ -1,7 +1,7 @@
 /*
  * Python object definition of the libluksde encryption chaining modes
  *
- * Copyright (C) 2013-2022, Joachim Metz <joachim.metz@gmail.com>
+ * Copyright (C) 2013-2023, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *

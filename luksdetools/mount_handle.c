@@ -1,7 +1,7 @@
 /*
  * Mount handle
  *
- * Copyright (C) 2013-2022, Joachim Metz <joachim.metz@gmail.com>
+ * Copyright (C) 2013-2023, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -412,8 +412,8 @@ int mount_handle_set_key(
 	}
 #endif
 	if( ( string_length != 32 )
-	 || ( string_length != 64 )
-	 || ( string_length != 128 ) )
+	 && ( string_length != 64 )
+	 && ( string_length != 128 ) )
 	{
 		libcerror_error_set(
 		 error,
