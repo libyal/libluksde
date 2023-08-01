@@ -151,6 +151,10 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
+				RelativePath="..\..\libfcrypto\libfcrypto_des3_context.c"
+				>
+			</File>
+			<File
 				RelativePath="..\..\libfcrypto\libfcrypto_error.c"
 				>
 			</File>
@@ -174,6 +178,10 @@
 			>
 			<File
 				RelativePath="..\..\libfcrypto\libfcrypto_definitions.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libfcrypto\libfcrypto_des3_context.h"
 				>
 			</File>
 			<File
