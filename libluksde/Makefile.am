@@ -87,11 +87,13 @@ MAINTAINERCLEANFILES = \
 	Makefile.in
 
 distclean: clean
-	/bin/rm -f libluksde_definitions.h
-	/bin/rm -f libluksde.rc
-	/bin/rm -f Makefile
+	-rm -f libluksde_definitions.h
+	-rm -f libluksde.rc
+	-rm -f Makefile
 
-splint:
+sources-local: $(BUILT_SOURCES)
+
+splint-local:
 	@echo "Running splint on libluksde ..."
 	-splint -preproc -redef $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(libluksde_la_SOURCES)
 

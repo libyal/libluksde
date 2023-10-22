@@ -19,9 +19,9 @@ MAINTAINERCLEANFILES = \
 	Makefile.in
 
 distclean: clean
-	/bin/rm -f libluksde.h
-	/bin/rm -f libluksde/definitions.h
-	/bin/rm -f libluksde/features.h
-	/bin/rm -f libluksde/types.h
-	/bin/rm -f Makefile
+	-rm -f libluksde.h
+	-rm -f libluksde/definitions.h
+	-rm -f libluksde/features.h
+	-rm -f libluksde/types.h
+	-rm -f Makefile
 
