@@ -1,6 +1,6 @@
 # Files to ignore by git
 #
-# Version: 20230926
+# Version: 20231119
 
 # Generic auto-generated build files
 *~
@@ -127,7 +127,6 @@ stamp-h[1-9]
 /libluksde.spec
 /libluksde/libluksde.rc
 /libluksde/libluksde_definitions.h
-/pyluksde-python[23]/*.[ch]
 /setup.cfg
 /luksdetools/*.exe
 /luksdetools/luksdeinfo

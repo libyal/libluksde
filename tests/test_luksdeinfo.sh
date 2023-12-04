@@ -9,7 +9,7 @@ EXIT_IGNORE=77;
 
 PROFILES=("luksdeinfo");
 OPTIONS_PER_PROFILE=("");
-OPTION_SETS=(password);
+OPTION_SETS=("password");
 
 INPUT_GLOB="*";
 

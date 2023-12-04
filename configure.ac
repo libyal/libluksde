@@ -2,7 +2,7 @@ AC_PREREQ([2.71])
 
 AC_INIT(
  [libluksde],
- [20231025],
+ [20231204],
  [joachim.metz@gmail.com])
 
 AC_CONFIG_SRCDIR(
@@ -119,7 +119,7 @@ dnl Check if libluksde Python bindings (pyluksde) required headers and functions
 AX_PYTHON_CHECK_ENABLE
 
 AS_IF(
-  [test "x${ac_cv_enable_python}" != xno || test "x${ac_cv_enable_python2}" != xno || test "x${ac_cv_enable_python3}" != xno],
+  [test "x${ac_cv_enable_python}" != xno],
   [dnl Headers included in pyluksde/pyluksde_error.c
   AC_CHECK_HEADERS([stdarg.h varargs.h])
 
@@ -193,8 +193,6 @@ AC_CONFIG_FILES([libcaes/Makefile])
 AC_CONFIG_FILES([libfcrypto/Makefile])
 AC_CONFIG_FILES([libluksde/Makefile])
 AC_CONFIG_FILES([pyluksde/Makefile])
-AC_CONFIG_FILES([pyluksde-python2/Makefile])
-AC_CONFIG_FILES([pyluksde-python3/Makefile])
 AC_CONFIG_FILES([luksdetools/Makefile])
 AC_CONFIG_FILES([po/Makefile.in])
 AC_CONFIG_FILES([po/Makevars])

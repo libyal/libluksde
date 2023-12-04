@@ -21,8 +21,6 @@ SUBDIRS = \
 	libluksde \
 	luksdetools \
 	pyluksde \
-	pyluksde-python2 \
-	pyluksde-python3 \
 	po \
 	manuals \
 	tests \
@@ -50,6 +48,9 @@ PKGCONFIG_FILES = \
 	libluksde.pc.in
 
 SETUP_PY_FILES = \
+	pyproject.toml \
+	setup.cfg \
+	setup.cfg.in \
 	setup.py
 
 SPEC_FILES = \
