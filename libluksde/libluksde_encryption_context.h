@@ -1,7 +1,7 @@
 /*
  * Encryption functions
  *
- * Copyright (C) 2013-2023, Joachim Metz <joachim.metz@gmail.com>
+ * Copyright (C) 2013-2024, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -70,6 +70,14 @@ struct libluksde_encryption_context
 	/* The AES-XTS encryption context
 	 */
 	libcaes_tweaked_context_t *aes_xts_encryption_context;
+
+	/* The Blowfish decryption context
+	 */
+	libfcrypto_blowfish_context_t *blowfish_decryption_context;
+
+	/* The Blowfish encryption context
+	 */
+	libfcrypto_blowfish_context_t *blowfish_encryption_context;
 
 	/* The RC4 decryption context
 	 */

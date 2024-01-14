@@ -1,7 +1,7 @@
 /*
  * Encryption functions
  *
- * Copyright (C) 2013-2023, Joachim Metz <joachim.metz@gmail.com>
+ * Copyright (C) 2013-2024, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -96,6 +96,17 @@ int libluksde_encryption_context_initialize(
 			encryption_mode = LIBLUKSDE_ENCRYPTION_MODE_RC4_ECB;
 		}
 	}
+	else if( method == LIBLUKSDE_ENCRYPTION_METHOD_BLOWFISH )
+	{
+		if( chaining_mode == LIBLUKSDE_ENCRYPTION_CHAINING_MODE_CBC )
+		{
+			encryption_mode = LIBLUKSDE_ENCRYPTION_MODE_BLOWFISH_CBC;
+		}
+		else if( chaining_mode == LIBLUKSDE_ENCRYPTION_CHAINING_MODE_ECB )
+		{
+			encryption_mode = LIBLUKSDE_ENCRYPTION_MODE_BLOWFISH_ECB;
+		}
+	}
 	else if( method == LIBLUKSDE_ENCRYPTION_METHOD_SERPENT )
 	{
 		if( chaining_mode == LIBLUKSDE_ENCRYPTION_CHAINING_MODE_CBC )
@@ -166,6 +177,13 @@ int libluksde_encryption_context_initialize(
 			          error );
 			break;
 
+		case LIBLUKSDE_ENCRYPTION_MODE_BLOWFISH_CBC:
+		case LIBLUKSDE_ENCRYPTION_MODE_BLOWFISH_ECB:
+			result = libfcrypto_blowfish_context_initialize(
+			          &( ( *context )->blowfish_decryption_context ),
+			          error );
+			break;
+
 		case LIBLUKSDE_ENCRYPTION_MODE_RC4_CBC:
 		case LIBLUKSDE_ENCRYPTION_MODE_RC4_ECB:
 			result = libfcrypto_rc4_context_initialize(
@@ -207,6 +225,13 @@ int libluksde_encryption_context_initialize(
 		case LIBLUKSDE_ENCRYPTION_MODE_AES_XTS:
 			result = libcaes_tweaked_context_initialize(
 			          &( ( *context )->aes_xts_encryption_context ),
+			          error );
+			break;
+
+		case LIBLUKSDE_ENCRYPTION_MODE_BLOWFISH_CBC:
+		case LIBLUKSDE_ENCRYPTION_MODE_BLOWFISH_ECB:
+			result = libfcrypto_blowfish_context_initialize(
+			          &( ( *context )->blowfish_encryption_context ),
 			          error );
 			break;
 
@@ -297,6 +322,18 @@ on_error:
 		{
 			libfcrypto_rc4_context_free(
 			 &( ( *context )->rc4_decryption_context ),
+			 NULL );
+		}
+		if( ( *context )->blowfish_encryption_context != NULL )
+		{
+			libfcrypto_blowfish_context_free(
+			 &( ( *context )->blowfish_encryption_context ),
+			 NULL );
+		}
+		if( ( *context )->blowfish_decryption_context != NULL )
+		{
+			libfcrypto_blowfish_context_free(
+			 &( ( *context )->blowfish_decryption_context ),
 			 NULL );
 		}
 		if( ( *context )->aes_xts_encryption_context != NULL )
@@ -413,6 +450,38 @@ int libluksde_encryption_context_free(
 				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 				 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
 				 "%s: unable to free AES-XTS encryption context.",
+				 function );
+
+				result = -1;
+			}
+		}
+		if( ( *context )->blowfish_decryption_context != NULL )
+		{
+			if( libfcrypto_blowfish_context_free(
+			     &( ( *context )->blowfish_decryption_context ),
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+				 "%s: unable to free Blowfish decryption context.",
+				 function );
+
+				result = -1;
+			}
+		}
+		if( ( *context )->blowfish_encryption_context != NULL )
+		{
+			if( libfcrypto_blowfish_context_free(
+			     &( ( *context )->blowfish_encryption_context ),
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+				 "%s: unable to free Blowfish encryption context.",
 				 function );
 
 				result = -1;
@@ -582,6 +651,15 @@ int libluksde_encryption_context_set_key(
 			          error );
 			break;
 
+		case LIBLUKSDE_ENCRYPTION_MODE_BLOWFISH_CBC:
+		case LIBLUKSDE_ENCRYPTION_MODE_BLOWFISH_ECB:
+			result = libfcrypto_blowfish_context_set_key(
+			          context->blowfish_decryption_context,
+			          key,
+			          key_bit_size,
+			          error );
+			break;
+
 		case LIBLUKSDE_ENCRYPTION_MODE_RC4_CBC:
 		case LIBLUKSDE_ENCRYPTION_MODE_RC4_ECB:
 			result = libfcrypto_rc4_context_set_key(
@@ -633,6 +711,15 @@ int libluksde_encryption_context_set_key(
 			          key,
 			          key_bit_size,
 			          &( key[ key_size ] ),
+			          key_bit_size,
+			          error );
+			break;
+
+		case LIBLUKSDE_ENCRYPTION_MODE_BLOWFISH_CBC:
+		case LIBLUKSDE_ENCRYPTION_MODE_BLOWFISH_ECB:
+			result = libfcrypto_blowfish_context_set_key(
+			          context->blowfish_encryption_context,
+			          key,
 			          key_bit_size,
 			          error );
 			break;
@@ -1000,6 +1087,40 @@ int libluksde_encryption_context_crypt(
 					  error );
 				break;
 
+			case LIBLUKSDE_ENCRYPTION_MODE_BLOWFISH_CBC:
+				result = libfcrypto_blowfish_crypt_cbc(
+					  context->blowfish_encryption_context,
+					  LIBFCRYPTO_BLOWFISH_CRYPT_MODE_ENCRYPT,
+					  initialization_vector,
+					  8,
+					  &( input_data[ data_offset ] ),
+					  input_data_size - data_offset,
+					  &( output_data[ data_offset ] ),
+					  output_data_size - data_offset,
+					  error );
+
+				if( result != 1 )
+				{
+					break;
+				}
+				break;
+
+			case LIBLUKSDE_ENCRYPTION_MODE_BLOWFISH_ECB:
+				result = libfcrypto_blowfish_crypt_ecb(
+					  context->blowfish_encryption_context,
+					  LIBFCRYPTO_BLOWFISH_CRYPT_MODE_ENCRYPT,
+					  &( input_data[ data_offset ] ),
+					  input_data_size - data_offset,
+					  &( output_data[ data_offset ] ),
+					  output_data_size - data_offset,
+					  error );
+
+				if( result != 1 )
+				{
+					break;
+				}
+				break;
+
 			case LIBLUKSDE_ENCRYPTION_MODE_RC4_CBC:
 			case LIBLUKSDE_ENCRYPTION_MODE_RC4_ECB:
 				result = libfcrypto_rc4_crypt(
@@ -1017,25 +1138,36 @@ int libluksde_encryption_context_crypt(
 				break;
 
 			case LIBLUKSDE_ENCRYPTION_MODE_SERPENT_CBC:
-			case LIBLUKSDE_ENCRYPTION_MODE_SERPENT_ECB:
-				while( data_offset < input_data_size )
-				{
-					/* The libfcrypto_serpent_crypt_ecb function encrypts 16 bytes at a time
-					 */
-					result = libfcrypto_serpent_crypt_ecb(
-						  context->serpent_encryption_context,
-						  LIBFCRYPTO_SERPENT_CRYPT_MODE_ENCRYPT,
-						  &( input_data[ data_offset ] ),
-						  input_data_size - data_offset,
-						  &( output_data[ data_offset ] ),
-						  output_data_size - data_offset,
-						  error );
+				result = libfcrypto_serpent_crypt_cbc(
+					  context->serpent_encryption_context,
+					  LIBFCRYPTO_SERPENT_CRYPT_MODE_ENCRYPT,
+					  initialization_vector,
+					  16,
+					  &( input_data[ data_offset ] ),
+					  input_data_size - data_offset,
+					  &( output_data[ data_offset ] ),
+					  output_data_size - data_offset,
+					  error );
 
-					if( result != 1 )
-					{
-						break;
-					}
-					data_offset += 16;
+				if( result != 1 )
+				{
+					break;
+				}
+				break;
+
+			case LIBLUKSDE_ENCRYPTION_MODE_SERPENT_ECB:
+				result = libfcrypto_serpent_crypt_ecb(
+					  context->serpent_encryption_context,
+					  LIBFCRYPTO_SERPENT_CRYPT_MODE_ENCRYPT,
+					  &( input_data[ data_offset ] ),
+					  input_data_size - data_offset,
+					  &( output_data[ data_offset ] ),
+					  output_data_size - data_offset,
+					  error );
+
+				if( result != 1 )
+				{
+					break;
 				}
 				break;
 
@@ -1107,6 +1239,40 @@ int libluksde_encryption_context_crypt(
 					  error );
 				break;
 
+			case LIBLUKSDE_ENCRYPTION_MODE_BLOWFISH_CBC:
+				result = libfcrypto_blowfish_crypt_cbc(
+					  context->blowfish_decryption_context,
+					  LIBFCRYPTO_BLOWFISH_CRYPT_MODE_DECRYPT,
+					  initialization_vector,
+					  8,
+					  input_data,
+					  input_data_size,
+					  output_data,
+					  output_data_size,
+					  error );
+
+				if( result != 1 )
+				{
+					break;
+				}
+				break;
+
+			case LIBLUKSDE_ENCRYPTION_MODE_BLOWFISH_ECB:
+				result = libfcrypto_blowfish_crypt_ecb(
+					  context->blowfish_decryption_context,
+					  LIBFCRYPTO_BLOWFISH_CRYPT_MODE_DECRYPT,
+					  &( input_data[ data_offset ] ),
+					  input_data_size - data_offset,
+					  &( output_data[ data_offset ] ),
+					  output_data_size - data_offset,
+					  error );
+
+				if( result != 1 )
+				{
+					break;
+				}
+				break;
+
 			case LIBLUKSDE_ENCRYPTION_MODE_RC4_CBC:
 			case LIBLUKSDE_ENCRYPTION_MODE_RC4_ECB:
 				result = libfcrypto_rc4_crypt(
@@ -1142,24 +1308,18 @@ int libluksde_encryption_context_crypt(
 				break;
 
 			case LIBLUKSDE_ENCRYPTION_MODE_SERPENT_ECB:
-				while( data_offset < input_data_size )
-				{
-					/* The libfcrypto_serpent_crypt_ecb function decrypts 16 bytes at a time
-					 */
-					result = libfcrypto_serpent_crypt_ecb(
-						  context->serpent_decryption_context,
-						  LIBFCRYPTO_SERPENT_CRYPT_MODE_DECRYPT,
-						  &( input_data[ data_offset ] ),
-						  input_data_size - data_offset,
-						  &( output_data[ data_offset ] ),
-						  output_data_size - data_offset,
-						  error );
+				result = libfcrypto_serpent_crypt_ecb(
+					  context->serpent_decryption_context,
+					  LIBFCRYPTO_SERPENT_CRYPT_MODE_DECRYPT,
+					  &( input_data[ data_offset ] ),
+					  input_data_size - data_offset,
+					  &( output_data[ data_offset ] ),
+					  output_data_size - data_offset,
+					  error );
 
-					if( result != 1 )
-					{
-						break;
-					}
-					data_offset += 16;
+				if( result != 1 )
+				{
+					break;
 				}
 				break;
 

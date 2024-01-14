@@ -1,7 +1,7 @@
 /*
  * Volume functions
  *
- * Copyright (C) 2013-2023, Joachim Metz <joachim.metz@gmail.com>
+ * Copyright (C) 2013-2024, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -2054,17 +2054,6 @@ ssize_t libluksde_internal_volume_read_buffer_from_file_io_handle(
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
 		 "%s: invalid volume - current offset value out of bounds.",
-		 function );
-
-		return( -1 );
-	}
-	if( internal_volume->is_locked != 0 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid volume - volume is locked.",
 		 function );
 
 		return( -1 );

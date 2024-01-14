@@ -1,6 +1,6 @@
 dnl Checks for libfcrypto required headers and functions
 dnl
-dnl Version: 20200104
+dnl Version: 20240114
 
 dnl Function to detect if libfcrypto is available
 dnl ac_libfcrypto_dummy is used to prevent AC_CHECK_LIB adding unnecessary -l<library> arguments
@@ -49,6 +49,64 @@ AC_DEFUN([AX_LIBFCRYPTO_CHECK_LIB],
         AC_CHECK_LIB(
           fcrypto,
           libfcrypto_get_version,
+          [ac_cv_libfcrypto_dummy=yes],
+          [ac_cv_libfcrypto=no])
+
+        dnl Blowfish context functions
+        AC_CHECK_LIB(
+          fcrypto,
+          libfcrypto_blowfish_context_initialize,
+          [ac_cv_libfcrypto_dummy=yes],
+          [ac_cv_libfcrypto=no])
+        AC_CHECK_LIB(
+          fcrypto,
+          libfcrypto_blowfish_context_free,
+          [ac_cv_libfcrypto_dummy=yes],
+          [ac_cv_libfcrypto=no])
+
+        AC_CHECK_LIB(
+          fcrypto,
+          libfcrypto_blowfish_context_set_key,
+          [ac_cv_libfcrypto_dummy=yes],
+          [ac_cv_libfcrypto=no])
+
+        AC_CHECK_LIB(
+          fcrypto,
+          libfcrypto_blowfish_crypt_cbc,
+          [ac_cv_libfcrypto_dummy=yes],
+          [ac_cv_libfcrypto=no])
+        AC_CHECK_LIB(
+          fcrypto,
+          libfcrypto_blowfish_crypt_ecb,
+          [ac_cv_libfcrypto_dummy=yes],
+          [ac_cv_libfcrypto=no])
+
+        dnl DES3 context functions
+        AC_CHECK_LIB(
+          fcrypto,
+          libfcrypto_des3_context_initialize,
+          [ac_cv_libfcrypto_dummy=yes],
+          [ac_cv_libfcrypto=no])
+        AC_CHECK_LIB(
+          fcrypto,
+          libfcrypto_des3_context_free,
+          [ac_cv_libfcrypto_dummy=yes],
+          [ac_cv_libfcrypto=no])
+
+        AC_CHECK_LIB(
+          fcrypto,
+          libfcrypto_des3_context_set_key,
+          [ac_cv_libfcrypto_dummy=yes],
+          [ac_cv_libfcrypto=no])
+
+        AC_CHECK_LIB(
+          fcrypto,
+          libfcrypto_des3_crypt_cbc,
+          [ac_cv_libfcrypto_dummy=yes],
+          [ac_cv_libfcrypto=no])
+        AC_CHECK_LIB(
+          fcrypto,
+          libfcrypto_des3_crypt_ecb,
           [ac_cv_libfcrypto_dummy=yes],
           [ac_cv_libfcrypto=no])
 

@@ -1,7 +1,7 @@
 /*
  * The internal libfcrypto header
  *
- * Copyright (C) 2013-2023, Joachim Metz <joachim.metz@gmail.com>
+ * Copyright (C) 2013-2024, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -29,6 +29,8 @@
 #if defined( HAVE_LOCAL_LIBFCRYPTO )
 
 #include <libfcrypto_definitions.h>
+#include <libfcrypto_blowfish_context.h>
+#include <libfcrypto_des3_context.h>
 #include <libfcrypto_rc4_context.h>
 #include <libfcrypto_serpent_context.h>
 #include <libfcrypto_support.h>

@@ -17,6 +17,7 @@ Supported encryption methods:
 
 * AES (AES-CBC, AES-ECB, AES-XTS)
 * ARC4 (ARC4-ECB)
+* Blowfish (Blowfish-CBC, Blowfish-ECB)
 * Serpent (Serpent-CBC, Serpent-ECB)
 
 Unsupported encryption methods:

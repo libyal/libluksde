@@ -1,7 +1,7 @@
 /*
  * Mounts a Linux Unified Key Setup (LUKS) Disk Encrypted volume
  *
- * Copyright (C) 2013-2023, Joachim Metz <joachim.metz@gmail.com>
+ * Copyright (C) 2013-2024, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
