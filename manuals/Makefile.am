@@ -8,9 +8,7 @@ EXTRA_DIST = \
 	luksdemount.1 \
 	libluksde.3
 
-MAINTAINERCLEANFILES = \
+DISTCLEANFILES = \
+	Makefile \
 	Makefile.in
-
-distclean: clean
-	-rm -f Makefile
 

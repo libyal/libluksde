@@ -15,13 +15,11 @@ EXTRA_DIST = \
 	libluksde/features.h.in \
 	libluksde/types.h.in
 
-MAINTAINERCLEANFILES = \
+DISTCLEANFILES = \
+	libluksde.h \
+	libluksde/definitions.h \
+	libluksde/features.h \
+	libluksde/types.h \
+	Makefile \
 	Makefile.in
-
-distclean: clean
-	-rm -f libluksde.h
-	-rm -f libluksde/definitions.h
-	-rm -f libluksde/features.h
-	-rm -f libluksde/types.h
-	-rm -f Makefile
 
