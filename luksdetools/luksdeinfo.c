@@ -1,5 +1,5 @@
 /*
- * Shows information obtained from a Linux Unified Key Setup (LUKS) volume
+ * Shows information obtained from a Linux Unified Key Setup (LUKS) volume.
  *
  * Copyright (C) 2013-2024, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -20,18 +20,23 @@
  */
 
 #include <common.h>
+#include <file_stream.h>
 #include <memory.h>
 #include <system_string.h>
 #include <types.h>
 
 #include <stdio.h>
 
-#if defined( HAVE_UNISTD_H )
-#include <unistd.h>
+#if defined( HAVE_IO_H ) || defined( WINAPI )
+#include <io.h>
 #endif
 
 #if defined( HAVE_STDLIB_H ) || defined( WINAPI )
 #include <stdlib.h>
+#endif
+
+#if defined( HAVE_UNISTD_H )
+#include <unistd.h>
 #endif
 
 #include "info_handle.h"
@@ -47,7 +52,7 @@
 info_handle_t *luksdeinfo_info_handle = NULL;
 int luksdeinfo_abort                  = 0;
 
-/* Prints the executable usage information
+/* Prints usage information
  */
 void usage_fprint(
       FILE *stream )
@@ -142,7 +147,7 @@ int main( int argc, char * const argv[] )
 	 1 );
 
 	if( libclocale_initialize(
-             "luksdetools",
+	     "luksdetools",
 	     &error ) != 1 )
 	{
 		fprintf(
@@ -152,8 +157,8 @@ int main( int argc, char * const argv[] )
 		goto on_error;
 	}
 	if( luksdetools_output_initialize(
-             _IONBF,
-             &error ) != 1 )
+	     _IONBF,
+	     &error ) != 1 )
 	{
 		fprintf(
 		 stderr,

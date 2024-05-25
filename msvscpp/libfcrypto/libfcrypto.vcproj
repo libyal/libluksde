@@ -151,6 +151,10 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
+				RelativePath="..\..\libfcrypto\libfcrypto_blowfish_context.c"
+				>
+			</File>
+			<File
 				RelativePath="..\..\libfcrypto\libfcrypto_des3_context.c"
 				>
 			</File>
@@ -176,6 +180,10 @@
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
+			<File
+				RelativePath="..\..\libfcrypto\libfcrypto_blowfish_context.h"
+				>
+			</File>
 			<File
 				RelativePath="..\..\libfcrypto\libfcrypto_definitions.h"
 				>
