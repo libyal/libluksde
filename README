@@ -1,9 +1,9 @@
-libluksde is a library to access LUKS Disk Encryption encrypted volumes.
+libluksde is a library to access the Linux Unified Key Setup (LUKS) Disk Encryption format.
 
 Project information:
 
 * Status: experimental
-* Licence: LGPLv3+
+* Licence: LGPL-3.0-or-later
 
 Read-only supported LUKS formats:
 
