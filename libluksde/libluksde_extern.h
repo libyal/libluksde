@@ -24,21 +24,28 @@
 
 #include <common.h>
 
+#if !defined( __CYGWIN__ ) && !defined( _WIN32 ) && defined( __has_attribute )
+#if __has_attribute( visibility )
+#define LIBLUKSDE_INTERNAL	__attribute__((visibility("hidden"))) extern
+
+#else
+#define LIBLUKSDE_INTERNAL	extern
+
+#endif /* __has_attribute( visibility ) */
+#else
+#define LIBLUKSDE_INTERNAL	extern
+
+#endif /* !defined( __CYGWIN__ ) && !defined( _WIN32 ) && defined( __has_attribute ) */
+
 /* Define HAVE_LOCAL_LIBLUKSDE for local use of libluksde
  */
 #if !defined( HAVE_LOCAL_LIBLUKSDE )
 
 #include <libluksde/extern.h>
 
-#if defined( __CYGWIN__ ) || defined( __MINGW32__ )
-#define LIBLUKSDE_EXTERN_VARIABLE	extern
-#else
-#define LIBLUKSDE_EXTERN_VARIABLE	LIBLUKSDE_EXTERN
-#endif
-
 #else
 #define LIBLUKSDE_EXTERN		/* extern */
-#define LIBLUKSDE_EXTERN_VARIABLE	extern
+#define LIBLUKSDE_EXTERN_VARIABLE	LIBLUKSDE_INTERNAL
 
 #endif /* !defined( HAVE_LOCAL_LIBLUKSDE ) */
 

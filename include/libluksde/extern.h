@@ -31,14 +31,17 @@
  */
 #if defined( LIBLUKSDE_DLL_EXPORT )
 #define LIBLUKSDE_EXTERN __declspec(dllexport)
+#define LIBLUKSDE_EXTERN_VARIABLE extern __declspec(dllexport)
 
 #elif defined( LIBLUKSDE_DLL_IMPORT )
-#define LIBLUKSDE_EXTERN extern __declspec(dllimport)
+#define LIBLUKSDE_EXTERN __declspec(dllimport)
+#define LIBLUKSDE_EXTERN_VARIABLE extern __declspec(dllimport)
 
 #else
 #define LIBLUKSDE_EXTERN extern
+#define LIBLUKSDE_EXTERN_VARIABLE extern
 
-#endif
+#endif /* defined( LIBLUKSDE_DLL_EXPORT ) */
 
 #endif /* !defined( _LIBLUKSDE_EXTERN_H ) */
 
