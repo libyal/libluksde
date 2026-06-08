@@ -1,6 +1,6 @@
 # Script that synchronizes the local test data
 #
-# Version: 20260531
+# Version: 20260607
 
 $Repository = "log2timeline/dfvfs"
 $TestDataPath = "test_data"
@@ -29,6 +29,7 @@ ForEach ($TestFile in ${TestFiles} -split " ")
 {
 	$Url = "https://raw.githubusercontent.com/${Repository}/refs/heads/main/${TestDataPath}/${TestFile}"
 
+	$ProgressPreference = 'SilentlyContinue'
 	Invoke-WebRequest -Uri ${Url} -OutFile "${TestInputDirectory}\${TestSet}\${TestFile}"
 
 	Copy-Item test_data_options -Destination "${TestInputDirectory}\.libluksde\${TestSet}\${TestFile}.password"
