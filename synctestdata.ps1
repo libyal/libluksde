@@ -1,6 +1,6 @@
 # Script that synchronizes the local test data
 #
-# Version: 20260607
+# Version: 20260608
 
 $Repository = "log2timeline/dfvfs"
 $TestDataPath = "test_data"
@@ -11,6 +11,11 @@ $TestFiles = "luks1.raw"
 If (-Not (Test-Path ${TestInputDirectory}))
 {
 	New-Item -Name ${TestInputDirectory} -ItemType "directory" | Out-Null
+}
+If (-Not (Test-Path "${TestInputDirectory}\.luksdeinfo"))
+{
+	New-Item -Name "${TestInputDirectory}\.luksdeinfo" -ItemType "directory" | Out-Null
+	Write-Output "-u" | Out-File -Encoding ascii -FilePath "${TestInputDirectory}\.luksdeinfo\options"
 }
 If (-Not (Test-Path "${TestInputDirectory}\${TestSet}"))
 {
@@ -27,7 +32,8 @@ password=luksde-TEST
 
 ForEach ($TestFile in ${TestFiles} -split " ")
 {
-	$Url = "https://raw.githubusercontent.com/${Repository}/refs/heads/main/${TestDataPath}/${TestFile}"
+	$UrlTestFile = [System.Uri]::EscapeDataString("${TestFile}")
+	$Url = "https://raw.githubusercontent.com/${Repository}/refs/heads/main/${TestDataPath}/${UrlTestFile}"
 
 	$ProgressPreference = 'SilentlyContinue'
 	Invoke-WebRequest -Uri ${Url} -OutFile "${TestInputDirectory}\${TestSet}\${TestFile}"

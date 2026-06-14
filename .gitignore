@@ -1,6 +1,6 @@
 # Files to ignore by git
 #
-# Version: 20251129
+# Version: 20260604
 
 # Generic auto-generated build files
 *~
@@ -131,7 +131,12 @@ stamp-h[1-9]
 /luksdetools/*.exe
 /luksdetools/luksdeinfo
 /luksdetools/luksdemount
+/tests/*.dir
 /tests/*.exe
+/tests/*.log
+/tests/*.tmp
+/tests/atconfig
+/tests/atlocal
 /tests/input
 /tests/luksde_test_diffuser
 /tests/luksde_test_encryption_context
@@ -149,6 +154,12 @@ stamp-h[1-9]
 /tests/luksde_test_volume
 /tests/luksde_test_volume_header
 /tests/notify_stream.log
+/tests/package.m4
+/tests/test_inputs_*.at
+/tests/test_library
+/tests/test_manpages
+/tests/test_python_module
+/tests/test_tools
 /tests/tmp*
 
 # Local library dependencies specific files
