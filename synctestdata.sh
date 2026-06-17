@@ -9,9 +9,6 @@ TEST_SET="public";
 TEST_INPUT_DIRECTORY="tests/input";
 TEST_FILES="luks1.raw";
 
-mkdir -p "${TEST_INPUT_DIRECTORY}/.luksdeinfo";
-echo "-u" > "${TEST_INPUT_DIRECTORY}/.luksdeinfo/options";
-
 mkdir -p "${TEST_INPUT_DIRECTORY}/${TEST_SET}";
 mkdir -p "${TEST_INPUT_DIRECTORY}/.libluksde/${TEST_SET}";
 mkdir -p "${TEST_INPUT_DIRECTORY}/.pyluksde/${TEST_SET}";

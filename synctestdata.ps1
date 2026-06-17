@@ -12,11 +12,6 @@ If (-Not (Test-Path ${TestInputDirectory}))
 {
 	New-Item -Name ${TestInputDirectory} -ItemType "directory" | Out-Null
 }
-If (-Not (Test-Path "${TestInputDirectory}\.luksdeinfo"))
-{
-	New-Item -Name "${TestInputDirectory}\.luksdeinfo" -ItemType "directory" | Out-Null
-	Write-Output "-u" | Out-File -Encoding ascii -FilePath "${TestInputDirectory}\.luksdeinfo\options"
-}
 If (-Not (Test-Path "${TestInputDirectory}\${TestSet}"))
 {
 	New-Item -Name "${TestInputDirectory}\${TestSet}" -ItemType "directory" | Out-Null
