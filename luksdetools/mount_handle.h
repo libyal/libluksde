@@ -68,6 +68,10 @@ struct mount_handle
 	 */
 	libbfio_handle_t *file_io_handle;
 
+	/* Value to indicate the mount handle is locked
+	 */
+	int is_locked;
+
 	/* The notification output stream
 	 */
 	FILE *notify_stream;
@@ -123,6 +127,10 @@ int mount_handle_open(
      libcerror_error_t **error );
 
 int mount_handle_close(
+     mount_handle_t *mount_handle,
+     libcerror_error_t **error );
+
+int mount_handle_is_locked(
      mount_handle_t *mount_handle,
      libcerror_error_t **error );
 

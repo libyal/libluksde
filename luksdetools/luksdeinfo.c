@@ -21,11 +21,8 @@
 
 #include <common.h>
 #include <file_stream.h>
-#include <memory.h>
 #include <system_string.h>
 #include <types.h>
-
-#include <stdio.h>
 
 #if defined( HAVE_FCNTL_H ) || defined( WINAPI )
 #include <fcntl.h>
@@ -45,42 +42,16 @@
 
 #include "info_handle.h"
 #include "luksdetools_getopt.h"
-#include "luksdetools_libluksde.h"
 #include "luksdetools_libcerror.h"
 #include "luksdetools_libclocale.h"
 #include "luksdetools_libcnotify.h"
+#include "luksdetools_libluksde.h"
 #include "luksdetools_output.h"
 #include "luksdetools_signal.h"
 #include "luksdetools_unused.h"
 
 info_handle_t *luksdeinfo_info_handle = NULL;
 int luksdeinfo_abort                  = 0;
-
-/* Prints usage information
- */
-void usage_fprint(
-      FILE *stream )
-{
-	if( stream == NULL )
-	{
-		return;
-	}
-	fprintf( stream, "Use luksdeinfo to determine information about a Linux Unified\n"
-	                 "Key Setup (LUKS) volume\n\n" );
-
-	fprintf( stream, "Usage: luksdeinfo [ -k key ] [ -o offset ] [ -p password ]\n"
-	                 "                  [ -huvV ] source\n\n" );
-
-	fprintf( stream, "\tsource: the source file or device\n\n" );
-
-	fprintf( stream, "\t-h:     shows this help\n" );
-	fprintf( stream, "\t-k:     specify the volume master key formatted in base16\n" );
-	fprintf( stream, "\t-o:     specify the volume offset\n" );
-	fprintf( stream, "\t-p:     specify the password/passphrase\n" );
-	fprintf( stream, "\t-u:     unattended mode (disables user interaction)\n" );
-	fprintf( stream, "\t-v:     verbose output to stderr\n" );
-	fprintf( stream, "\t-V:     print version\n" );
-}
 
 /* Signal handler for luksdeinfo
  */
@@ -134,15 +105,31 @@ int wmain( int argc, wchar_t * const argv[] )
 int main( int argc, char * const argv[] )
 #endif
 {
-	libluksde_error_t *error                 = NULL;
-	system_character_t *option_key           = NULL;
-	system_character_t *option_password      = NULL;
-	system_character_t *option_volume_offset = NULL;
-	system_character_t *source               = NULL;
-	char *program                            = "luksdeinfo";
-	system_integer_t option                  = 0;
-	int unattended_mode                      = 0;
-	int verbose                              = 0;
+	const char *description = \
+		"Use luksdeinfo to determine information about a Linux Unified Key Setup (LUKS) volume.";
+
+	luksdetools_option_t options[ ] = {
+		{ 'h', NULL, "shows this help" },
+		{ 'k', "key", "specify the key formatted in base16" },
+		{ 'o', "offset", "specify the volume offset in bytes" },
+		{ 'p', "password", "specify the password (or passphrase)" },
+		{ 'u', NULL, "unattended mode (disables user interaction)" },
+		{ 'v', NULL, "verbose output to stderr" },
+		{ 'V', NULL, "print version" },
+		{ 0, "source", "the source volume" },
+	};
+	system_character_t options_string[ 32 ];
+
+	libluksde_error_t *error            = NULL;
+	system_character_t *option_key      = NULL;
+	system_character_t *option_offset   = NULL;
+	system_character_t *option_password = NULL;
+	system_character_t *source          = NULL;
+	char *program                       = "luksdeinfo";
+	system_integer_t option             = 0;
+	int number_of_options               = (int) ( sizeof( options ) / sizeof( luksdetools_option_t ) );
+	int unattended_mode                 = 0;
+	int verbose                         = 0;
 
 #if defined( __MINGW32__ ) && defined( HAVE_MINGW_BINMODE )
 	_setmode( _fileno( stdout ), _O_BINARY );
@@ -179,10 +166,22 @@ int main( int argc, char * const argv[] )
 	 stdout,
 	 program );
 
+	if( luksdetools_getopt_get_options_string(
+	     options,
+	     number_of_options,
+	     options_string,
+	     32 ) != 1 )
+	{
+		fprintf(
+		 stderr,
+		 "Unable to determine options string.\n" );
+
+		goto on_error;
+	}
 	while( ( option = luksdetools_getopt(
 	                   argc,
 	                   argv,
-	                   _SYSTEM_STRING( "hk:o:p:uvV" ) ) ) != (system_integer_t) -1 )
+	                   options_string ) ) != (system_integer_t) -1 )
 	{
 		switch( option )
 		{
@@ -193,14 +192,22 @@ int main( int argc, char * const argv[] )
 				 "Invalid argument: %" PRIs_SYSTEM "\n",
 				 argv[ optind - 1 ] );
 
-				usage_fprint(
-				 stdout );
+				luksdetools_getopt_usage_fprint(
+				 stdout,
+				 program,
+				 description,
+				 options,
+				 number_of_options );
 
 				return( EXIT_FAILURE );
 
 			case (system_integer_t) 'h':
-				usage_fprint(
-				 stdout );
+				luksdetools_getopt_usage_fprint(
+				 stdout,
+				 program,
+				 description,
+				 options,
+				 number_of_options );
 
 				return( EXIT_SUCCESS );
 
@@ -210,7 +217,7 @@ int main( int argc, char * const argv[] )
 				break;
 
 			case (system_integer_t) 'o':
-				option_volume_offset = optarg;
+				option_offset = optarg;
 
 				break;
 
@@ -240,10 +247,14 @@ int main( int argc, char * const argv[] )
 	{
 		fprintf(
 		 stderr,
-		 "Missing source file or device.\n" );
+		 "Missing source volume.\n" );
 
-		usage_fprint(
-		 stdout );
+		luksdetools_getopt_usage_fprint(
+		 stdout,
+		 program,
+		 description,
+		 options,
+		 number_of_options );
 
 		return( EXIT_FAILURE );
 	}
@@ -296,11 +307,11 @@ int main( int argc, char * const argv[] )
 			goto on_error;
 		}
 	}
-	if( option_volume_offset != NULL )
+	if( option_offset != NULL )
 	{
 		if( info_handle_set_volume_offset(
 		     luksdeinfo_info_handle,
-		     option_volume_offset,
+		     option_offset,
 		     &error ) != 1 )
 		{
 			fprintf(
@@ -317,8 +328,7 @@ int main( int argc, char * const argv[] )
 	{
 		fprintf(
 		 stderr,
-		 "Unable to open: %" PRIs_SYSTEM ".\n",
-		 source );
+		 "Unable to open source volume.\n" );
 
 		goto on_error;
 	}
