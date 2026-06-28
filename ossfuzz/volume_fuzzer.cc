@@ -47,8 +47,17 @@ int LLVMFuzzerTestOneInput(
      const uint8_t *data,
      size_t size )
 {
+	uint8_t buffer[ 512 ];
+	uint8_t uuid[ 16 ];
+
 	libbfio_handle_t *file_io_handle = NULL;
 	libluksde_volume_t *volume       = NULL;
+	off64_t volume_offset            = 0;
+	size64_t volume_size             = 0;
+	int encryption_chaining_mode     = 0;
+	int encryption_method            = 0;
+	int is_locked                    = 0;
+	int read_iterator                = 0;
 
 	if( libbfio_memory_range_initialize(
 	     &file_io_handle,
@@ -70,6 +79,14 @@ int LLVMFuzzerTestOneInput(
 	{
 		goto on_error_libbfio;
 	}
+	if( libluksde_volume_set_utf8_password(
+	     volume,
+	     (uint8_t *) "luksde-TEST",
+	     11,
+	     NULL ) != 1 )
+	{
+		goto on_error_libbfio;
+	}
 	if( libluksde_volume_open_file_io_handle(
 	     volume,
 	     file_io_handle,
@@ -77,6 +94,59 @@ int LLVMFuzzerTestOneInput(
 	     NULL ) != 1 )
 	{
 		goto on_error_libluksde;
+	}
+	if( libluksde_volume_get_encryption_method(
+	     volume,
+	     &encryption_method,
+	     &encryption_chaining_mode,
+	     NULL ) != 1 )
+	{
+		goto on_error_libluksde;
+	}
+	if( libluksde_volume_get_volume_identifier(
+	     volume,
+	     uuid,
+	     16,
+	     NULL ) != 1 )
+	{
+		goto on_error_libluksde;
+	}
+	is_locked = libluksde_volume_is_locked(
+	             volume,
+		     NULL );
+
+	if( is_locked == -1 )
+	{
+		goto on_error_libluksde;
+	}
+	else if( is_locked == 0 )
+	{
+		if( libluksde_volume_get_size(
+		     volume,
+		     &volume_size,
+		     NULL ) != 1 )
+		{
+			goto on_error_libluksde;
+		}
+		for( read_iterator = 0;
+		     read_iterator < 128;
+		     read_iterator++ )
+		{
+			if( volume_offset >= volume_size )
+			{
+				break;
+			}
+			if( libluksde_volume_read_buffer_at_offset(
+			     volume,
+			     buffer,
+			     497,
+			     volume_offset,
+			     NULL ) == -1 )
+			{
+				goto on_error_libluksde;
+			}
+			volume_offset += 497;
+		}
 	}
 	libluksde_volume_close(
 	 volume,
