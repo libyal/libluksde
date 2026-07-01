@@ -1246,7 +1246,7 @@ int libluksde_internal_volume_open_read_keys(
      libcerror_error_t **error )
 {
 	uint8_t master_key_validation_hash[ 20 ];
-	uint8_t user_key[ 32 ];
+	uint8_t user_key[ 64 ];
 
 	libluksde_encryption_context_t *user_key_encryption_context = NULL;
 	libluksde_key_slot_t *key_slot                              = NULL;
@@ -1288,6 +1288,19 @@ int libluksde_internal_volume_open_read_keys(
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 		 "%s: invalid volume - invalid IO handle - missing bytes per sector.",
+		 function );
+
+		return( -1 );
+	}
+	if( ( internal_volume->master_key_size != 16 )
+	 && ( internal_volume->master_key_size != 32 )
+	 && ( internal_volume->master_key_size != 64 ) )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_UNSUPPORTED_VALUE,
+		 "%s: unsupported master key size.",
 		 function );
 
 		return( -1 );

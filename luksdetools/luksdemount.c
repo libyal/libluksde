@@ -567,6 +567,9 @@ int main( int argc, char * const argv[] )
 
 		goto on_error;
 	}
+	fuse_unmount(
+	 luksdemount_fuse_handle );
+
 	fuse_destroy(
 	 luksdemount_fuse_handle );
 
