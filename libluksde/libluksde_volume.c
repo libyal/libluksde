@@ -1450,6 +1450,17 @@ int libluksde_internal_volume_open_read_keys(
 				}
 				key_material_size = (size_t) internal_volume->master_key_size * key_slot->number_of_stripes;
 
+				if( ( key_material_size % internal_volume->io_handle->bytes_per_sector ) != 0 )
+				{
+					libcerror_error_set(
+					 error,
+					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+					 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
+					 "%s: invalid volume - master key size value not a multitude of bytes per sector.",
+					 function );
+
+					goto on_error;
+				}
 				key_material_data = (uint8_t *) memory_allocate(
 				                                 sizeof( uint8_t ) * key_material_size );
 

@@ -2,7 +2,7 @@ AC_PREREQ([2.71])
 
 AC_INIT(
   [libluksde],
-  [20260701],
+  [20260716],
   [https://github.com/libyal/libluksde/issues])
 
 AC_CONFIG_SRCDIR(
