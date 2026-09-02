@@ -567,9 +567,14 @@ int main( int argc, char * const argv[] )
 
 		goto on_error;
 	}
+#if defined( HAVE_LIBFUSE3 )
 	fuse_unmount(
 	 luksdemount_fuse_handle );
-
+#else
+	fuse_unmount(
+	 mount_point,
+	 luksdemount_fuse_channel );
+#endif
 	fuse_destroy(
 	 luksdemount_fuse_handle );
 

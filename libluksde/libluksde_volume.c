@@ -1316,6 +1316,20 @@ int libluksde_internal_volume_open_read_keys(
 
 		return( -1 );
 	}
+	if( memory_set(
+	     master_key_validation_hash,
+	     0,
+	     20  ) == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_MEMORY,
+		 LIBCERROR_MEMORY_ERROR_SET_FAILED,
+		 "%s: unable to clear master key validation hash.",
+		 function );
+
+		goto on_error;
+	}
 	if( internal_volume->volume_master_key_is_set != 0 )
 	{
 		if( libluksde_password_pbkdf2(
@@ -1505,7 +1519,7 @@ int libluksde_internal_volume_open_read_keys(
 
 					goto on_error;
 				}
-#if defined( HAVE_DEBUG_OUTPUT )
+#if defined( HAVE_DEBUG_OUTPUT ) && defined( DISABLED )
 				if( libcnotify_verbose != 0 )
 				{
 					libcnotify_printf(
@@ -1617,7 +1631,7 @@ int libluksde_internal_volume_open_read_keys(
 					key_material_data_offset += internal_volume->io_handle->bytes_per_sector;
 					key_material_block_key   += 1;
 				}
-#if defined( HAVE_DEBUG_OUTPUT )
+#if defined( HAVE_DEBUG_OUTPUT ) && defined( DISABLED )
 				if( libcnotify_verbose != 0 )
 				{
 					libcnotify_printf(
