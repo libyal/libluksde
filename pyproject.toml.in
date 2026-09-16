@@ -23,6 +23,11 @@ Documentation = "https://github.com/libyal/libluksde/wiki/Home"
 Homepage = "https://github.com/libyal/libluksde"
 Repository = "https://github.com/libyal/libluksde"
 
+[tool.black]
+line-length = 88
+target-version = ["py310"]
+include = "\\.pyi?$"
+
 [tool.setuptools]
 py-modules = ["_build"]
 
