@@ -29,450 +29,461 @@ import pyluksde
 
 
 class VolumeTypeTests(unittest.TestCase):
-  """Tests the volume type."""
+    """Tests the volume type."""
 
-  def test_signal_abort(self):
-    """Tests the signal_abort function."""
-    luksde_volume = pyluksde.volume()
+    def test_signal_abort(self):
+        """Tests the signal_abort function."""
+        luksde_volume = pyluksde.volume()
 
-    luksde_volume.signal_abort()
+        luksde_volume.signal_abort()
 
-  def test_open(self):
-    """Tests the open function."""
-    test_source = getattr(unittest, "source", None)
-    if not test_source:
-      raise unittest.SkipTest("missing source")
+    def test_open(self):
+        """Tests the open function."""
+        test_source = getattr(unittest, "source", None)
+        if not test_source:
+            raise unittest.SkipTest("missing source")
 
-    luksde_volume = pyluksde.volume()
+        luksde_volume = pyluksde.volume()
 
-    test_password = getattr(unittest, "password", None)
-    if test_password:
-      luksde_volume.set_password(test_password)
+        test_password = getattr(unittest, "password", None)
+        if test_password:
+            luksde_volume.set_password(test_password)
 
-    luksde_volume.open(test_source)
+        luksde_volume.open(test_source)
 
-    with self.assertRaises(IOError):
-      luksde_volume.open(test_source)
+        with self.assertRaises(IOError):
+            luksde_volume.open(test_source)
 
-    luksde_volume.close()
-
-    with self.assertRaises(TypeError):
-      luksde_volume.open(None)
-
-    with self.assertRaises(ValueError):
-      luksde_volume.open(test_source, mode="w")
-
-  def test_open_file_object(self):
-    """Tests the open_file_object function."""
-    test_source = getattr(unittest, "source", None)
-    if not test_source:
-      raise unittest.SkipTest("missing source")
-
-    if not os.path.isfile(test_source):
-      raise unittest.SkipTest("source not a regular file")
-
-    luksde_volume = pyluksde.volume()
-
-    test_password = getattr(unittest, "password", None)
-    if test_password:
-      luksde_volume.set_password(test_password)
-
-    with open(test_source, "rb") as file_object:
-
-      luksde_volume.open_file_object(file_object)
-
-      with self.assertRaises(IOError):
-        luksde_volume.open_file_object(file_object)
-
-      luksde_volume.close()
-
-      with self.assertRaises(TypeError):
-        luksde_volume.open_file_object(None)
-
-      with self.assertRaises(ValueError):
-        luksde_volume.open_file_object(file_object, mode="w")
-
-  def test_close(self):
-    """Tests the close function."""
-    test_source = getattr(unittest, "source", None)
-    if not test_source:
-      raise unittest.SkipTest("missing source")
-
-    luksde_volume = pyluksde.volume()
-
-    test_password = getattr(unittest, "password", None)
-    if test_password:
-      luksde_volume.set_password(test_password)
-
-    with self.assertRaises(IOError):
-      luksde_volume.close()
-
-  def test_open_close(self):
-    """Tests the open and close functions."""
-    test_source = getattr(unittest, "source", None)
-    if not test_source:
-      return
-
-    luksde_volume = pyluksde.volume()
-
-    test_password = getattr(unittest, "password", None)
-    if test_password:
-      luksde_volume.set_password(test_password)
-
-    # Test open and close.
-    luksde_volume.open(test_source)
-    luksde_volume.close()
-
-    # Test open and close a second time to validate clean up on close.
-    luksde_volume.open(test_source)
-    luksde_volume.close()
-
-    if os.path.isfile(test_source):
-      with open(test_source, "rb") as file_object:
-
-        # Test open_file_object and close.
-        luksde_volume.open_file_object(file_object)
         luksde_volume.close()
 
-        # Test open_file_object and close a second time to validate clean up on close.
-        luksde_volume.open_file_object(file_object)
+        with self.assertRaises(TypeError):
+            luksde_volume.open(None)
+
+        with self.assertRaises(ValueError):
+            luksde_volume.open(test_source, mode="w")
+
+    def test_open_file_object(self):
+        """Tests the open_file_object function."""
+        test_source = getattr(unittest, "source", None)
+        if not test_source:
+            raise unittest.SkipTest("missing source")
+
+        if not os.path.isfile(test_source):
+            raise unittest.SkipTest("source not a regular file")
+
+        luksde_volume = pyluksde.volume()
+
+        test_password = getattr(unittest, "password", None)
+        if test_password:
+            luksde_volume.set_password(test_password)
+
+        with open(test_source, "rb") as file_object:
+
+            luksde_volume.open_file_object(file_object)
+
+            with self.assertRaises(IOError):
+                luksde_volume.open_file_object(file_object)
+
+            luksde_volume.close()
+
+            with self.assertRaises(TypeError):
+                luksde_volume.open_file_object(None)
+
+            with self.assertRaises(ValueError):
+                luksde_volume.open_file_object(file_object, mode="w")
+
+    def test_close(self):
+        """Tests the close function."""
+        test_source = getattr(unittest, "source", None)
+        if not test_source:
+            raise unittest.SkipTest("missing source")
+
+        luksde_volume = pyluksde.volume()
+
+        test_password = getattr(unittest, "password", None)
+        if test_password:
+            luksde_volume.set_password(test_password)
+
+        with self.assertRaises(IOError):
+            luksde_volume.close()
+
+    def test_open_close(self):
+        """Tests the open and close functions."""
+        test_source = getattr(unittest, "source", None)
+        if not test_source:
+            return
+
+        luksde_volume = pyluksde.volume()
+
+        test_password = getattr(unittest, "password", None)
+        if test_password:
+            luksde_volume.set_password(test_password)
+
+        # Test open and close.
+        luksde_volume.open(test_source)
         luksde_volume.close()
 
-        # Test open_file_object and close and dereferencing file_object.
-        luksde_volume.open_file_object(file_object)
-        del file_object
+        # Test open and close a second time to validate clean up on close.
+        luksde_volume.open(test_source)
         luksde_volume.close()
 
-  def test_is_locked(self):
-    """Tests the is_locked function."""
-    test_source = getattr(unittest, "source", None)
-    if not test_source:
-      raise unittest.SkipTest("missing source")
+        if os.path.isfile(test_source):
+            with open(test_source, "rb") as file_object:
 
-    luksde_volume = pyluksde.volume()
+                # Test open_file_object and close.
+                luksde_volume.open_file_object(file_object)
+                luksde_volume.close()
 
-    luksde_volume.open(test_source)
+                # Test open_file_object and close a second time to validate clean up on close.
+                luksde_volume.open_file_object(file_object)
+                luksde_volume.close()
 
-    result = luksde_volume.is_locked()
-    self.assertTrue(result)
+                # Test open_file_object and close and dereferencing file_object.
+                luksde_volume.open_file_object(file_object)
+                del file_object
+                luksde_volume.close()
 
-    luksde_volume.close()
+    def test_is_locked(self):
+        """Tests the is_locked function."""
+        test_source = getattr(unittest, "source", None)
+        if not test_source:
+            raise unittest.SkipTest("missing source")
 
-    test_password = getattr(unittest, "password", None)
-    if test_password:
-      luksde_volume = pyluksde.volume()
-      luksde_volume.set_password(test_password)
+        luksde_volume = pyluksde.volume()
 
-      luksde_volume.open(test_source)
+        luksde_volume.open(test_source)
 
-      result = luksde_volume.is_locked()
-      self.assertFalse(result)
+        result = luksde_volume.is_locked()
+        self.assertTrue(result)
 
-      luksde_volume.close()
+        luksde_volume.close()
 
-  def test_read_buffer(self):
-    """Tests the read_buffer function."""
-    test_source = getattr(unittest, "source", None)
-    if not test_source:
-      raise unittest.SkipTest("missing source")
+        test_password = getattr(unittest, "password", None)
+        if test_password:
+            luksde_volume = pyluksde.volume()
+            luksde_volume.set_password(test_password)
 
-    luksde_volume = pyluksde.volume()
+            luksde_volume.open(test_source)
 
-    test_password = getattr(unittest, "password", None)
-    if test_password:
-      luksde_volume.set_password(test_password)
+            result = luksde_volume.is_locked()
+            self.assertFalse(result)
 
-    luksde_volume.open(test_source)
+            luksde_volume.close()
 
-    size = luksde_volume.get_size()
+    def test_read_buffer(self):
+        """Tests the read_buffer function."""
+        test_source = getattr(unittest, "source", None)
+        if not test_source:
+            raise unittest.SkipTest("missing source")
 
-    if size < 4096:
-      # Test read without maximum size.
-      luksde_volume.seek_offset(0, os.SEEK_SET)
+        luksde_volume = pyluksde.volume()
 
-      data = luksde_volume.read_buffer()
+        test_password = getattr(unittest, "password", None)
+        if test_password:
+            luksde_volume.set_password(test_password)
 
-      self.assertIsNotNone(data)
-      self.assertEqual(len(data), size)
+        luksde_volume.open(test_source)
 
-    # Test read with maximum size.
-    luksde_volume.seek_offset(0, os.SEEK_SET)
+        size = luksde_volume.get_size()
 
-    data = luksde_volume.read_buffer(size=4096)
+        if size < 4096:
+            # Test read without maximum size.
+            luksde_volume.seek_offset(0, os.SEEK_SET)
 
-    self.assertIsNotNone(data)
-    self.assertEqual(len(data), min(size, 4096))
+            data = luksde_volume.read_buffer()
 
-    if size > 8:
-      luksde_volume.seek_offset(-8, os.SEEK_END)
+            self.assertIsNotNone(data)
+            self.assertEqual(len(data), size)
 
-      # Read buffer on size boundary.
-      data = luksde_volume.read_buffer(size=4096)
+        # Test read with maximum size.
+        luksde_volume.seek_offset(0, os.SEEK_SET)
 
-      self.assertIsNotNone(data)
-      self.assertEqual(len(data), 8)
+        data = luksde_volume.read_buffer(size=4096)
 
-      # Read buffer beyond size boundary.
-      data = luksde_volume.read_buffer(size=4096)
+        self.assertIsNotNone(data)
+        self.assertEqual(len(data), min(size, 4096))
 
-      self.assertIsNotNone(data)
-      self.assertEqual(len(data), 0)
+        if size > 8:
+            luksde_volume.seek_offset(-8, os.SEEK_END)
 
-    # Stress test read buffer.
-    luksde_volume.seek_offset(0, os.SEEK_SET)
+            # Read buffer on size boundary.
+            data = luksde_volume.read_buffer(size=4096)
 
-    remaining_size = size
+            self.assertIsNotNone(data)
+            self.assertEqual(len(data), 8)
 
-    for _ in range(1024):
-      read_size = int(random.random() * 4096)
+            # Read buffer beyond size boundary.
+            data = luksde_volume.read_buffer(size=4096)
 
-      data = luksde_volume.read_buffer(size=read_size)
+            self.assertIsNotNone(data)
+            self.assertEqual(len(data), 0)
 
-      self.assertIsNotNone(data)
-
-      data_size = len(data)
-
-      if read_size > remaining_size:
-        read_size = remaining_size
-
-      self.assertEqual(data_size, read_size)
-
-      remaining_size -= data_size
-
-      if not remaining_size:
+        # Stress test read buffer.
         luksde_volume.seek_offset(0, os.SEEK_SET)
 
         remaining_size = size
 
-    with self.assertRaises(ValueError):
-      luksde_volume.read_buffer(size=-1)
+        for _ in range(1024):
+            read_size = int(random.random() * 4096)
 
-    luksde_volume.close()
+            data = luksde_volume.read_buffer(size=read_size)
 
-    # Test the read without open.
-    with self.assertRaises(IOError):
-      luksde_volume.read_buffer(size=4096)
+            self.assertIsNotNone(data)
 
-  def test_read_buffer_file_object(self):
-    """Tests the read_buffer function on a file-like object."""
-    test_source = getattr(unittest, "source", None)
-    if not test_source:
-      raise unittest.SkipTest("missing source")
+            data_size = len(data)
 
-    if not os.path.isfile(test_source):
-      raise unittest.SkipTest("source not a regular file")
+            if read_size > remaining_size:
+                read_size = remaining_size
 
-    luksde_volume = pyluksde.volume()
+            self.assertEqual(data_size, read_size)
 
-    test_password = getattr(unittest, "password", None)
-    if test_password:
-      luksde_volume.set_password(test_password)
+            remaining_size -= data_size
 
-    with open(test_source, "rb") as file_object:
-      luksde_volume.open_file_object(file_object)
+            if not remaining_size:
+                luksde_volume.seek_offset(0, os.SEEK_SET)
 
-      size = luksde_volume.get_size()
+                remaining_size = size
 
-      # Test normal read.
-      data = luksde_volume.read_buffer(size=4096)
+        with self.assertRaises(ValueError):
+            luksde_volume.read_buffer(size=-1)
 
-      self.assertIsNotNone(data)
-      self.assertEqual(len(data), min(size, 4096))
+        luksde_volume.close()
 
-      luksde_volume.close()
+        # Test the read without open.
+        with self.assertRaises(IOError):
+            luksde_volume.read_buffer(size=4096)
 
-  def test_read_buffer_at_offset(self):
-    """Tests the read_buffer_at_offset function."""
-    test_source = getattr(unittest, "source", None)
-    if not test_source:
-      raise unittest.SkipTest("missing source")
+    def test_read_buffer_file_object(self):
+        """Tests the read_buffer function on a file-like object."""
+        test_source = getattr(unittest, "source", None)
+        if not test_source:
+            raise unittest.SkipTest("missing source")
 
-    luksde_volume = pyluksde.volume()
+        if not os.path.isfile(test_source):
+            raise unittest.SkipTest("source not a regular file")
 
-    test_password = getattr(unittest, "password", None)
-    if test_password:
-      luksde_volume.set_password(test_password)
+        luksde_volume = pyluksde.volume()
 
-    luksde_volume.open(test_source)
+        test_password = getattr(unittest, "password", None)
+        if test_password:
+            luksde_volume.set_password(test_password)
 
-    size = luksde_volume.get_size()
+        with open(test_source, "rb") as file_object:
+            luksde_volume.open_file_object(file_object)
 
-    # Test normal read.
-    data = luksde_volume.read_buffer_at_offset(4096, 0)
+            size = luksde_volume.get_size()
 
-    self.assertIsNotNone(data)
-    self.assertEqual(len(data), min(size, 4096))
+            # Test normal read.
+            data = luksde_volume.read_buffer(size=4096)
 
-    if size > 8:
-      # Read buffer on size boundary.
-      data = luksde_volume.read_buffer_at_offset(4096, size - 8)
+            self.assertIsNotNone(data)
+            self.assertEqual(len(data), min(size, 4096))
 
-      self.assertIsNotNone(data)
-      self.assertEqual(len(data), 8)
+            luksde_volume.close()
 
-      # Read buffer beyond size boundary.
-      data = luksde_volume.read_buffer_at_offset(4096, size + 8)
+    def test_read_buffer_at_offset(self):
+        """Tests the read_buffer_at_offset function."""
+        test_source = getattr(unittest, "source", None)
+        if not test_source:
+            raise unittest.SkipTest("missing source")
 
-      self.assertIsNotNone(data)
-      self.assertEqual(len(data), 0)
+        luksde_volume = pyluksde.volume()
 
-    # Stress test read buffer.
-    for _ in range(1024):
-      random_number = random.random()
+        test_password = getattr(unittest, "password", None)
+        if test_password:
+            luksde_volume.set_password(test_password)
 
-      media_offset = int(random_number * size)
-      read_size = int(random_number * 4096)
+        luksde_volume.open(test_source)
 
-      data = luksde_volume.read_buffer_at_offset(read_size, media_offset)
+        size = luksde_volume.get_size()
 
-      self.assertIsNotNone(data)
+        # Test normal read.
+        data = luksde_volume.read_buffer_at_offset(4096, 0)
 
-      remaining_size = size - media_offset
+        self.assertIsNotNone(data)
+        self.assertEqual(len(data), min(size, 4096))
 
-      data_size = len(data)
+        if size > 8:
+            # Read buffer on size boundary.
+            data = luksde_volume.read_buffer_at_offset(4096, size - 8)
 
-      if read_size > remaining_size:
-        read_size = remaining_size
+            self.assertIsNotNone(data)
+            self.assertEqual(len(data), 8)
 
-      self.assertEqual(data_size, read_size)
+            # Read buffer beyond size boundary.
+            data = luksde_volume.read_buffer_at_offset(4096, size + 8)
 
-      remaining_size -= data_size
+            self.assertIsNotNone(data)
+            self.assertEqual(len(data), 0)
 
-      if not remaining_size:
-        luksde_volume.seek_offset(0, os.SEEK_SET)
+        # Stress test read buffer.
+        for _ in range(1024):
+            random_number = random.random()
 
-    with self.assertRaises(ValueError):
-      luksde_volume.read_buffer_at_offset(-1, 0)
+            media_offset = int(random_number * size)
+            read_size = int(random_number * 4096)
 
-    with self.assertRaises(ValueError):
-      luksde_volume.read_buffer_at_offset(4096, -1)
+            data = luksde_volume.read_buffer_at_offset(read_size, media_offset)
 
-    luksde_volume.close()
+            self.assertIsNotNone(data)
 
-    # Test the read without open.
-    with self.assertRaises(IOError):
-      luksde_volume.read_buffer_at_offset(4096, 0)
+            remaining_size = size - media_offset
 
-  def test_seek_offset(self):
-    """Tests the seek_offset function."""
-    test_source = getattr(unittest, "source", None)
-    if not test_source:
-      raise unittest.SkipTest("missing source")
+            data_size = len(data)
 
-    luksde_volume = pyluksde.volume()
+            if read_size > remaining_size:
+                read_size = remaining_size
 
-    test_password = getattr(unittest, "password", None)
-    if test_password:
-      luksde_volume.set_password(test_password)
+            self.assertEqual(data_size, read_size)
 
-    luksde_volume.open(test_source)
+            remaining_size -= data_size
 
-    size = luksde_volume.get_size()
+            if not remaining_size:
+                luksde_volume.seek_offset(0, os.SEEK_SET)
 
-    luksde_volume.seek_offset(16, os.SEEK_SET)
+        with self.assertRaises(ValueError):
+            luksde_volume.read_buffer_at_offset(-1, 0)
 
-    offset = luksde_volume.get_offset()
-    self.assertEqual(offset, 16)
+        with self.assertRaises(ValueError):
+            luksde_volume.read_buffer_at_offset(4096, -1)
 
-    luksde_volume.seek_offset(16, os.SEEK_CUR)
+        luksde_volume.close()
 
-    offset = luksde_volume.get_offset()
-    self.assertEqual(offset, 32)
+        # Test the read without open.
+        with self.assertRaises(IOError):
+            luksde_volume.read_buffer_at_offset(4096, 0)
 
-    luksde_volume.seek_offset(-16, os.SEEK_CUR)
+    def test_seek_offset(self):
+        """Tests the seek_offset function."""
+        test_source = getattr(unittest, "source", None)
+        if not test_source:
+            raise unittest.SkipTest("missing source")
 
-    offset = luksde_volume.get_offset()
-    self.assertEqual(offset, 16)
+        luksde_volume = pyluksde.volume()
 
-    if size > 16:
-      luksde_volume.seek_offset(-16, os.SEEK_END)
+        test_password = getattr(unittest, "password", None)
+        if test_password:
+            luksde_volume.set_password(test_password)
 
-      offset = luksde_volume.get_offset()
-      self.assertEqual(offset, size - 16)
+        luksde_volume.open(test_source)
 
-    luksde_volume.seek_offset(16, os.SEEK_END)
+        size = luksde_volume.get_size()
 
-    offset = luksde_volume.get_offset()
-    self.assertEqual(offset, size + 16)
+        luksde_volume.seek_offset(16, os.SEEK_SET)
 
-    # TODO: change IOError into ValueError
-    with self.assertRaises(IOError):
-      luksde_volume.seek_offset(-1, os.SEEK_SET)
+        offset = luksde_volume.get_offset()
+        self.assertEqual(offset, 16)
 
-    # TODO: change IOError into ValueError
-    with self.assertRaises(IOError):
-      luksde_volume.seek_offset(-32 - size, os.SEEK_CUR)
+        luksde_volume.seek_offset(16, os.SEEK_CUR)
 
-    # TODO: change IOError into ValueError
-    with self.assertRaises(IOError):
-      luksde_volume.seek_offset(-32 - size, os.SEEK_END)
+        offset = luksde_volume.get_offset()
+        self.assertEqual(offset, 32)
 
-    # TODO: change IOError into ValueError
-    with self.assertRaises(IOError):
-      luksde_volume.seek_offset(0, -1)
+        luksde_volume.seek_offset(-16, os.SEEK_CUR)
 
-    luksde_volume.close()
+        offset = luksde_volume.get_offset()
+        self.assertEqual(offset, 16)
 
-    # Test the seek without open.
-    with self.assertRaises(IOError):
-      luksde_volume.seek_offset(16, os.SEEK_SET)
+        if size > 16:
+            luksde_volume.seek_offset(-16, os.SEEK_END)
 
-  def test_get_offset(self):
-    """Tests the get_offset function."""
-    test_source = getattr(unittest, "source", None)
-    if not test_source:
-      raise unittest.SkipTest("missing source")
+            offset = luksde_volume.get_offset()
+            self.assertEqual(offset, size - 16)
 
-    luksde_volume = pyluksde.volume()
+        luksde_volume.seek_offset(16, os.SEEK_END)
 
-    test_password = getattr(unittest, "password", None)
-    if test_password:
-      luksde_volume.set_password(test_password)
+        offset = luksde_volume.get_offset()
+        self.assertEqual(offset, size + 16)
 
-    luksde_volume.open(test_source)
+        # TODO: change IOError into ValueError
+        with self.assertRaises(IOError):
+            luksde_volume.seek_offset(-1, os.SEEK_SET)
 
-    offset = luksde_volume.get_offset()
-    self.assertIsNotNone(offset)
+        # TODO: change IOError into ValueError
+        with self.assertRaises(IOError):
+            luksde_volume.seek_offset(-32 - size, os.SEEK_CUR)
 
-    luksde_volume.close()
+        # TODO: change IOError into ValueError
+        with self.assertRaises(IOError):
+            luksde_volume.seek_offset(-32 - size, os.SEEK_END)
 
-  def test_get_size(self):
-    """Tests the get_size function and size property."""
-    test_source = getattr(unittest, "source", None)
-    if not test_source:
-      raise unittest.SkipTest("missing source")
+        # TODO: change IOError into ValueError
+        with self.assertRaises(IOError):
+            luksde_volume.seek_offset(0, -1)
 
-    luksde_volume = pyluksde.volume()
+        luksde_volume.close()
 
-    test_password = getattr(unittest, "password", None)
-    if test_password:
-      luksde_volume.set_password(test_password)
+        # Test the seek without open.
+        with self.assertRaises(IOError):
+            luksde_volume.seek_offset(16, os.SEEK_SET)
 
-    luksde_volume.open(test_source)
+    def test_get_offset(self):
+        """Tests the get_offset function."""
+        test_source = getattr(unittest, "source", None)
+        if not test_source:
+            raise unittest.SkipTest("missing source")
 
-    size = luksde_volume.get_size()
-    self.assertIsNotNone(size)
+        luksde_volume = pyluksde.volume()
 
-    self.assertIsNotNone(luksde_volume.size)
+        test_password = getattr(unittest, "password", None)
+        if test_password:
+            luksde_volume.set_password(test_password)
 
-    luksde_volume.close()
+        luksde_volume.open(test_source)
+
+        offset = luksde_volume.get_offset()
+        self.assertIsNotNone(offset)
+
+        luksde_volume.close()
+
+    def test_get_size(self):
+        """Tests the get_size function and size property."""
+        test_source = getattr(unittest, "source", None)
+        if not test_source:
+            raise unittest.SkipTest("missing source")
+
+        luksde_volume = pyluksde.volume()
+
+        test_password = getattr(unittest, "password", None)
+        if test_password:
+            luksde_volume.set_password(test_password)
+
+        luksde_volume.open(test_source)
+
+        size = luksde_volume.get_size()
+        self.assertIsNotNone(size)
+
+        self.assertIsNotNone(luksde_volume.size)
+
+        luksde_volume.close()
 
 
 if __name__ == "__main__":
-  argument_parser = argparse.ArgumentParser()
+    argument_parser = argparse.ArgumentParser()
 
-  argument_parser.add_argument(
-      "-p", "--password", dest="password", action="store", default=None,
-      type=str, help="password to unlock the source file.")
+    argument_parser.add_argument(
+        "-p",
+        "--password",
+        dest="password",
+        action="store",
+        default=None,
+        type=str,
+        help="password to unlock the source file.",
+    )
 
-  argument_parser.add_argument(
-      "source", nargs="?", action="store", metavar="PATH",
-      default=None, help="path of the source file.")
+    argument_parser.add_argument(
+        "source",
+        nargs="?",
+        action="store",
+        metavar="PATH",
+        default=None,
+        help="path of the source file.",
+    )
 
-  options, unknown_options = argument_parser.parse_known_args()
-  unknown_options.insert(0, sys.argv[0])
+    options, unknown_options = argument_parser.parse_known_args()
+    unknown_options.insert(0, sys.argv[0])
 
-  setattr(unittest, "password", options.password)
-  setattr(unittest, "source", options.source)
+    setattr(unittest, "password", options.password)
+    setattr(unittest, "source", options.source)
 
-  unittest.main(argv=unknown_options, verbosity=2)
+    unittest.main(argv=unknown_options, verbosity=2)
