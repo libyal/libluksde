@@ -1318,8 +1318,8 @@ int libluksde_internal_volume_open_read_keys(
 	}
 	if( memory_set(
 	     master_key_validation_hash,
-	     0,
-	     20  ) == NULL )
+	     20,
+	     0 ) == NULL )
 	{
 		libcerror_error_set(
 		 error,
