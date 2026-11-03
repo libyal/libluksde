@@ -47,6 +47,10 @@ int LLVMFuzzerTestOneInput(
      const uint8_t *data,
      size_t size )
 {
+	uint8_t master_key[ 32 ] = {
+		0xa0, 0x1a, 0x0a, 0x46, 0xc2, 0xa4, 0xe9, 0x97, 0x69, 0xbb, 0xb2, 0x4c, 0x6d, 0x7c, 0x8a, 0x7c,
+		0x3b, 0xf0, 0x30, 0xc1, 0x88, 0x16, 0x29, 0xe6, 0xa6, 0xa0, 0xb7, 0x27, 0xcd, 0x13, 0x70, 0x5b };
+
 	uint8_t buffer[ 512 ];
 	uint8_t uuid[ 16 ];
 
@@ -79,10 +83,15 @@ int LLVMFuzzerTestOneInput(
 	{
 		goto on_error_libbfio;
 	}
-	if( libluksde_volume_set_utf8_password(
+	/* Using libluksde_volume_set_key to prevent timeouts due to large number
+	 * of iterations for PBKDF2 
+	 *
+	 * Password: luksde-TEST
+	 */
+	if( libluksde_volume_set_key(
 	     volume,
-	     (uint8_t *) "luksde-TEST",
-	     11,
+	     master_key,
+	     32,
 	     NULL ) != 1 )
 	{
 		goto on_error_libbfio;

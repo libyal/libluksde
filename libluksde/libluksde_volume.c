@@ -1545,6 +1545,20 @@ int libluksde_internal_volume_open_read_keys(
 
 					goto on_error;
 				}
+				if( memory_set(
+				     split_master_key_data,
+				     0,
+				     key_material_size  ) == NULL )
+				{
+					libcerror_error_set(
+					 error,
+					 LIBCERROR_ERROR_DOMAIN_MEMORY,
+					 LIBCERROR_MEMORY_ERROR_SET_FAILED,
+					 "%s: unable to clear split master key data.",
+					 function );
+
+					goto on_error;
+				}
 #if defined( HAVE_DEBUG_OUTPUT )
 				if( libcnotify_verbose != 0 )
 				{
